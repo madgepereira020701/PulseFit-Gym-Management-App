@@ -1,0 +1,117 @@
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 5px 15px;
+    font-size: 16px;
+  }
+  
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 months per row */
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .month-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: rgb(251, 235, 211);
+    display: flex;
+    width: 350px;
+    flex-direction: column;
+  }
+  
+  h3.month-title {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .days-of-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .day-name {
+    font-weight: bold;
+  }
+  
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+  }
+  
+  .day1 {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  .empty {
+    background-color: #fcf5eecd;
+  }
+  
+  .btn2{
+    width: 200px;
+    margin-left: 100px;
+  }
+
+  .btn3{
+    width: 200px;
+    margin-right: 100px;
+  }
+
+ 
+  .today {
+    background-color: #ffcc80;
+    font-weight: bold;
+  }
+
+
+
+
+
+
+
+
+
+
+ 
+  @media (max-width: 768px) {
+    .calendar-grid {
+      grid-template-columns: 1fr; /* 1 month per row for small screens */
+    }
+  
+    .calendar-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+  
+   
+  
+    .btn2, .btn3 {
+      width: 100%;
+      margin: 10px 0; /* Full width on small screens */
+    }
+  }
+  
+  @media (max-width: 480px) {
+   
+    h3.month-title {
+      font-size: 16px;
+    }
+  
+    .day1 {
+      padding: 5px; /* Smaller padding for smaller screens */
+    }
+  } 

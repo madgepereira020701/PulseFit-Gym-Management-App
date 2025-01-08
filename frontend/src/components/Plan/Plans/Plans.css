@@ -1,0 +1,62 @@
+/* Container for the table */
+.table-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1200px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Heading */
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: red;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  
+  /* Table styling */
+  .plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .plan-table th,
+  .plan-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+
+  
+  
+  .plan-table th {
+    background-color: orange;
+    color: white;
+  }
+  
+  .plan-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .plan-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  /* Message when no members are found */
+  p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  

@@ -1,0 +1,118 @@
+.nav{
+    background-color:orange;
+    text-align: left;
+    display:flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    align-items: center;
+    position: relative;
+
+}
+
+.company-title{
+    margin-left: 20px;
+}
+
+.nav-links li {
+    list-style: none;
+}
+
+.nav .nav-links{
+    display: flex;
+}
+
+
+ .nav-links li a{
+    color: black;
+    flex-direction: row;
+    margin: 0 0.5rem ;
+    text-decoration: none;
+    padding: 0.7rem;
+    display: block;
+ }
+
+ .nav-links .account{
+    color: black;
+    flex-direction: row;
+    margin: 0 0.5rem ;
+    text-decoration: none;
+    padding: 0.7rem;
+    display: block;
+ }
+
+ .nav-links li a:hover,
+ .nav-links li a.active {
+    background-color: rgba(245, 194, 105, 0.931);
+    color: black;
+    border-radius: 4px;
+ }
+
+ .nav-links .account:hover,
+ .nav-links .account.active {
+    background-color: rgba(245, 194, 105, 0.931);
+    color: black;
+    border-radius: 4px;
+ }
+
+ .icon{
+    display: none;
+ }
+
+ .drop-down{
+    justify-content: space-evenly;
+    flex-direction: column;
+    position: absolute;
+    height: 60vh;
+    width: 300px;
+    background-color: rgba(242, 203, 136, 0.931);
+    top: -800px;
+    right: 0;
+    z-index: -10px;
+}
+
+ @media (max-width: 768px)
+ {
+     h2{
+        margin-left: 30px;
+    }
+
+    .icon{
+        display: block;
+        margin-right: 10px;
+    }
+
+    .nav-links{
+        justify-content: space-evenly;
+        flex-direction: column;
+        position: absolute;
+        height: 90vh;
+        width: 300px;
+        background-color: rgba(242, 203, 136, 0.931);
+        top: -800px;
+        right: 0;
+        z-index: -10px;
+    }
+    .drop-down{
+        justify-content: space-evenly;
+        flex-direction: column;
+        position: absolute;
+        height: 60vh;
+        width: 300px;
+        background-color: rgba(242, 203, 136, 0.931);
+        top: -800px;
+        right: 0;
+        display: block;
+        z-index: -10px;
+    }
+
+
+     .nav-links.active{
+        top:80px;
+    }
+
+ }
+
+    
+ 

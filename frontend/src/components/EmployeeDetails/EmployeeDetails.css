@@ -1,0 +1,56 @@
+/* details.css */
+.details-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 500px;
+    background-color: #ffcc80;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0.1, 0.1, 0.1, 0.1);
+    text-align: center; /* Center-align all text inside the container */
+}
+
+.details-container h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px; /* Add spacing below the heading */
+}
+
+.details-container p {
+    font-size: 19px; /* Slightly smaller font for readability */
+    margin: 10px 0; /* Add consistent spacing between paragraphs */
+    text-align: left; /* Align the text to the left for a cleaner look */
+}
+
+.details-container p strong {
+    color: #444;
+    font-weight: bold; /* Ensure bold text stands out */
+}
+
+.details-container .details-row {
+    display: flex;
+    justify-content: space-between; /* Space between label and value */
+    margin-bottom: 15px; /* Add some spacing between rows */
+}
+
+.details-container .details-row p {
+    margin: 0; /* Remove additional margins for better spacing */
+    margin-left: 40px;
+}
+
+.details-container .details-row strong {
+    flex: 1; /* Ensure the label takes up equal space */
+    text-align: right; /* Align the label to the right */
+    padding-right: 20px; /* Add some space to the right */
+}
+
+.details-container .details-row span {
+    flex: 2; /* Allow the value to take more space */
+    text-align: left; /* Align the value to the left */
+}
+
+.details-row span {
+    font-family: 'Arial', sans-serif; /* Change this to any desired font */
+    color: #555; /* Customize font color */
+    font-size: 17px; /* Adjust the font size */
+  }
+  
