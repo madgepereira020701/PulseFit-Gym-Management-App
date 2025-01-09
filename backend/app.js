@@ -495,8 +495,11 @@ app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by
 
 
 //AUTHENTICATION
-const { userRegister, userLogin, memberLogin, employeeLogin } = require('./Users/controllers/AuthController');
+const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister } = require('./Users/controllers/AuthController');
 app.post('/api/register', userRegister); // Register Route
+app.post('/api/memberregister', memberRegister); // Register Route
+app.post('/api/employeeregister', employeeRegister); // Register Route
+
 app.post('/api/login', userLogin); // Login Route
 app.post('/api/memberlogin', memberLogin); // Login Route
 app.post('/api/employeelogin', employeeLogin); // Login Route
