@@ -110,6 +110,25 @@ API.userRegister = async (userData) => {
     return await response.json();
 };
 
+API.memberRegister = async (userData) => {
+    const response = await fetch('http://localhost:3000/api/memberregister', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+    });
+    return await response.json();
+};
+
+
+API.employeeRegister = async (userData) => {
+    const response = await fetch('http://localhost:3000/api/employeeregister', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+    });
+    return await response.json();
+};
+
 API.userLogin = async (loginData) => {
     const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
