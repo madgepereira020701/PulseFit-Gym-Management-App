@@ -59,14 +59,14 @@ const Navbar = () => {
     </>
   ) : role === 'Member' ? (
     <>
-      <li><NavLink to="/home2" activeClassName="active">Home</NavLink></li>
+      <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
       <li><NavLink to="/details" activeClassName="active">Details</NavLink></li>
       <li><NavLink to="/viewpayments" activeClassName="active">View Payments</NavLink></li>
       <li><NavLink to="/memcalendar" activeClassName="active">Calendar</NavLink></li>
     </>
   ) : role === 'Employee' ? (
     <>
-      <li><NavLink to="/home3" activeClassName="active">Home</NavLink></li>
+      <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
       <li><NavLink to="/employeedetails" activeClassName="active">Details</NavLink></li>
       <li><NavLink to="/emcalendar" activeClassName="active">Calendar</NavLink></li>
     </>
