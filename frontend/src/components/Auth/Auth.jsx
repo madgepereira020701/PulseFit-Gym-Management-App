@@ -89,7 +89,15 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
     }
 
     try {
-      const response = await API.userRegister(register);
+      const response =
+        register.role === 'Admin'
+          ? await API.userRegister(register) // Admin registration
+          : register.role === 'Member'
+          ? await API.memberRegister(register) // Member registration
+          : register.role === 'Employee'
+          ? await API.employeeRegister(register) // Employee registration
+          : { isSuccess: false, msg: 'Invalid role' };
+    
       if (response.isSuccess) {
         setRegister(registerInitialValues);
         toggleAccount('login');
@@ -112,7 +120,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
       setError('Please resolve all validation warnings.');
       return;
     }
-  
+
     try {
       const response =
         login.role === 'Admin'
@@ -120,27 +128,25 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
           : login.role === 'Member'
           ? await API.memberLogin(login) // Member login
           : login.role === 'Employee'
-          ? await API.employeeLogin(login) // New Employee login option
+          ? await API.employeeLogin(login) // Employee login
           : { isSuccess: false, msg: 'Invalid role' };
-    
+
       if (response.isSuccess) {
         setIsAuthenticated(true);
         if (login.role === 'Admin') {
           setUserName(response.data.userName);
           localStorage.setItem('userName', response.data.userName);
-          localStorage.setItem('role', login.role); // Save role in localStorage
-    
+          localStorage.setItem('role', login.role);
         } else if (login.role === 'Member') {
           setUserName(response.data.memberDetails.fullname);
           localStorage.setItem('userName', response.data.memberDetails.fullname);
-          localStorage.setItem('role', login.role); // Save role in localStorage
-    
+          localStorage.setItem('role', login.role);
         } else if (login.role === 'Employee') {
           setUserName(response.data.employeeDetails.fullname);
           localStorage.setItem('userName', response.data.employeeDetails.fullname);
-          localStorage.setItem('role', login.role); // Save role in localStorage
+          localStorage.setItem('role', login.role);
         }
-    
+
         localStorage.setItem('token', response.data.token);
         setRedirectToHome(true);
       } else {
@@ -150,8 +156,8 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
       setError('An error occurred. Please try again later.');
       console.error('Error in loginUser:', err);
     }
-  }    
-  
+  }
+
   if (redirectToHome) {
     return <Navigate to="/" replace />;
   }
@@ -230,9 +236,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
             </span>
           </div>
 
-          <select name="role" value={register.role} 
-          onChange={onRoleChange} 
-          className="input-field">
+          <select name="role" value={register.role} onChange={onRoleChange} className="input-field">
             <option value="">Signup as</option>
             <option value="Admin">Admin</option>
             <option value="Employee">Employee</option>
@@ -243,7 +247,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
           <button className="dark-button" onClick={registerUser}>Signup</button>
           <p className="text">OR</p>
           <br />
-          <button className="light-button" onClick={toggleSignup}>Already have an account</button>        
+          <button className="light-button" onClick={toggleSignup}>Already have an account</button>
         </div>
       )}
     </div>
