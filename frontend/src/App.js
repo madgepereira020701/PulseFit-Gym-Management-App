@@ -5,9 +5,9 @@ import Navbar from './components/Navbar/NavBar';
 import Home from './components/Home/Home'; // Import Home component
 import AddPackage from './components/Plan/AddPlan/AddPackage';
 import AddMember from './components/Member/AddMember/AddMember';
-import AddEmployee from './components/Employee/AddEmployee';
+import AddEmployee from './components/Employee/AddEmployee/AddEmployee.jsx';
 import Members from './components/Member/Members/Members';
-import Employees from './components/Employee/Employees';
+import Employees from './components/Employee/Employees/Employees.jsx';
 import Settings from './components/Settings/Settings';
 import AddRenewal from './components/Renewal/AddRenewal/AddRenewal';
 import Renewals from './components/Renewal/Renewals/Renewals';
