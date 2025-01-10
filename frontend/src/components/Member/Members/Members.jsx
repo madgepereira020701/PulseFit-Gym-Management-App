@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Members.css';
 
@@ -14,6 +14,9 @@ const Members = () => {
     doj: '',
     doe: ''
   });
+  const [searchQuery, setSearchQuery] = useState(''); // Step 1: Add search query state
+  const searchInputRef = useRef(null); // Create a reference for the input field
+
 
   const navigate = useNavigate();
 
@@ -61,6 +64,21 @@ const Members = () => {
       doe: member.doe
     });
   };
+
+  // Step 2: Fix search handler and directly filter members
+  const handleSearch = (e) => {
+    let searchTerm = e.target.value.toLowerCase();
+    setSearchQuery(searchTerm);  // Store the lowercase query directly
+  };
+  
+ 
+
+  const filteredMembers = members.filter((member) => {
+    return (
+      member.fullname.toLowerCase().includes(searchQuery) || 
+      member.email.toLowerCase().includes(searchQuery)
+    );
+  });
 
   const handleUpdateChange = (e) => {
     const { name, value } = e.target;
@@ -148,6 +166,13 @@ const Members = () => {
     navigate(`/payments/${memno}`);
   };
 
+  const handleIconClick = () => {
+    // Focus the input field when the search icon is clicked
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
   return (
     <div className="table-container">
       {loading ? (
@@ -157,6 +182,21 @@ const Members = () => {
       ) : (
         <>
           <h2>Members List</h2>
+          
+          <div className='search-bar-container'>
+            <input
+              type="text"
+              placeholder="Search members..."
+              className='search-bar'
+              value={searchQuery}
+              onChange={handleSearch}
+              ref={searchInputRef} // Attach ref to the input field
+            />
+            <i 
+              className="fas fa-search search-bar-icon"
+              onClick={handleIconClick} // Focus input field when clicked
+            ></i>
+          </div>
           <table className="member-table">
             <thead>
               <tr>
@@ -169,7 +209,7 @@ const Members = () => {
               </tr>
             </thead>
             <tbody>
-              {members.map((member) => (
+              {filteredMembers.map((member) => (
                 <tr key={member.memno}>
                   <td>{member.memno}</td>
                   <td>{member.fullname}</td>
