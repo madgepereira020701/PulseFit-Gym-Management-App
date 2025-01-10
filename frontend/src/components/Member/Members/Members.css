@@ -118,23 +118,3 @@ h3 {
 }
 
 
-.search-bar-container {
-  position: relative;
-  width: 200px; /* Adjust the container width if needed */
-}
-
-.search-bar {
-  padding: 5px;
-  border-radius: 15px;
-  border-color: orange;
-  width: 100%; /* Make input fill the container */
-  padding-left: 10px; /* Adjust padding to make space for the icon */
-}
-
-.search-bar-icon {
-  color: grey;  /* Icon color */
-  position: absolute;
-  right: 10px; /* Adjust to place the icon at the end */
-  top: 50%;
-  transform: translateY(-50%); /* Vertically center the icon */
-}
