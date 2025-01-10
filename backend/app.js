@@ -15,7 +15,6 @@ const Attendance = require('./models/attendance');
 const mongoPlans = require('./mongo/addplan_mongo'); // Assuming plans API is in this file
 const mongoMember = require('./mongo/member_mongo');
 const mongoEmployee = require('./mongo/employee_mongo');
-//const Employee = require('./models/employees'); // Schema for members
 
 
 
