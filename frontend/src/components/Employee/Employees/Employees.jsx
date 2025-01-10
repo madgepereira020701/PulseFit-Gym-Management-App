@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect} from 'react';
 import './Employees.css';
 
 const Employees = () => {
@@ -11,8 +11,6 @@ const Employees = () => {
     emphno: '',
   });
 
-  const [searchQuery, setSearchQuery] = useState(''); // Step 1: Add search query state
-  const searchInputRef = useRef(null); // Create a reference for the input field
 
   // Fetch employees data on component mount
   useEffect(() => {
@@ -58,17 +56,9 @@ const Employees = () => {
     });
   };
 
-  const handleSearch = (e) => {
-    let searchTerm = e.target.value.toLowerCase();
-    setSearchQuery(searchTerm);  // Store the lowercase query directly
-  };
+ 
   
-  const filteredEmployees = employees.filter((member) => {
-    return (
-      member.fullname.toLowerCase().includes(searchQuery) || 
-      member.email.toLowerCase().includes(searchQuery)
-    );
-  });
+
 
   const handleUpdateChange = (e) => {
     const { name, value } = e.target;
@@ -142,12 +132,7 @@ const Employees = () => {
     }
   };
 
-  const handleIconClick = () => {
-    // Focus the input field when the search icon is clicked
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  };
+  
 
   return (
     <div className="table-container">
@@ -159,20 +144,7 @@ const Employees = () => {
         <>
           <h2>Employees List</h2>
 
-          <div className='search-bar-container'>
-            <input
-              type="text"
-              placeholder="Search members..."
-              className='search-bar'
-              value={searchQuery}
-              onChange={handleSearch}
-              ref={searchInputRef} // Attach ref to the input field
-            />
-            <i 
-              className="fas fa-search search-bar-icon"
-              onClick={handleIconClick} // Focus input field when clicked
-            ></i>
-          </div>
+      
 
           <table className="employee-table">
             <thead>
@@ -188,7 +160,7 @@ const Employees = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEmployees.map((employee) => (
+              {employees.map((employee) => (
                 <tr key={employee.emno}>
                   <td>{employee.emno}</td>
                   <td>{employee.fullname}</td>
