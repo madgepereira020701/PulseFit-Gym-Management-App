@@ -8,6 +8,8 @@ const SentEmail1 = require('./models/members'); // Schema for members
 const Event = require('./models/addevent'); // Corrected model import
 const Settings = require('./models/settings');
 const Employee = require('./models/employees');
+const Attendance = require('./models/attendance');
+
 
  // Schema for members
 const mongoPlans = require('./mongo/addplan_mongo'); // Assuming plans API is in this file
