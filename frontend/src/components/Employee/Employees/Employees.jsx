@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Employees.css';
 
 const Employees = () => {
@@ -10,6 +10,9 @@ const Employees = () => {
     emno: '',
     emphno: '',
   });
+
+  const [searchQuery, setSearchQuery] = useState(''); // Step 1: Add search query state
+  const searchInputRef = useRef(null); // Create a reference for the input field
 
   // Fetch employees data on component mount
   useEffect(() => {
@@ -31,8 +34,6 @@ const Employees = () => {
         console.log('Fetched Employees:', data); // Log entire response
     
         if (response.ok) {
-          // Check if the data contains employees
-          console.log('Employees data:', data.employees);
           setEmployees(data.employees || []);
         } else {
           throw new Error(data.message || 'Failed to fetch employees');
@@ -56,6 +57,18 @@ const Employees = () => {
       emphno: employee.emphno,
     });
   };
+
+  const handleSearch = (e) => {
+    let searchTerm = e.target.value.toLowerCase();
+    setSearchQuery(searchTerm);  // Store the lowercase query directly
+  };
+  
+  const filteredEmployees = employees.filter((member) => {
+    return (
+      member.fullname.toLowerCase().includes(searchQuery) || 
+      member.email.toLowerCase().includes(searchQuery)
+    );
+  });
 
   const handleUpdateChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +97,6 @@ const Employees = () => {
         throw new Error(data.message || 'Failed to update employee');
       }
 
-      // Update the employee in the state
       setEmployees((prevEmployees) =>
         prevEmployees.map((employee) =>
           employee.email === updatedDetails.email ? { ...employee, ...updatedDetails } : employee
@@ -130,6 +142,13 @@ const Employees = () => {
     }
   };
 
+  const handleIconClick = () => {
+    // Focus the input field when the search icon is clicked
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
   return (
     <div className="table-container">
       {loading ? (
@@ -139,6 +158,22 @@ const Employees = () => {
       ) : (
         <>
           <h2>Employees List</h2>
+
+          <div className='search-bar-container'>
+            <input
+              type="text"
+              placeholder="Search members..."
+              className='search-bar'
+              value={searchQuery}
+              onChange={handleSearch}
+              ref={searchInputRef} // Attach ref to the input field
+            />
+            <i 
+              className="fas fa-search search-bar-icon"
+              onClick={handleIconClick} // Focus input field when clicked
+            ></i>
+          </div>
+
           <table className="employee-table">
             <thead>
               <tr>
@@ -153,7 +188,7 @@ const Employees = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map((employee) => (
+              {filteredEmployees.map((employee) => (
                 <tr key={employee.emno}>
                   <td>{employee.emno}</td>
                   <td>{employee.fullname}</td>
@@ -191,8 +226,8 @@ const Employees = () => {
                 onChange={handleUpdateChange}
               />
               <div className="button-group">
-              <button onClick={handleUpdateEmployee} className="add">Update</button>
-              <button onClick={handleCancelEdit} className="cancel">Cancel</button>
+                <button onClick={handleUpdateEmployee} className="add">Update</button>
+                <button onClick={handleCancelEdit} className="cancel">Cancel</button>
               </div>
             </div>
           )}
