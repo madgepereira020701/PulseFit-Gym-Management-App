@@ -199,7 +199,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
           <button className="dark-button" onClick={loginUser}>
             Login
           </button>
-          <p className="text">OR</p>
+          <p className="text">OR</p><br />
           <button className="light-button" onClick={toggleSignup}>
             Create an account
           </button>
