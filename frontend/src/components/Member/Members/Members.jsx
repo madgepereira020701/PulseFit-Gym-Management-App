@@ -250,96 +250,98 @@ const Members = () => {
   };
 
   return (
-    <div className="table-container">
-      {loading ? (
-        <p>Loading members...</p>
-      ) : error ? (
-        <p className="error-message">{error}</p>
-      ) : (
-        <>
-          <h2>Members List</h2>
-          <table className="member-table" id="memberTable">
-            <thead>
-              <tr>
-                <th>Member ID</th>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Details</th>
-                <th>Actions</th>
+    <div className="table-members-container">
+  {loading ? (
+    <p>Loading members...</p>
+  ) : error ? (
+    <p className="error-message">{error}</p>
+  ) : (
+    <>
+      <h2>Members List</h2>
+      <div className="member-table-wrapper">
+      <table className="member-table" id="memberTable">
+          <thead>
+            <tr>
+              <th>Member ID</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Details</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.memno}>
+                <td>{member.memno}</td>
+                <td>{member.fullname}</td>
+                <td>{member.email}</td>
+                <td>{member.memphno}</td>
+                <td>
+                  <button onClick={() => handleViewPayments(member.memno)}>View Payments</button>
+                </td>
+                <td className="actions">
+                  <button onClick={() => handleEdit(member)}>Edit</button>
+                  <button onClick={() => handleDeleteMember(member.memno)}>Delete</button>
+                  <button onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr key={member.memno}>
-                  <td>{member.memno}</td>
-                  <td>{member.fullname}</td>
-                  <td>{member.email}</td>
-                  <td>{member.memphno}</td>
-                  <td>
-                    <button onClick={() => handleViewPayments(member.memno)}>View Payments</button>
-                  </td>
-                  <td className="actions">
-                    <button onClick={() => handleEdit(member)}>Edit</button>
-                    <button onClick={() => handleDeleteMember(member.memno)}>Delete</button>
-                    <button onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-          {editingMember && (
-            <div className="edit-form">
-              <h3>Edit Member</h3>
-              <label>Member Number:</label>
-              <input
-                type="text"
-                name="memno"
-                className="input-field"
-                value={updatedDetails.memno}
-                onChange={handleUpdateChange}
-                // readOnly
-              />
+      {editingMember && (
+        <div className="edit-form">
+          <h3>Edit Member</h3>
+          <label>Member Number:</label>
+          <input
+            type="text"
+            name="memno"
+            className="input-field"
+            value={updatedDetails.memno}
+            onChange={handleUpdateChange}
+          />
 
-              <label>Phone Number:</label>
-              <input
-                type="text"
-                name="memphno"
-                className="input-field"
-                value={updatedDetails.memphno}
-                onChange={handleUpdateChange}
-              />
+          <label>Phone Number:</label>
+          <input
+            type="text"
+            name="memphno"
+            className="input-field"
+            value={updatedDetails.memphno}
+            onChange={handleUpdateChange}
+          />
 
-              <label>Date of Joining:</label>
-              <input
-                type="date"
-                name="doj"
-                className="input-field"
-                value={updatedDetails.doj}
-                onChange={handleUpdateChange}
-              />
+          <label>Date of Joining:</label>
+          <input
+            type="date"
+            name="doj"
+            className="input-field"
+            value={updatedDetails.doj}
+            onChange={handleUpdateChange}
+          />
 
-              <label>Date of End:</label>
-              <input
-                type="date"
-                name="doe"
-                className="input-field"
-                value={updatedDetails.doe}
-                onChange={handleUpdateChange}
-              />
+          <label>Date of End:</label>
+          <input
+            type="date"
+            name="doe"
+            className="input-field"
+            value={updatedDetails.doe}
+            onChange={handleUpdateChange}
+          />
 
-              {error && <p className="error-message">{error}</p>}
+          {error && <p className="error-message">{error}</p>}
 
-              <div className="button-group">
-                <button onClick={handleUpdateMember} className="add">Update</button>
-                <button onClick={handleCancelEdit} className="cancel">Cancel</button>
-              </div>
-            </div>
-          )}
-        </>
+          <div className="button-group">
+            <button onClick={handleUpdateMember} className="add">Update</button>
+            <button onClick={handleCancelEdit} className="cancel">Cancel</button>
+          </div>
+        </div>
       )}
-    </div>
+    </>
+  )}
+</div>
+
   );
 };
 

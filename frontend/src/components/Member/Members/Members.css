@@ -1,10 +1,15 @@
-.table-container {
+.table-members-container {
   margin: 20px auto;
   padding: 20px;
-  max-width: 1200px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.member-table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on touch devices */
 }
 
 .member-table th {
@@ -16,12 +21,12 @@
   background-color: #f2f2f2;
 }
 
-
 .member-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
+
 .member-table th,
 .member-table td {
   padding: 5px;
@@ -32,7 +37,6 @@
   text-overflow: ellipsis;
 }
 
- 
 .member-table td.actions {
   white-space: nowrap;
   font-size: 0.9em;
@@ -60,8 +64,6 @@ button {
   width: 100%; /* Ensures buttons take full width of the cell */
 }
 
-
-
 .big {
   padding: 10px;
   margin: 5px 0; /* Adjusted to ensure there is space between the buttons */
@@ -72,6 +74,7 @@ button {
   cursor: pointer;
   width: 200px; /* Ensures buttons take full width of the cell */
 }
+
 button:hover {
   background-color: orange;
 }
@@ -117,5 +120,3 @@ h3 {
   margin-bottom: 15px;
   font-size: 20px;
 }
-
-
