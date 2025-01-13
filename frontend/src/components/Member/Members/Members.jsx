@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../../../../node_modules/datatables.net-dt/css/dataTables.dataTables.css';
+import $ from 'jquery';
+import 'datatables.net';
 import './Members.css';
 
 const Members = () => {
@@ -47,9 +50,107 @@ const Members = () => {
     fetchMembers();
   }, []);
 
+  
+
   const handleNavigation = (route) => {
     navigate(route);
   };
+
+  useEffect(() => {
+    if (members.length > 0) {
+      // Destroy the existing DataTable instance if it already exists
+      if ($.fn.DataTable.isDataTable('#memberTable')) {
+        $('#memberTable').DataTable().destroy();
+      }
+  
+      // Initialize DataTable with custom toolbar
+      $('#memberTable').DataTable({
+        dom: '<"dt-toolbar">rt<"bottom bottom-info"ip>', // Correct layout for pagination and info
+        initComplete: function () {
+          // Add custom toolbar HTML
+          $('.dt-toolbar').html(`
+            <div class="dt-layout-row">
+              <div class="dt-layout-cell dt-layout-start">
+                <div class="dt-length">
+                  Entries per page:
+                  <select aria-controls="memberTable" class="dt-input" id="dt-length">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </div>
+              </div>
+              <div class="dt-layout-cell dt-layout-end">
+                <div class="dt-search">
+                  Search:
+                  <input type="search" class="dt-input" id="dt-search" placeholder="Search..." aria-controls="memberTable">
+                </div>
+              </div>
+            </div>
+          `);
+  
+          // Move DataTable info and pagination to the correct container
+          const info = $('#memberTable_info').detach();
+          $('.bottom-info').prepend(info);
+  
+          // Dynamically add CSS for styling
+          const styles = `
+            <style>
+              .dt-paging {
+                display: flex !important;
+                justify-content: flex-start !important; /* Align buttons to the left */
+                flex-wrap: nowrap !important; /* Prevent buttons from wrapping */
+                align-items: center !important; /* Vertically align buttons */
+                white-space: nowrap !important; /* Prevent wrapping inside buttons */
+              }
+  
+              .dt-paging-button {
+                display: inline-flex !important; /* Ensure buttons stay inline */
+                align-items: center !important; /* Vertically center button text */
+                margin: 0 !important; /* Remove default margin */
+                background-color: #f9f9f9 !important; /* Optional: Button background */
+                cursor: pointer !important; /* Pointer cursor for better UX */
+                width: 30px;
+              }
+  
+              .dt-toolbar {
+                margin-bottom: 10px !important; /* Add spacing below toolbar */
+              }
+
+              .dt-paging{
+              margin-top: 10px;}
+             
+  
+              .bottom-info {
+                display: flex !important;
+                justify-content: space-between !important; /* Spread content across the row */
+                flex-wrap: nowrap !important; /* Prevent wrapping */
+                align-items: center !important; /* Vertically align the content */
+              }
+  
+              .dt-info {
+                margin-right: 10px !important; /* Space between info and pagination */
+              }
+            </style>
+          `;
+  
+          // Append the style to the head
+          $('head').append(styles);
+  
+          // Add event listener to handle "entries per page" change
+          $('#dt-length').on('change', function () {
+            $('#memberTable').DataTable().page.len($(this).val()).draw();
+          });
+  
+          // Add event listener for the search box functionality
+          $('#dt-search').on('input', function () {
+            $('#memberTable').DataTable().search($(this).val()).draw();
+          });
+        },
+      });
+    }
+  }, [members]);
 
   const handleEdit = (member) => {
     setEditingMember(member);
@@ -157,7 +258,7 @@ const Members = () => {
       ) : (
         <>
           <h2>Members List</h2>
-          <table className="member-table">
+          <table className="member-table" id="memberTable">
             <thead>
               <tr>
                 <th>Member ID</th>
