@@ -31,7 +31,7 @@ const Plans = () => {
   }, []);
 
   return (
-    <div className="table-container">
+    <div className="table-plan-container">
       <h2>Packages List</h2>
       {error && <p className="error-message">{error}</p>}
       {!error && plans.length === 0 && <p>No plans found.</p>}
