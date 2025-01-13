@@ -36,8 +36,9 @@
 .member-table td.actions {
   white-space: nowrap;
   font-size: 0.9em;
+  gap: 10px;
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
+  flex-direction: row; /* Stack buttons vertically */
   align-items: center; /* Optional: Center the buttons horizontally */
 }
 
