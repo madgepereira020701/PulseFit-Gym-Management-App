@@ -28,11 +28,15 @@
 }
    
 .employee-table td.actions {
-    white-space: nowrap;
-    text-align: center;
-    vertical-align: middle;
-    padding: 10px; /* Ensure padding for clarity */
+  white-space: nowrap;
+  font-size: 0.9em;
+  gap: 10px;
+  display: flex;
+  flex-direction: row; /* Stack buttons vertically */
+  align-items: center; /* Optional: Center the buttons horizontally */
   }
+
+
   
   
   .employee-table td.fullname, 

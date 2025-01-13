@@ -261,7 +261,7 @@ const Employees = () => {
                   <td>{employee.doj}</td>
                   <td>{employee.designation}</td>
                   <td>{employee.department}</td>
-                  <td>
+                  <td className='actions'>
                     <button className="embutton" onClick={() => handleEdit(employee)}>Edit</button>
                     <button className="embutton" onClick={() => handleDeleteEmployee(employee.emno)}>Delete</button>
                   </td>
