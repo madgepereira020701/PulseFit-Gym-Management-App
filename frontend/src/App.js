@@ -13,7 +13,7 @@ import AddRenewal from './components/Renewal/AddRenewal/AddRenewal';
 import Renewals from './components/Renewal/Renewals/Renewals';
 import Auth from './components/Auth/Auth';
 import MemRecords from './components/Member/MemRecords/MemRecords';
-import Calendar from './components/Calender/Calendar';
+import Calendar from './components/Calendar/Calendar';
 import EmCalendar  from './components/EmCalendar/EmCalendar.jsx';
 import MemCalendar from './components/MemCalendar/MemCalendar';
 import YearCalendar from './components/Year Calendar/Year Calendar';
