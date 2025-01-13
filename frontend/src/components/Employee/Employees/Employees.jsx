@@ -230,7 +230,7 @@ const Employees = () => {
   };
 
   return (
-    <div className="table-container">
+    <div className="table-employees-container">
       {loading ? (
         <p>Loading employees...</p>
       ) : error ? (
@@ -238,6 +238,7 @@ const Employees = () => {
       ) : (
         <>
           <h2>Employees List</h2>
+          <div className="employee-table-wrapper">
           <table id="employeeTable" className="employee-table">
             <thead>
               <tr>
@@ -269,6 +270,7 @@ const Employees = () => {
               ))}
             </tbody>
           </table>
+          </div>
 
           {editingEmployee && (
             <div className="edit-form">
