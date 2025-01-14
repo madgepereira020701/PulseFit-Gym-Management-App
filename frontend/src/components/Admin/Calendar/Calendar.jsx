@@ -28,28 +28,33 @@ const Calendar = () => {
         console.log('No token found');
         return;
       }
-    
+  
       try {
         const response = await fetch('http://localhost:3000/events', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-    
+  
         const data = await response.json();
         console.log('API Response:', data);  // Log the full response
-    
+  
         if (data.status === 'SUCCESS') {
           const formattedEvents = {};
           data.events.forEach(event => {
             const { eventDate, eventName } = event;
-            const formattedDate = new Date(eventDate).toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  
+            // Ensure date is formatted as 'YYYY-MM-DD'
+            const eventDateObj = new Date(eventDate);
+            const formattedDate = `${eventDateObj.getFullYear()}-${String(eventDateObj.getMonth() + 1).padStart(2, '0')}-${String(eventDateObj.getDate()).padStart(2, '0')}`;
+  
+            // Store events in formattedEvents object
             formattedEvents[formattedDate] = [
               ...(formattedEvents[formattedDate] || []),
               eventName
             ];
           });
-          
+  
           console.log('Formatted Events:', formattedEvents);  // Log the formatted events
           setEvents(formattedEvents); // Store in state
         } else {
@@ -59,10 +64,10 @@ const Calendar = () => {
         console.error('Error fetching events:', error);
       }
     };
-    
+  
     fetchEvents();
   }, []); // Runs once when component mounts
-
+  
 
 
 
@@ -142,7 +147,11 @@ const Calendar = () => {
       return;
     }
   
-    const eventDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${selectedDay}`;
+    // Ensure the date is in the correct format: YYYY-MM-DD
+    const formattedDay = String(selectedDay).padStart(2, '0');
+    const formattedMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const eventDate = `${currentDate.getFullYear()}-${formattedMonth}-${formattedDay}`;
+  
     const eventData = {
       eventDate: eventDate,
       eventName: newEvent.trim(),
@@ -185,6 +194,7 @@ const Calendar = () => {
       alert('Failed to add event.');
     }
   };
+  
     const handleDeleteEvent = (eventIndex) => {
     const eventKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${selectedDay}`;
     setEvents((prevEvents) => {
@@ -233,7 +243,7 @@ const Calendar = () => {
   
     // Render the actual days of the month
     for (let i = 1; i <= totalDays; i++) {
-      const eventDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
+      const eventDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
       const isToday = new Date().getDate() === i && new Date().getMonth() === currentDate.getMonth();
       days.push(
         <td 
@@ -249,7 +259,7 @@ const Calendar = () => {
             e.preventDefault();
             // Handle drop event
             const draggedEvent = e.dataTransfer.getData("event");
-            const targetDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
+            const targetDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             if (draggedEvent !== targetDate) {
               // Move event to the new target date
               setEvents((prevEvents) => {
@@ -258,7 +268,7 @@ const Calendar = () => {
                 if (event) {
                   // Remove event from the dragged date
                   newEvents[draggedEvent] = newEvents[draggedEvent].filter(ev => ev !== event);
-
+  
                   // Add event to the new date
                   newEvents[targetDate] = [...(newEvents[targetDate] || []), event];
                 }
@@ -282,7 +292,7 @@ const Calendar = () => {
               onDrop={(e) => {
                 e.preventDefault();
                 const draggedEvent = e.dataTransfer.getData("event");
-                const targetDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${i}`;
+                const targetDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 if (draggedEvent !== targetDate) {
                   setEvents((prevEvents) => {
                     const newEvents = { ...prevEvents };
@@ -321,6 +331,7 @@ const Calendar = () => {
     return rows;
   };
   
+  
 
   const renderWeekView = () => {
     const startOfWeek = new Date(currentDate);
@@ -334,14 +345,14 @@ const Calendar = () => {
     }
   
     const handleDragStart = (e, eventKey) => {
-      e.dataTransfer.setData("eventKey", eventKey);  // Store the event's unique key (date-time)
+      e.dataTransfer.setData("eventKey", eventKey); // Store the event's unique key (date-time)
     };
   
     const handleDrop = (e, targetDate, targetTime) => {
       e.preventDefault();
-      const draggedEventKey = e.dataTransfer.getData("eventKey");  // Get the dragged event's unique key
+      const draggedEventKey = e.dataTransfer.getData("eventKey"); // Get the dragged event's unique key
       if (draggedEventKey) {
-        const draggedEvent = events[draggedEventKey][0];  // Get the event from the dragged key
+        const draggedEvent = events[draggedEventKey][0]; // Get the event from the dragged key
         if (draggedEvent) {
           // Add the event to the new target date-time slot
           setEvents((prevEvents) => {
@@ -378,9 +389,9 @@ const Calendar = () => {
                 return (
                   <th key={day} className={isToday ? "current-day" : ""}>
                     {day.toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
+                      weekday: "short", // Short weekday (e.g., Sun)
+                      month: "short",   // Short month (e.g., Jan)
+                      day: "numeric",   // Numeric day (e.g., 12)
                     })}
                   </th>
                 );
@@ -392,7 +403,7 @@ const Calendar = () => {
             <tr>
               <td>Whole Day</td>
               {weekDays.map((day, index) => {
-                const date = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+                const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
                 return (
                   <td key={index} className="extra-row">
                     {/* Display events for the day in the extra row */}
@@ -408,19 +419,19 @@ const Calendar = () => {
               <tr key={index}>
                 <td>{time}</td>
                 {weekDays.map((day) => {
-                  const date = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+                  const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
                   const eventKey = `${date}-${time}`;
                   const isSelected = selectedSlot && selectedSlot.date === date && selectedSlot.time === time;
   
                   return (
                     <td
                       key={eventKey}
-                      className={`time-slot ${isSelected ? 'selected' : ''}`}
+                      className={`time-slot ${isSelected ? "selected" : ""}`}
                       onClick={() => {
                         setSelectedSlot(isSelected ? null : { date, time });
                       }}
-                      onDrop={(e) => handleDrop(e, date, time)}  // Handle drop on time slot
-                      onDragOver={(e) => e.preventDefault()}  // Allow drop
+                      onDrop={(e) => handleDrop(e, date, time)} // Handle drop on time slot
+                      onDragOver={(e) => e.preventDefault()} // Allow drop
                     >
                       {/* Event bars inside time slots */}
                       {events[eventKey] &&
@@ -429,7 +440,7 @@ const Calendar = () => {
                             key={idx}
                             className="event-bar"
                             draggable
-                            onDragStart={(e) => handleDragStart(e, eventKey)}  // Start drag for the event
+                            onDragStart={(e) => handleDragStart(e, eventKey)} // Start drag for the event
                           >
                             <div className="event-name">{event}</div>
                           </div>
@@ -445,10 +456,12 @@ const Calendar = () => {
     );
   };
   
+  
   const renderAgendaView = () => {
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
     const weekDates = [];
+    
     for (let i = 0; i < 7; i++) {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
@@ -462,7 +475,7 @@ const Calendar = () => {
       
       // Check if any events exist for this time slot on any day
       const hasEvents = weekDates.some(day => {
-        const date = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+        const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
         const eventKey = `${date}-${formattedTime}`;
         return events[eventKey] && events[eventKey].length > 0;
       });
@@ -481,16 +494,20 @@ const Calendar = () => {
               <th>Time</th>
               {weekDates.map((day, index) => (
                 <th key={index}>
-                  {day.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                  {day.toLocaleDateString("en-US", {
+                    weekday: "short", // Short weekday (e.g., Sun)
+                    month: "short",   // Short month (e.g., Jan)
+                    day: "numeric",   // Numeric day (e.g., 12)
+                  })}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-          <tr>
+            <tr>
               <td>Whole Day</td>
               {weekDates.map((day, index) => {
-                const date = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+                const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
                 return (
                   <td key={index} className="extra-row">
                     {/* Display events for the day in the extra row */}
@@ -505,7 +522,7 @@ const Calendar = () => {
               <tr key={index}>
                 <td>{time}</td>
                 {weekDates.map((day, dayIndex) => {
-                  const date = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+                  const date = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
                   const eventKey = `${date}-${time}`;
                   const eventsForTime = events[eventKey] || [];
   
@@ -532,6 +549,10 @@ const Calendar = () => {
       </div>
     );
   };
+  
+  
+
+  
 
 
   const handleViewChange = (viewType) => {
