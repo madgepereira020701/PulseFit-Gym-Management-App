@@ -15,7 +15,7 @@ const Attendance = require('./models/attendance');
 const mongoPlans = require('./mongo/addplan_mongo'); // Assuming plans API is in this file
 const mongoMember = require('./mongo/member_mongo');
 const mongoEmployee = require('./mongo/employee_mongo');
-
+const mongoAttendance = require('./mongo/addattendance_mongo');
 
 
 
@@ -493,6 +493,9 @@ app.post('/addplans',protect, mongoPlans.addPlans); // Add a new plan
 app.get('/addplans', protect,mongoPlans.getPlans); // Fetch all plans
 app.delete('/addplans/:amount', protect, mongoPlans.deletePlan); // Delete plan by amount
 app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by amount
+
+app.post('/addattendance',protect, mongoAttendance.addAttendance); // Add a new plan
+app.get('/addattendance', protect,mongoAttendance.getAttendance); // Fetch all plans
 
 
 //AUTHENTICATION
