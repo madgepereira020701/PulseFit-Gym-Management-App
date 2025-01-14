@@ -3,23 +3,23 @@ import './App.css';
 import { Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/NavBar';
 import Home from './components/Home/Home'; // Import Home component
-import AddPackage from './components/Plan/AddPlan/AddPackage';
-import AddMember from './components/Member/AddMember/AddMember';
-import AddEmployee from './components/Employee/AddEmployee/AddEmployee.jsx';
-import Members from './components/Member/Members/Members';
-import Employees from './components/Employee/Employees/Employees.jsx';
-import Settings from './components/Settings/Settings';
-import AddRenewal from './components/Renewal/AddRenewal/AddRenewal';
-import Renewals from './components/Renewal/Renewals/Renewals';
+import AddPackage from './components/Admin/Plan/AddPlan/AddPackage.jsx';
+import AddMember from './components/Admin/Member/AddMember/AddMember.jsx';
+import AddEmployee from './components/Admin/Employee/AddEmployee/AddEmployee.jsx';
+import Members from './components/Admin/Member/Members/Members.jsx';
+import Employees from './components/Admin/Employee/Employees/Employees.jsx';
+import Settings from './components/Admin/Settings/Settings.jsx';
+import AddRenewal from './components/Admin/Renewal/AddRenewal/AddRenewal.jsx';
+import Renewals from './components/Admin/Renewal/Renewals/Renewals.jsx';
 import Auth from './components/Auth/Auth';
-import MemRecords from './components/Member/MemRecords/MemRecords';
-import Calendar from './components/Calendar/Calendar';
-import EmCalendar  from './components/EmCalendar/EmCalendar.jsx';
-import MemCalendar from './components/MemCalendar/MemCalendar';
+import MemRecords from './components/Admin/Member/MemRecords/MemRecords.jsx';
+import Calendar from './components/Admin/Calendar/Calendar.jsx';
+import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
+import MemCalendar from './components/Members/MemCalendar/MemCalendar.jsx';
 import YearCalendar from './components/Year Calendar/Year Calendar';
-import Details from './components/Details /Details';
-import EmployeeDetails from './components/EmployeeDetails/EmployeeDetails';
-import ViewPayments from './components/ViewPayments/ViewPayments';
+import Details from './components/Members/Details /Details.jsx';
+import EmployeeDetails from './components/Employee/EmployeeDetails/EmployeeDetails.jsx';
+import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
 
