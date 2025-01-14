@@ -1,0 +1,396 @@
+.calendar-container {
+    margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-view{
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on touch devices */
+}
+
+.span1 {
+    margin-left: 10px;
+}
+
+.span2 {
+    margin-left: 10px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* Allow wrapping if necessary */
+}
+
+.calendar-header h2 {
+    margin: 0;
+    flex-grow: 1; /* Makes the month-year text take the available space */
+    text-align: center;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.btn1 {
+    width: 100px;
+}
+
+.day {
+    background-color: rgb(251, 241, 226);
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    width: 300px; /* Fixed width for day cell */
+    height: 100px;
+    overflow: hidden; /* Hide any overflowed content */
+    position: relative; /* Needed for positioning child elements like event-name */
+}
+
+.event-name {
+    padding: 5px;
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Ensure long text breaks to next line */
+    font-size: 0.8em;
+    color: #333;
+    margin-top: 2px;
+    text-overflow: ellipsis;
+    overflow: hidden; /* Prevent text overflow */
+}
+
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    cursor: ew-resize; /* Horizontal resize cursor */
+    background-color: #ccc;
+}
+
+.empty {
+    padding: 10px;
+}
+
+.event-indicator {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 16px;
+}
+
+.event-form {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    z-index: 100;
+}
+
+.event-form h3 {
+    margin-top: 0;
+}
+
+.event-form textarea {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.form-actions button {
+    margin-right: 10px;
+}
+
+.existing-events ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.existing-events li {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.existing-events {
+    border: none;
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Adjusting layout for the calendar header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between; /* Distribute space between elements */
+    align-items: center; /* Align items vertically */
+    flex-wrap: wrap; /* Allow wrapping if necessary */
+}
+
+.calendar-header button {
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    flex-grow: 1; /* Makes the month-year text take the available space */
+    text-align: center;
+}
+
+.view-buttons {
+    display: flex; /* Use flex to arrange the buttons horizontally */
+    justify-content: center;
+    flex-wrap: wrap;  /* Allow buttons to wrap to the next line */
+    width: 100%;
+}
+
+.view-buttons .btn1 {
+    width: 100px;
+}
+
+@media (max-width: 768px) {
+    .calendar-header {
+        flex-direction: column;  /* Stack elements vertically */
+        text-align: center;
+    }
+
+    .view-buttons {
+        flex-direction: column;  /* Stack buttons vertically on small screens */
+        align-items: center;  /* Center buttons */
+    }
+
+    .day {
+        height: 80px;
+    }
+
+    /* Make all tables scrollable on smaller screens */
+   
+    .week-view-table,
+    .day-table,
+    .agenda-table,
+    .calendar-grid {
+        display: block; /* Make the tables block-level elements */
+        width: 100%;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    .week-view-table th,
+    .agenda-table th,
+    .week-view-table td,
+    .agenda-table td {
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-header {
+        font-size: 14px;
+    }
+
+    .view-buttons .btn1 {
+        width: 70px;
+    }
+
+    .day {
+        min-height: 60px;
+        min-width: 100px;
+        font-size: 12px;
+    }
+    
+
+    .week-view-table,
+    .day-table,
+    .agenda-table {
+        font-size: 12px; /* Adjust font size for smaller screens */
+    }
+
+    .week-view-table th,
+    .agenda-table th,
+    .week-view-table td,
+    .agenda-table td {
+        padding: 4px; /* Adjust padding for better space usage */
+    }
+}
+
+/* Highlight today's date in light orange */
+.today {
+    background-color: #ffcc80; /* Light orange */
+}
+
+.event-indicator {
+    font-size: 0.8em;
+    color: #333;
+    margin-top: 5px;
+}
+
+.event-name {
+    font-size: 0.8em;
+    color: #333;
+    margin-top: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.more-events {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.event-bar {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-name {
+    background-color: orange; /* Green bar */
+    color: white;
+    padding: 5px;
+    margin: 2px 0;
+    border-radius: 3px;
+}
+
+.event-name:hover {
+    background-color: orange;
+}
+
+.day-table td,
+.day-table th,
+.agenda-table th,
+.week-view-table th,
+.week-view-table td,
+.agenda-table td {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.week-view-table th,
+.day-table th,
+.agenda-table th {
+    color: white;
+    background-color: orange;
+}
+
+.week-view-table,
+.day-table,
+.agenda-table {
+    width: 100%;
+}
+
+
+
+.current-day {
+    background-color: #ffcc80; /* Light gray background */
+    font-weight: bold;
+}
+
+.current-day .time-slot {
+    background-color: #e0f7fa; /* Light blue background for time slots */
+}
+
+.delete-btn {
+    background: none;
+    width: 50px;
+    border: none;
+    cursor: pointer;
+    color: #d9534f; /* Red color for the bin icon */
+}
+
+.delete-btn:hover {
+    background: none;
+}
+
+.delete-btn svg {
+    font-size: 18px; /* Adjust the icon size */
+}
+
+.event-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.delete-btn {
+    margin-right: 10px; /* Space between the bin icon and the event */
+    cursor: pointer;
+}
+
+
+
+.year-view-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  
+  .year-view-table td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  
+  .year-view-table td:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .month-cell {
+    width: 30%;
+    cursor: pointer;
+  }
+  
+  .month-cell span {
+    font-weight: bold;
+  }
+  
+  .event-preview {
+    margin-top: 5px;
+    font-size: 12px;
+  }
+  
+  .event-name {
+    background-color: orange;
+    padding: 5px;
+    margin-bottom: 2px;
+  }
+  
+  
+
+
+
+
+
+
+ 
