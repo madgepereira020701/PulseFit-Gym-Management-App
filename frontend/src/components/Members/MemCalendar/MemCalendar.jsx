@@ -30,7 +30,7 @@ const MemCalendar = () => {
       }
   
       try {
-        const response = await fetch('http://localhost:3000/events', {
+        const response = await fetch('http://localhost:3000/eventsformembers', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
