@@ -494,8 +494,8 @@ app.get('/addplans', protect,mongoPlans.getPlans); // Fetch all plans
 app.delete('/addplans/:amount', protect, mongoPlans.deletePlan); // Delete plan by amount
 app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by amount
 
-app.post('/addattendance',protect, mongoAttendance.addAttendance); // Add a new plan
-app.get('/addattendance', protect,mongoAttendance.getAttendance); // Fetch all plans
+//app.post('/addattendance',protect, mongoAttendance.addAttendance); // Add a new plan
+//app.get('/addattendance', protect,mongoAttendance.getAttendance); // Fetch all plans
 
 
 //AUTHENTICATION
@@ -881,6 +881,90 @@ app.get('/payments', protect1, async (req, res) => {
     });
   }
 });
+
+
+// Assuming JWT middleware to verify the token and add userId to req.user
+app.post('/attendance', protect1, async (req, res) => {
+  const { date, in_time, out_time } = req.body;
+  const userEmail = req.user?.email;
+
+  // Check for missing email, member or employee, etc. (existing checks)
+  
+  const member = await SentEmail1.findOne({ email: userEmail });
+  const employee = await Employee.findOne({ email: userEmail });
+
+  // Existing code...
+  
+  let user_type;
+  let user_id;
+  let userId;
+
+  if (member) {
+    user_type = 'member';
+    user_id = member.memno;
+    userId = member.userId;
+  } else if (employee) {
+    user_type = 'employee';
+    user_id = employee.emno;
+    userId = employee.userId;
+  }
+
+  if (in_time && !out_time) {
+    // Check-in: Ensure no active check-in
+    const existingCheckIn = await Attendance.findOne({
+      user_id,
+      user_type,
+      out_time: null,
+    });
+
+    if (existingCheckIn) {
+      return res.status(400).json({
+        message: 'Already checked in, cannot check in again until you check out.',
+      });
+    }
+
+    const attendance = new Attendance({
+      date,
+      in_time,
+      out_time: null,
+      user_type,
+      user_id,
+      userId,
+    });
+
+    await attendance.save();
+
+    return res.status(201).json({
+      message: 'Checked in successfully',
+      attendance,
+    });
+  } else if (out_time) {
+    // Check-out: Ensure no active check-out
+    const attendance = await Attendance.findOne({
+      user_id,
+      user_type,
+      out_time: null,
+    }).sort({ createdAt: -1 });
+
+    if (!attendance) {
+      return res.status(400).json({
+        message: 'Already checked out, cannot check out again when you already check out.',
+      });
+    }
+
+    attendance.out_time = out_time;
+    await attendance.save();
+
+    return res.status(200).json({
+      message: 'Checked out successfully',
+      attendance,
+    });
+  }
+  
+  // Handle invalid requests (already covered)
+});
+
+
 
 
 
