@@ -965,6 +965,20 @@ app.post('/attendance', protect1, async (req, res) => {
 });
 
 
+app.get('/attendance', protect, async (req,res) => {
+  try{
+    const attendance = await Attendance.find({userId: req.user});
+    console.log(attendance);
+    if(attendance.length == 0) {
+      return res.status(404).json({status: 'ERROR', message:'No attendance found'});
+    }
+    res.status(200).json({ status: 'SUCCESS', attendance});
+  } 
+  catch (error) {
+    console.error('Error fetching attendance:', error);
+    res.status(500).json({ status: 'ERROR', message: 'Error fetching attendance'})
+  }
+});
 
 
 
