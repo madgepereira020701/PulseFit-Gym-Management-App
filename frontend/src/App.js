@@ -63,6 +63,8 @@ function App() {
 
           {/* Make '/home' accessible to all roles */}
           <Route path="/home" element={<Home />} />
+          <Route path="/year" element={<YearCalendar />} />
+
 
           {/* Use ProtectedRoute for role-specific pages */}
           <Route path="/members" element={<ProtectedRoute element={<AddMember />} requiredRole="Admin" />} />
@@ -79,7 +81,6 @@ function App() {
           <Route path="/memcalendar" element={<ProtectedRoute element={<MemCalendar />} requiredRole="Member" />} />
           <Route path="/mcheck" element={<ProtectedRoute element={<MarkMAttendance />} requiredRole="Member" />} />
           <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRole="Admin" />} />
-          <Route path="/year" element={<ProtectedRoute element={<YearCalendar />} requiredRole="Admin" />} />
           <Route path="/details" element={<ProtectedRoute element={<Details />} requiredRole="Member" />} />
           <Route path="/employeedetails" element={<ProtectedRoute element={<EmployeeDetails />} requiredRole="Employee" />} />
           <Route path="/viewpayments" element={<ProtectedRoute element={<ViewPayments />} requiredRole="Member" />} />
