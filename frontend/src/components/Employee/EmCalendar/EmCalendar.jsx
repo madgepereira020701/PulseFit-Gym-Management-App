@@ -30,7 +30,7 @@ const EmCalendar = () => {
       }
   
       try {
-        const response = await fetch('http://localhost:3000/events', {
+        const response = await fetch('http://localhost:3000/eventsforemployees', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
