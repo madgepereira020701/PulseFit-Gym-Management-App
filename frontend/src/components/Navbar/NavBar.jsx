@@ -49,6 +49,7 @@ const Navbar = () => {
       {role === 'Admin' ? (
     <>
       <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
+      <li><NavLink to="/attendance" activeClassName="active">Attendance</NavLink></li>
       <li><NavLink to="/members" activeClassName="active">Add Members</NavLink></li>
       <li><NavLink to="/viewmembers" activeClassName="active">Members</NavLink></li>
       <li><NavLink to="/employees" activeClassName="active">Add Employees</NavLink></li>
@@ -56,11 +57,13 @@ const Navbar = () => {
       <li><NavLink to="/addplans" activeClassName="active">Package</NavLink></li>
       <li><NavLink to="/calendar" activeClassName="active">Calendar</NavLink></li>
       <li><NavLink to="/settings" activeClassName="active">Settings</NavLink></li>
+
     </>
   ) : role === 'Member' ? (
     <>
       <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
       <li><NavLink to="/details" activeClassName="active">Details</NavLink></li>
+      <li><NavLink to="/mcheck" activeClassName="active">Mark Attendance</NavLink></li>
       <li><NavLink to="/viewpayments" activeClassName="active">View Payments</NavLink></li>
       <li><NavLink to="/memcalendar" activeClassName="active">Calendar</NavLink></li>
     </>
@@ -68,6 +71,7 @@ const Navbar = () => {
     <>
       <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
       <li><NavLink to="/employeedetails" activeClassName="active">Details</NavLink></li>
+      <li><NavLink to="/echeck" activeClassName="active">Mark Attendance</NavLink></li>
       <li><NavLink to="/emcalendar" activeClassName="active">Calendar</NavLink></li>
     </>
   ) : null}
