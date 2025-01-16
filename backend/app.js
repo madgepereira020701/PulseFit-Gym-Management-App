@@ -513,19 +513,16 @@ app.post('/api/employeelogin', employeeLogin); // Login Route
 
 
 app.post('/addevent', protect, async (req, res) => {
-  console.log(req.body); // Log the request body
+  console.log(req.body); // Log the request body to see if eventName is coming in
 
-  const { eventName, eventDate } = req.body;
+  const { eventName } = req.body;
 
   if (!eventName) {
     return res.status(400).json({ status: 'ERROR', message: 'Event name is required' });
   }
 
-  if (!eventDate) {
-    return res.status(400).json({ status: 'ERROR', message: 'Event date is required' });
-  }
-
   try {
+    const eventDate = req.body.eventDate || new Date();
     const formattedEventDate = moment(eventDate).format('YYYY-MM-DD');
 
     const newEvent = new Event({
@@ -546,6 +543,8 @@ app.post('/addevent', protect, async (req, res) => {
     res.status(500).json({ status: 'ERROR', message: 'Error adding event' });
   }
 });
+
+
 
 
 
@@ -968,8 +967,10 @@ app.post('/attendance', protect1, async (req, res) => {
 
 app.get('/attendance', protect, async (req, res) => {
   try {
-    // Fetch attendance records for the authenticated user
-    const attendance = await Attendance.find({ userId: req.user }).lean();
+    // Fetch attendance records for the authenticated user, sorted by insertion time (descending)
+    const attendance = await Attendance.find({ userId: req.user })
+                                       .sort({ _id: -1 }) // Sort by _id in descending order
+                                       .lean();
 
     if (attendance.length === 0) {
       return res.status(404).json({ status: 'ERROR', message: 'No attendance found' });
@@ -1007,7 +1008,6 @@ app.get('/attendance', protect, async (req, res) => {
     res.status(500).json({ status: 'ERROR', message: 'Error fetching attendance' });
   }
 });
-
 
 
 // Start server
