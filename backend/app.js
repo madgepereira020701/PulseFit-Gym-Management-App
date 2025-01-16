@@ -965,18 +965,45 @@ app.post('/attendance', protect1, async (req, res) => {
 });
 
 
-app.get('/attendance', protect, async (req,res) => {
-  try{
-    const attendance = await Attendance.find({userId: req.user});
-    console.log(attendance);
-    if(attendance.length == 0) {
-      return res.status(404).json({status: 'ERROR', message:'No attendance found'});
+app.get('/attendance', protect, async (req, res) => {
+  try {
+    // Fetch attendance records for the authenticated user
+    const attendance = await Attendance.find({ userId: req.user }).lean();
+
+    if (attendance.length === 0) {
+      return res.status(404).json({ status: 'ERROR', message: 'No attendance found' });
     }
-    res.status(200).json({ status: 'SUCCESS', attendance});
-  } 
-  catch (error) {
+
+    // Enhance attendance records with fullnames from Members and Employees
+    const enhancedAttendance = await Promise.all(
+      attendance.map(async (record) => {
+        let fullname = 'Unknown';
+
+        // Fetch fullname from Members collection using memno
+        if (record.user_type === 'member') {
+          const member = await SentEmail1.findOne({ memno: record.user_id }, 'fullname');
+          if (member) {
+            fullname = member.fullname;
+          }
+        }
+
+        // Fetch fullname from Employees collection using emno
+        if (record.user_type === 'employee') {
+          const employee = await Employee.findOne({ emno: record.user_id }, 'fullname');
+          if (employee) {
+            fullname = employee.fullname;
+          }
+        }
+
+        return { ...record, fullname };
+      })
+    );
+
+    // Respond with the enhanced attendance data
+    res.status(200).json({ status: 'SUCCESS', attendance: enhancedAttendance });
+  } catch (error) {
     console.error('Error fetching attendance:', error);
-    res.status(500).json({ status: 'ERROR', message: 'Error fetching attendance'})
+    res.status(500).json({ status: 'ERROR', message: 'Error fetching attendance' });
   }
 });
 
