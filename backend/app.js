@@ -513,16 +513,19 @@ app.post('/api/employeelogin', employeeLogin); // Login Route
 
 
 app.post('/addevent', protect, async (req, res) => {
-  console.log(req.body); // Log the request body to see if eventName is coming in
+  console.log(req.body); // Log the request body
 
-  const { eventName } = req.body;
+  const { eventName, eventDate } = req.body;
 
   if (!eventName) {
     return res.status(400).json({ status: 'ERROR', message: 'Event name is required' });
   }
 
+  if (!eventDate) {
+    return res.status(400).json({ status: 'ERROR', message: 'Event date is required' });
+  }
+
   try {
-    const eventDate = req.body.eventDate || new Date();
     const formattedEventDate = moment(eventDate).format('YYYY-MM-DD');
 
     const newEvent = new Event({
@@ -543,8 +546,6 @@ app.post('/addevent', protect, async (req, res) => {
     res.status(500).json({ status: 'ERROR', message: 'Error adding event' });
   }
 });
-
-
 
 
 
