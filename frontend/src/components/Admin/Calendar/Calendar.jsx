@@ -147,38 +147,40 @@ const Calendar = () => {
       return;
     }
   
-    // Ensure the date is in the correct format: YYYY-MM-DD
     const formattedDay = String(selectedDay).padStart(2, '0');
     const formattedMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
     const eventDate = `${currentDate.getFullYear()}-${formattedMonth}-${formattedDay}`;
   
+    if (new Date(eventDate) < new Date().setHours(0, 0, 0, 0)) {
+      alert('Cannot add events for past dates.');
+      return;
+    }
+  
     const eventData = {
-      eventDate: eventDate,
+      eventDate,
       eventName: newEvent.trim(),
     };
   
-    // Update events locally (frontend state)
     setEvents((prevEvents) => ({
       ...prevEvents,
       [eventDate]: [...(prevEvents[eventDate] || []), newEvent.trim()],
     }));
   
-    setNewEvent(""); // Clear input after adding event
-    setSelectedDay(null); // Close the form
+    setNewEvent("");
+    setSelectedDay(null);
   
-    const token = localStorage.getItem('token');  // Get token from localStorage
+    const token = localStorage.getItem('token');
     if (!token) {
       console.log('No token found');
       return;
     }
   
-    // Send event data to the backend
     try {
       const response = await fetch('http://localhost:3000/addevent', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json', // Ensure backend recognizes JSON
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(eventData),
       });
