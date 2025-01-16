@@ -148,6 +148,7 @@ const Attendance = () => {
                   <th>Date</th>
                   <th>Id</th>
                   <th>Type</th>
+                  <th>Full Name</th>
                   <th>Check In</th>
                   <th>Check Out</th>
                 </tr>
@@ -159,6 +160,7 @@ const Attendance = () => {
                       <td>{attendance.date}</td>
                       <td>{attendance.user_id}</td>
                       <td>{attendance.user_type}</td>
+                      <td>{attendance.fullname}</td>
                       <td>{attendance.in_time}</td>
                       <td>{attendance.out_time}</td>
                     </tr>
