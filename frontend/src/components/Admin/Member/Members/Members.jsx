@@ -278,7 +278,7 @@ const Members = () => {
                 <td>{member.email}</td>
                 <td>{member.memphno}</td>
                 <td>
-                  <button onClick={() => handleViewPayments(member.memno)}>View Payments</button>
+                  <button className="membutton"onClick={() => handleViewPayments(member.memno)}>View Payments</button>
                 </td>
                 <td className="actions">
                   <button className="membutton"onClick={() => handleEdit(member)}>Edit</button>
