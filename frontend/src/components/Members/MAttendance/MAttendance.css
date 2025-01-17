@@ -1,0 +1,65 @@
+.table-attendance-container {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .attendance-table-wrapper {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on touch devices */
+  }
+  
+  .attendance-table th {
+    background-color: orange;
+    color: white;
+  }
+  
+  .attendance-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .attendance-table th,
+  .attendance-table td {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+ 
+  button:hover {
+    background-color: orange;
+  }
+  
+  button:active {
+    background-color: orange;
+  }
+  
+  h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    text-align: center;
+  }
+  
+ 
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+  }
+  
