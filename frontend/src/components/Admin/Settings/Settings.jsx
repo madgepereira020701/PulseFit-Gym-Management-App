@@ -76,7 +76,7 @@ const Settings = () => {
                     Send to Employees
                 </label>
                 <br />
-                <button onClick={handleSubmit}>Submit</button>
+                <button className="settings-button"onClick={handleSubmit}>Submit</button>
             </div>
         </div>
     );
