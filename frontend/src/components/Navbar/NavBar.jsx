@@ -64,6 +64,7 @@ const Navbar = () => {
       <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
       <li><NavLink to="/details" activeClassName="active">Details</NavLink></li>
       <li><NavLink to="/mcheck" activeClassName="active">Mark Attendance</NavLink></li>
+      <li><NavLink to="/memberattendance" activeClassName="active">Attendance</NavLink></li>
       <li><NavLink to="/viewpayments" activeClassName="active">View Payments</NavLink></li>
       <li><NavLink to="/memcalendar" activeClassName="active">Calendar</NavLink></li>
     </>
