@@ -281,9 +281,9 @@ const Members = () => {
                   <button onClick={() => handleViewPayments(member.memno)}>View Payments</button>
                 </td>
                 <td className="actions">
-                  <button onClick={() => handleEdit(member)}>Edit</button>
-                  <button onClick={() => handleDeleteMember(member.memno)}>Delete</button>
-                  <button onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
+                  <button className="membutton"onClick={() => handleEdit(member)}>Edit</button>
+                  <button className="membutton"onClick={() => handleDeleteMember(member.memno)}>Delete</button>
+                  <button className="membutton"onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
                 </td>
               </tr>
             ))}

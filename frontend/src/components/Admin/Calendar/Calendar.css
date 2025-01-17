@@ -40,8 +40,14 @@
 }
 
 .btn1 {
-    width: 100px;
-}
+    padding: 10px;
+    margin: 5px 0; /* Adjusted to ensure there is space between the buttons */
+    border: none;
+    border-radius: 4px;
+    background-color: orange;
+    color: white;
+    cursor: pointer;
+    width: 100%; }
 
 .day {
     background-color: rgb(251, 241, 226);

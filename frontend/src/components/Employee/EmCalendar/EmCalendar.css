@@ -1,10 +1,15 @@
 .calendar-container {
     margin: 20px auto;
   padding: 20px;
-  max-width: 1200px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-view{
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on touch devices */
 }
 
 .span1 {
@@ -35,8 +40,14 @@
 }
 
 .btn1 {
-    width: 100px;
-}
+    padding: 10px;
+    margin: 5px 0; /* Adjusted to ensure there is space between the buttons */
+    border: none;
+    border-radius: 4px;
+    background-color: orange;
+    color: white;
+    cursor: pointer;
+    width: 100%; }
 
 .day {
     background-color: rgb(251, 241, 226);
@@ -181,10 +192,7 @@ button {
     }
 
     /* Make all tables scrollable on smaller screens */
-    .table-container {
-        overflow-x: auto; /* Enable horizontal scrolling for table container */
-    }
-
+   
     .week-view-table,
     .day-table,
     .agenda-table,
@@ -306,14 +314,7 @@ button {
     width: 100%;
 }
 
-.table-container {
-    margin: 20px auto;
-    padding: 20px;
-    width: 100%;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+
 
 .current-day {
     background-color: #ffcc80; /* Light gray background */
