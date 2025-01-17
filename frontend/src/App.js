@@ -21,7 +21,7 @@ import Details from './components/Members/Details /Details.jsx';
 import MarkMAttendance from './components/Members/MarkMAttendance/MarkMAttendance.jsx';
 import MarkEAttendance from './components/Employee/MarkEAttendance/MarkEAttendance.jsx';
 import Attendance from './components/Admin/Attendance/Attendance.jsx';
-
+import MAttendance from './components/Members/MAttendance/MAttendance.jsx';
 
 import EmployeeDetails from './components/Employee/EmployeeDetails/EmployeeDetails.jsx';
 import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
@@ -84,6 +84,7 @@ function App() {
           <Route path="/details" element={<ProtectedRoute element={<Details />} requiredRole="Member" />} />
           <Route path="/employeedetails" element={<ProtectedRoute element={<EmployeeDetails />} requiredRole="Employee" />} />
           <Route path="/viewpayments" element={<ProtectedRoute element={<ViewPayments />} requiredRole="Member" />} />
+          <Route path="/memberattendance" element={<ProtectedRoute element={<MAttendance />} requiredRole="Member" />} />
           <Route path="/attendance" element={<ProtectedRoute element={<Attendance />} requiredRole="Admin" />} />
 
         </Routes>
