@@ -9,32 +9,41 @@ const Attendance = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   useEffect(() => {
     const fetchAttendances = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.log('No token found');
-          return;
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:3000/attendance', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setAttendance(Array.isArray(data.attendance) ? data.attendance : []);
+        } else {
+          throw new Error(data.message || 'Failed to fetch attendance');
         }
-        try {
-          const response = await fetch('http://localhost:3000/attendance', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await response.json();
-          if (response.ok) {
-            setAttendance(Array.isArray(data.attendance) ? data.attendance : []);
-          } else {
-            throw new Error(data.message || 'Failed to fetch attendance');
-          }
-        } catch (error) {
-          setError(error.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAttendances();
   }, []);
 
@@ -43,7 +52,8 @@ const Attendance = () => {
       if ($.fn.DataTable.isDataTable('#attendanceTable')) {
         $('#attendanceTable').DataTable().destroy();
       }
-  
+
+      // Initialize DataTable with all records, but filter today's records by default
       $('#attendanceTable').DataTable({
         dom: '<"dt-toolbar">rt<"bottom bottom-info"ip>',
         initComplete: function () {
@@ -74,11 +84,11 @@ const Attendance = () => {
               </div>
             </div>
           `);
-  
+
           const info = $('#attendanceTable_info').detach();
           $('.bottom-info').prepend(info);
 
-  const styles = `
+          const styles = `
             <style>
               .dt-paging {
                 display: flex !important;
@@ -113,7 +123,6 @@ const Attendance = () => {
               }
 
               .dt-layout-center {
-              
                 margin-left: 140px;
               }
 
@@ -125,24 +134,36 @@ const Attendance = () => {
             </style>
           `;
           $('head').append(styles);
-  
+
           // Handle "entries per page" change
           $('#dt-length').on('change', function () {
             $('#attendanceTable').DataTable().page.len($(this).val()).draw();
           });
-  
+
           // Handle general search functionality
           $('#dt-search').on('input', function () {
             $('#attendanceTable').DataTable().search($(this).val()).draw();
           });
-  
+
           // Handle date search functionality
           $('#dt-date-search').on('change', function () {
             const searchValue = $(this).val(); // Input value will already be in YYYY-MM-DD format
             $('#attendanceTable').DataTable().column(0).search(searchValue).draw();
           });
         },
+
+        // Initially filter by today's date if it matches any row
+        rowCallback: function (row, data) {
+          const todayDate = getTodayDate();
+          if (data[0] !== todayDate) {
+            // Allow all records, don't hide any rows
+            $(row).show();
+          }
+        },
       });
+
+      // Trigger search for today's date by default
+      $('#dt-date-search').val(getTodayDate()).trigger('change');
     }
   }, [attendances]);
 
