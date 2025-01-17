@@ -43,7 +43,7 @@ const Attendance = () => {
       if ($.fn.DataTable.isDataTable('#attendanceTable')) {
         $('#attendanceTable').DataTable().destroy();
       }
-
+  
       $('#attendanceTable').DataTable({
         dom: '<"dt-toolbar">rt<"bottom bottom-info"ip>',
         initComplete: function () {
@@ -69,16 +69,16 @@ const Attendance = () => {
               <div class="dt-layout-cell dt-layout-end">
                 <div class="dt-search">
                   Search by Date:
-                  <input type="text" class="dt-input" id="dt-date-search" placeholder="YYYY-MM-DD" aria-controls="attendanceTable">
+                  <input type="date" class="dt-input" id="dt-date-search" aria-controls="attendanceTable">
                 </div>
               </div>
             </div>
           `);
-
+  
           const info = $('#attendanceTable_info').detach();
           $('.bottom-info').prepend(info);
 
-          const styles = `
+  const styles = `
             <style>
               .dt-paging {
                 display: flex !important;
@@ -114,7 +114,7 @@ const Attendance = () => {
 
               .dt-layout-center {
               
-                margin-left: 170px;
+                margin-left: 140px;
               }
 
               .dt-layout-row {
@@ -125,31 +125,21 @@ const Attendance = () => {
             </style>
           `;
           $('head').append(styles);
-
+  
           // Handle "entries per page" change
           $('#dt-length').on('change', function () {
             $('#attendanceTable').DataTable().page.len($(this).val()).draw();
           });
-
+  
           // Handle general search functionality
           $('#dt-search').on('input', function () {
             $('#attendanceTable').DataTable().search($(this).val()).draw();
           });
-
+  
           // Handle date search functionality
-          $('#dt-date-search').on('input', function () {
-            const searchValue = $(this).val().toLowerCase();
-            $('#attendanceTable').DataTable().rows().every(function () {
-              const row = this.node();
-              const dateCell = $(row).find('td').eq(0).text().toLowerCase(); // Date is in the first column
-              const shouldShowRow = dateCell.includes(searchValue);
-              if (shouldShowRow) {
-                $(row).show();
-              } else {
-                $(row).hide();
-              }
-              return shouldShowRow; // Ensure you return true or false to satisfy the ESLint rule
-            });
+          $('#dt-date-search').on('change', function () {
+            const searchValue = $(this).val(); // Input value will already be in YYYY-MM-DD format
+            $('#attendanceTable').DataTable().column(0).search(searchValue).draw();
           });
         },
       });
