@@ -5,14 +5,13 @@ import 'datatables.net';
 import './Attendance.css';
 
 const Attendance = () => {
-  const [attendances, setAttendance] = useState([]); // Default to an empty array
+  const [attendances, setAttendance] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch attendance data on component mount
   useEffect(() => {
     const fetchAttendances = async () => {
-        const token = localStorage.getItem('token');  // Get token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           console.log('No token found');
           return;
@@ -20,12 +19,12 @@ const Attendance = () => {
         try {
           const response = await fetch('http://localhost:3000/attendance', {
             headers: {
-              Authorization: `Bearer ${token}`,  // Add token in Authorization header
+              Authorization: `Bearer ${token}`,
             },
           });
           const data = await response.json();
           if (response.ok) {
-            setAttendance(Array.isArray(data.attendance) ? data.attendance : []); // Ensure it's an array
+            setAttendance(Array.isArray(data.attendance) ? data.attendance : []);
           } else {
             throw new Error(data.message || 'Failed to fetch attendance');
           }
@@ -36,22 +35,18 @@ const Attendance = () => {
         }
       };
       
-
     fetchAttendances();
   }, []);
 
   useEffect(() => {
     if (attendances.length > 0) {
-      // Destroy the existing DataTable instance if it already exists
       if ($.fn.DataTable.isDataTable('#attendanceTable')) {
         $('#attendanceTable').DataTable().destroy();
       }
 
-      // Initialize DataTable with custom toolbar
       $('#attendanceTable').DataTable({
-        dom: '<"dt-toolbar">rt<"bottom bottom-info"ip>', // Correct layout for pagination and info
+        dom: '<"dt-toolbar">rt<"bottom bottom-info"ip>',
         initComplete: function () {
-          // Add custom toolbar HTML
           $('.dt-toolbar').html(`
             <div class="dt-layout-row">
               <div class="dt-layout-cell dt-layout-start">
@@ -65,20 +60,24 @@ const Attendance = () => {
                   </select>
                 </div>
               </div>
-              <div class="dt-layout-cell dt-layout-end">
+              <div class="dt-layout-cell dt-layout-center">
                 <div class="dt-search">
                   Search:
                   <input type="search" class="dt-input" id="dt-search" placeholder="Search..." aria-controls="attendanceTable">
                 </div>
               </div>
+              <div class="dt-layout-cell dt-layout-end">
+                <div class="dt-search">
+                  Search by Date:
+                  <input type="text" class="dt-input" id="dt-date-search" placeholder="YYYY-MM-DD" aria-controls="attendanceTable">
+                </div>
+              </div>
             </div>
           `);
 
-          // Move DataTable info and pagination to the correct container
           const info = $('#attendanceTable_info').detach();
           $('.bottom-info').prepend(info);
 
-          // Dynamically add CSS for styling
           const styles = `
             <style>
               .dt-paging {
@@ -112,20 +111,45 @@ const Attendance = () => {
               .dt-info {
                 margin-right: 10px !important;
               }
+
+              .dt-layout-center {
+              
+                margin-left: 170px;
+              }
+
+              .dt-layout-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              }
             </style>
           `;
-  
-          // Append the style to the head
           $('head').append(styles);
-  
-          // Add event listener to handle "entries per page" change
+
+          // Handle "entries per page" change
           $('#dt-length').on('change', function () {
             $('#attendanceTable').DataTable().page.len($(this).val()).draw();
           });
-  
-          // Add event listener for the search box functionality
+
+          // Handle general search functionality
           $('#dt-search').on('input', function () {
             $('#attendanceTable').DataTable().search($(this).val()).draw();
+          });
+
+          // Handle date search functionality
+          $('#dt-date-search').on('input', function () {
+            const searchValue = $(this).val().toLowerCase();
+            $('#attendanceTable').DataTable().rows().every(function () {
+              const row = this.node();
+              const dateCell = $(row).find('td').eq(0).text().toLowerCase(); // Date is in the first column
+              const shouldShowRow = dateCell.includes(searchValue);
+              if (shouldShowRow) {
+                $(row).show();
+              } else {
+                $(row).hide();
+              }
+              return shouldShowRow; // Ensure you return true or false to satisfy the ESLint rule
+            });
           });
         },
       });
@@ -167,7 +191,7 @@ const Attendance = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5">No attendance records found.</td>
+                    <td colSpan="6">No attendance records found.</td>
                   </tr>
                 )}
               </tbody>
