@@ -79,6 +79,7 @@ label {
   font-size: 1rem;
   border-radius: 8px;
   cursor: pointer;
+  width:100%;
   transition: background-color 0.3s;
 }
 
