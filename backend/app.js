@@ -1001,6 +1001,42 @@ app.get('/memberattendance', protect1, async (req, res) => {
   }
 });
 
+app.get('/employeeattendance', protect2, async (req, res) => {
+  try {
+    // Step 1: Retrieve employee details using their memno from the authenticated user
+    const employee = await Employee.findOne({ user_id: req.user.emno });
+
+    // Step 2: If the employee is not found, return an error
+    if (!employee) {
+      return res.status(404).json({ status: 'ERROR', message: 'Employee not found' });
+    }
+
+    // Step 3: Fetch attendance records for the member
+    const attendance = await Attendance.find({ 
+      userId: employee.userId    // Ensure the userId matches the employee's userId
+    })
+    .sort({ _id: -1 })           // Sort by _id in descending order
+    .select('date in_time out_time') // Only select date, in_time, and out_time fields
+    .lean();
+
+    // Step 4: If no attendance records are found, return an error
+    if (attendance.length === 0) {
+      return res.status(404).json({ status: 'ERROR', message: 'No attendance found for this member' });
+    }
+
+    // Step 5: Enhance attendance records with employee details (email, doj, doe, plan, etc.)
+    const enhancedAttendance = attendance.map((record) => ({
+      ...record,
+    }));
+
+    // Step 6: Respond with the enhanced attendance data
+    res.status(200).json({ status: 'SUCCESS', attendance: enhancedAttendance });
+  } catch (error) {
+    console.error('Error fetching member attendance:', error);
+    res.status(500).json({ status: 'ERROR', message: 'Error fetching member attendance' });
+  }
+});
+
 
 
 // Start server
