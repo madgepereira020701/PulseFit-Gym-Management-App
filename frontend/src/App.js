@@ -18,8 +18,7 @@ import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
 import MemCalendar from './components/Members/MemCalendar/MemCalendar.jsx';
 import YearCalendar from './components/Year Calendar/Year Calendar';
 import Details from './components/Members/Details /Details.jsx';
-import MarkMAttendance from './components/Members/MarkMAttendance/MarkMAttendance.jsx';
-import MarkEAttendance from './components/Employee/MarkEAttendance/MarkEAttendance.jsx';
+import MarkAttendance from './components/MarkAttendance/MarkAttendance.jsx';
 import Attendance from './components/Admin/Attendance/Attendance.jsx';
 import MAttendance from './components/Members/MAttendance/MAttendance.jsx';
 
@@ -77,9 +76,8 @@ function App() {
           <Route path="/payments/:memno" element={<ProtectedRoute element={<MemRecords />} requiredRole="Admin" />} />
           <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} requiredRole="Admin" />} />
           <Route path="/emcalendar" element={<ProtectedRoute element={<EmCalendar />} requiredRole="Employee" />} />
-          <Route path="/echeck" element={<ProtectedRoute element={<MarkEAttendance />} requiredRole="Employee" />} />
+          <Route path="/check" element={<ProtectedRoute element={<MarkAttendance />} requiredRoles={['Member', 'Employee']} />} />
           <Route path="/memcalendar" element={<ProtectedRoute element={<MemCalendar />} requiredRole="Member" />} />
-          <Route path="/mcheck" element={<ProtectedRoute element={<MarkMAttendance />} requiredRole="Member" />} />
           <Route path="/settings" element={<ProtectedRoute element={<Settings />} requiredRole="Admin" />} />
           <Route path="/details" element={<ProtectedRoute element={<Details />} requiredRole="Member" />} />
           <Route path="/employeedetails" element={<ProtectedRoute element={<EmployeeDetails />} requiredRole="Employee" />} />
