@@ -832,12 +832,6 @@ app.get('/details2', protect2, async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 app.get('/payments', protect1, async (req, res) => {
   try {
     // Find the member based on the email in the "members" collection
@@ -965,6 +959,8 @@ app.post('/attendance', protect1, async (req, res) => {
 });
 
 
+//Admin
+//Attendance
 app.get('/attendance', protect, async (req, res) => {
   try {
     // Fetch attendance records for the authenticated user, sorted by insertion time (descending)
@@ -1009,6 +1005,8 @@ app.get('/attendance', protect, async (req, res) => {
   }
 });
 
+
+//Member Attendance
 app.get('/memberattendance', protect1, async (req, res) => {
   try {
     // Step 1: Retrieve member details using their memno from the authenticated user
@@ -1045,6 +1043,34 @@ app.get('/memberattendance', protect1, async (req, res) => {
     res.status(500).json({ status: 'ERROR', message: 'Error fetching member attendance' });
   }
 });
+
+app.get('/employeeattendance', protect2, async (req,res) => {
+  try{
+    const employee = await Employee.findOne({user_id: req.user.emno});
+
+    if(!employee){
+      return res.status(404).json({ status: 'ERROR', message: 'Employee not found'});  
+    }
+
+    const attendance = await Attendance.find({userId: employee.userId,
+      user_type: "employee"
+    }).sort({_id: -1}).select('date in_time out_time').lean();
+
+    if(!attendance){
+      return res.status(404).json({ status: 'ERROR', message: 'Attendance not found'});  
+    }
+
+    const enhancedAttendance = attendance.map((record) => ({
+      ...record
+    }));
+
+    res.status(200).json({ status: 'SUCCESS', attendance: enhancedAttendance});
+  } catch (error) {
+    console.error('Error fetching attendance', error);
+    res.status(500).json({ status: 'ERROR', message: 'Error fetching attendance'});
+  }
+});
+
 
 
 // Start server
