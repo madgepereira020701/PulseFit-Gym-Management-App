@@ -170,6 +170,8 @@ const EAttendance = () => {
         <p className='error-message'>{error}</p>
       ) : (
         <>
+                  <h2>Attendance List</h2>
+
         <div className="attendance-table-wrapper">
             <table className="attendance-table" id="attendanceTable">
                 <thead>
