@@ -12,6 +12,7 @@ import Settings from './components/Admin/Settings/Settings.jsx';
 import AddRenewal from './components/Admin/Renewal/AddRenewal/AddRenewal.jsx';
 import Renewals from './components/Admin/Renewal/Renewals/Renewals.jsx';
 import Auth from './components/Auth/Auth';
+import ChangePassword from './components/Auth/ChangePassword/ChangePassword.jsx';
 import MemRecords from './components/Admin/Member/MemRecords/MemRecords.jsx';
 import Calendar from './components/Admin/Calendar/Calendar.jsx';
 import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
@@ -63,6 +64,7 @@ function App() {
           {/* Make '/home' accessible to all roles */}
           <Route path="/home" element={<Home />} />
           <Route path="/year" element={<YearCalendar />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
 
 
           {/* Use ProtectedRoute for role-specific pages */}

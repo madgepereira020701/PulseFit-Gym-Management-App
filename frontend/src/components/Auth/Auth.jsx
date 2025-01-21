@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API } from '../service/api';
 import { Navigate } from 'react-router-dom';
 import './Auth.css';
@@ -21,6 +22,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
   const [login, setLogin] = useState(loginInitialValues);
   const [account, toggleAccount] = useState('login');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   const [warnings, setWarnings] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [redirectToHome, setRedirectToHome] = useState(false);
@@ -31,6 +33,9 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
     setWarnings({});
   };
 
+  const handleClick = () => {
+    navigate('./changepassword');
+  }
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -188,6 +193,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
               {showPassword ? 'visibility' : 'visibility_off'}
             </span>
           </div>
+          <p onClick={handleClick} style={{textAlign: "start"}}>Forgot Password ?</p>
           <select name="role" value={login.role} onChange={onRoleChange} className="input-field">
             <option value="">Login as</option>
             <option value="Admin">Admin</option>
