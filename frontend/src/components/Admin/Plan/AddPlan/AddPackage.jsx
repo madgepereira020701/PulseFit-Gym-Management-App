@@ -152,7 +152,7 @@ const AddPlan = () => {
 
           <div className="button-group">
             <button className="cancel">Cancel</button>
-            <button className="save" onClick={addplan}>Add</button>
+            <button className="add" onClick={addplan}>Add</button>
           </div>
         </div>
         <Plans />
