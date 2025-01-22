@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User.jsx');
 const Member = require('../../models/members.js');
 const Employee = require('../../models/employees.js');
+const bcrypt = require('bcryptjs');
+const { isDate } = require('moment');
 
 
 // Define your JWT_SECRET directly
@@ -128,6 +130,9 @@ const employeeRegister = async (req, res) => {
 const employeeLogin = async (req, res) => {
   const { email, password } = req.body;
 
+  console.log('Entered password:', password);
+
+
   try {
     const employee = await Employee.findOne({ email });
     if (!employee) {
@@ -164,39 +169,77 @@ const employeeLogin = async (req, res) => {
 
 
 
-
-
 // Login user
-const userLogin = async (req, res) => {
+const userLogin = async(req,res) => {
   const { email, password } = req.body;
 
-  try {
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ isSuccess: false, message: 'Invalid credentials' });
+  console.log('Entered email:', email);
+  console.log('Entered password:', password);
+
+
+  try{
+    const admin = await User.findOne({email});
+    if(!admin){
+      console.log("User not found in email");
+      return res.status(400).json({isSuccess: false, message: 'Invalid credentials'});
     }
 
-    // Check password
-    const isValidPassword = await user.isValidPassword(password);
-    if (!isValidPassword) {
-      return res.status(400).json({ isSuccess: false, message: 'Invalid credentials' });
+    console.log('Stored hashed password:', admin.password);
+
+    const isValidPassword = await admin.isValidPassword(password);
+    if(!isValidPassword){
+      return res.status(400).json({isSuccess: false, message: 'Invalid credentials'});
     }
+      console.log('Entered password:', password);
 
-    // Create JWT token using hardcoded secret key
-    const token = jwt.sign(
-      { userId: user._id, userName: user.name },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    res.status(200).json({ isSuccess: true, data: { userName: user.name, token } });
-  } catch (err) {
-    console.error('Error in userLogin:', err);
-    res.status(500).json({ isSuccess: false, message: 'An error occurred. Please try again later.' });
+      const token = jwt.sign({ userId: admin._id, userName: admin.name}, JWT_SECRET, {expiresIn: '1hr'});
+      return res.status(200).json({isSuccess: true, data: { userName: admin.name, token}});
+  } catch (err)
+  {
+    console.log("Error in userLogin", err);
+    return res.status(500).json({isSuccess: false, message: 'Message occured'});
   }
+}
+
+const updatePassword = async(req,res) => {
+  const { newpassword, confirmpassword} = req.body;
+  const userId = req.user;
+
+  console.log('Recieved new password:', newpassword);
+  console.log('Authenticated user ID:', userId);
+
+  if(!newpassword || !confirmpassword){
+    return res.status(400).json({ isSuccess: false , message: 'Both fields are required'});
+  }
+
+  if(newpassword !== confirmpassword){
+    return res.status(404).json({ isSuccess: false , message: 'Passwords do not match'});
+  }
+
+  try{
+  const user = await User.findById(userId);
+  if(!user){
+    return res.status(404).json({ isSuccess: false , message: 'User not found'});
+  }
+
+  console.log('Current hashed password:', user.password);
+  
+  const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+  if(isMatch){
+    return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
+  }
+
+  user.password = newpassword.trim();
+  await user.save();
+
+  console.log('Updated password:', user.password);
+  return res.status(200).json({ isSuccess: true , message: 'Passwords are updated'});
+} catch (err){
+  console.error('Error in updatePassword', err);
+  return res.status(500).json({ isSuccess: false , message: 'An error occured'});
+}  
 };
 
 
 
-module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister };
+module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword };
