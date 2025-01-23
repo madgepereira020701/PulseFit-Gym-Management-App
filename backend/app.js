@@ -499,11 +499,16 @@ app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by
 
 
 //AUTHENTICATION
-const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword } = require('./Users/controllers/AuthController');
+const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, emupdatePassword, memupdatePassword, deleteAccount } = require('./Users/controllers/AuthController');
 app.post('/api/register', userRegister); // Register Route
 app.post('/api/memberregister', memberRegister); // Register Route
 app.post('/api/employeeregister', employeeRegister); // Register Route
 app.post('/api/updatepassword', protect, updatePassword);
+app.post('/api/emupdatepassword', protect2, emupdatePassword);
+app.post('/api/memupdatepassword', protect1, memupdatePassword);
+app.delete('/api/:userName', protect, deleteAccount);
+
+
 
 app.post('/api/login', userLogin); // Login Route
 app.post('/api/memberlogin', memberLogin); // Login Route
@@ -562,6 +567,26 @@ app.get('/events', protect, async (req, res) => {
     res.status(500).json({ status: 'ERROR', message: 'Error fetching events' });
   }
 });
+
+app.delete('/events/:eventName', protect, async(req,res) => {
+  const eventName = req.params.eventName;
+
+  try{
+    const result = await Event.deleteOne({eventName: eventName} );
+
+    if(result.deletedCount === 0)
+    {
+      return res.status(404).json({message: 'Event is not found.'});
+    }
+
+    return res.status(200).json({message: 'Event deleted successfully.'});
+
+  } catch (error)
+  {
+    return res.status(500).json({message: 'Could not delete member.', error});
+
+  }
+})
 
 
 
