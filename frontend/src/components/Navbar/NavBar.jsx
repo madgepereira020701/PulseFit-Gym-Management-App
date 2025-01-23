@@ -38,6 +38,47 @@ const Navbar = () => {
     window.location.href = '/'; // Redirect to login page
   };
 
+  const deleteaccount = async () => {
+    const userName = localStorage.getItem('userName'); // Get the logged-in user's email from localStorage
+    const token = localStorage.getItem('token'); // Get token from localStorage
+  
+    console.log('Name:', userName);  // Check the email value
+    console.log('Token:', token);  // Check the token value
+  
+    if (!token || !userName) {
+      console.log('No token or email found');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:3000/api/${userName}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to delete account');
+      }
+  
+      localStorage.removeItem('token'); // Remove token
+      localStorage.removeItem('userName'); // Remove username
+      localStorage.removeItem('role'); // Remove role
+  
+      alert('Your account has been deleted successfully.');
+  
+      window.location.href = '/'; // Redirect to the login page
+  
+    } catch (error) {
+      console.error('Error deleting account:', error.message);
+      alert('Error deleting account. Please try again.');
+    }
+  };
+  
+
   return (
     <nav className="nav">
       <div className="company-title">
@@ -48,41 +89,40 @@ const Navbar = () => {
       <ul className={isOpen ? 'nav-links active' : 'nav-links'}>
       {role === 'Admin' ? (
     <>
-      <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
-      <li><NavLink to="/attendance" activeClassName="active">Attendance</NavLink></li>
-      <li><NavLink to="/members" activeClassName="active">Add Members</NavLink></li>
-      <li><NavLink to="/viewmembers" activeClassName="active">Members</NavLink></li>
-      <li><NavLink to="/employees" activeClassName="active">Add Employees</NavLink></li>
-      <li><NavLink to="/viewemployees" activeClassName="active">Employees</NavLink></li>
-      <li><NavLink to="/addplans" activeClassName="active">Package</NavLink></li>
-      <li><NavLink to="/calendar" activeClassName="active">Calendar</NavLink></li>
-      <li><NavLink to="/settings" activeClassName="active">Settings</NavLink></li>
-
+      <li><NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
+      <li><NavLink to="/attendance" className={({ isActive }) => isActive ? 'active' : ''}>Attendance</NavLink></li>
+      <li><NavLink to="/members" className={({ isActive }) => isActive ? 'active' : ''}>Add Members</NavLink></li>
+      <li><NavLink to="/viewmembers" className={({ isActive }) => isActive ? 'active' : ''}>Members</NavLink></li>
+      <li><NavLink to="/employees" className={({ isActive }) => isActive ? 'active' : ''}>Add Employees</NavLink></li>
+      <li><NavLink to="/viewemployees" className={({ isActive }) => isActive ? 'active' : ''}>Employees</NavLink></li>
+      <li><NavLink to="/addplans" className={({ isActive }) => isActive ? 'active' : ''}>Package</NavLink></li>
+      <li><NavLink to="/calendar" className={({ isActive }) => isActive ? 'active' : ''}>Calendar</NavLink></li>
+      <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>Settings</NavLink></li>
     </>
   ) : role === 'Member' ? (
     <>
-      <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
-      <li><NavLink to="/details" activeClassName="active">Details</NavLink></li>
-      <li><NavLink to="/check" activeClassName="active">Mark Attendance</NavLink></li>
-      <li><NavLink to="/memberattendance" activeClassName="active">Attendance</NavLink></li>
-      <li><NavLink to="/viewpayments" activeClassName="active">View Payments</NavLink></li>
-      <li><NavLink to="/memcalendar" activeClassName="active">Calendar</NavLink></li>
+      <li><NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
+      <li><NavLink to="/details" className={({ isActive }) => isActive ? 'active' : ''}>Details</NavLink></li>
+      <li><NavLink to="/check" className={({ isActive }) => isActive ? 'active' : ''}>Mark Attendance</NavLink></li>
+      <li><NavLink to="/memberattendance" className={({ isActive }) => isActive ? 'active' : ''}>Attendance</NavLink></li>
+      <li><NavLink to="/viewpayments" className={({ isActive }) => isActive ? 'active' : ''}>View Payments</NavLink></li>
+      <li><NavLink to="/memcalendar" className={({ isActive }) => isActive ? 'active' : ''}>Calendar</NavLink></li>
     </>
   ) : role === 'Employee' ? (
     <>
-      <li><NavLink to="/home" activeClassName="active">Home</NavLink></li>
-      <li><NavLink to="/employeedetails" activeClassName="active">Details</NavLink></li>
-      <li><NavLink to="/employeeattendance" activeClassName="active">Attendance</NavLink></li>
-      <li><NavLink to="/check" activeClassName="active">Mark Attendance</NavLink></li>
-      <li><NavLink to="/emcalendar" activeClassName="active">Calendar</NavLink></li>
+      <li><NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
+      <li><NavLink to="/employeedetails" className={({ isActive }) => isActive ? 'active' : ''}>Details</NavLink></li>
+      <li><NavLink to="/employeeattendance" className={({ isActive }) => isActive ? 'active' : ''}>Attendance</NavLink></li>
+      <li><NavLink to="/check" className={({ isActive }) => isActive ? 'active' : ''}>Mark Attendance</NavLink></li>
+      <li><NavLink to="/emcalendar" className={({ isActive }) => isActive ? 'active' : ''}>Calendar</NavLink></li>
     </>
   ) : null}
-        
         <li className="account" onClick={toggleDropDown}>
           {user ? user : 'Guest'} <FaAngleDown />
           {isDropDownOpen && (
             <ul className="dropdown">
               <li><NavLink onClick={logout} activeClassName="active">Log out</NavLink></li>
+              <li><NavLink onClick={deleteaccount} activeClassName="active">Delete Account</NavLink></li>
             </ul>
           )}
         </li>
