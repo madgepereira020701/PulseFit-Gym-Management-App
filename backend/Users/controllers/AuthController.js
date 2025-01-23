@@ -97,6 +97,44 @@ const memberLogin = async (req, res) => {
   }
 };
 
+const memupdatePassword = async(req,res) => {
+  const { newpassword, confirmpassword} = req.body;
+  const email = req.user.email;
+
+  if(!newpassword || !confirmpassword)
+  {
+    res.status(400).json({ isSuccess: false, message: 'Both fields are required' });
+  }
+  if(newpassword !== confirmpassword)
+    {
+      res.status(400).json({ isSuccess: false, message: 'Passwords do not match' });
+    }
+
+    try {
+    const user = await Member.findOne({email});
+    if(!user) {
+      res.status(404).json({ isSuccess: false, message: 'User is not in email' });
+    }
+
+    const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+    if(isMatch){
+      res.status(400).json({ isSuccess: false, message: 'New password cannot be same as the old one' });
+    }
+
+    user.password = newpassword.trim();
+    await user.save();
+
+    console.log('Updated Password:', user.password);
+    res.status(200).json({ isSuccess: true, message: 'Password updated successfully' });
+  } catch(err){
+    console.error('Error in memupdatePassword:', err);
+    res.status(500).json({ isSuccess: true, message: 'An error occured' });
+
+  }
+
+}
+
+
 
 const employeeRegister = async (req, res) => {
   const { fullname, emno, emphno, email, doj, department,  userId, password } = req.body;
@@ -166,6 +204,45 @@ const employeeLogin = async (req, res) => {
     res.status(500).json({ isSuccess: false, message: 'An error occurred. Please try again later.' });
   }
 };
+
+
+const emupdatePassword = async (req,res) => {
+  const { newpassword, confirmpassword } = req.body;
+  const email = req.user.email;
+
+  console.log('Recieved new password:', newpassword);
+
+
+  if(!newpassword || !confirmpassword){
+    return res.status(400).json({isSuccess: false, message: 'Both the fields are required'});
+  }
+  if(newpassword !== confirmpassword){
+    return res.status(400).json({isSuccess: false, message: 'Passwords do not match'});
+  }
+
+  try{
+  const user = await Employee.findOne({email});
+  if(!user){
+    return res.status(404).json({isSuccess: false, message: 'User not found in email'});
+  }
+
+  console.log('Current hashed password:', user.password);
+
+  const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+  if(isMatch){
+    return res.status(400).json({isSuccess: false, message: 'New password cannot be same as the old one'});
+  }
+
+  user.password = newpassword.trim();
+  await user.save();
+
+  console.log('Updated password:', user.password);
+  return res.status(200).json({ isSuccess: true , message: 'Passwords are updated'});
+  } catch(err) {
+    console.log('Error in emupdatePassword', err);
+    return res.status(500).json({ isSuccess: false , message: 'An error occured'});
+  }  
+}
 
 
 
@@ -240,6 +317,24 @@ const updatePassword = async(req,res) => {
 }  
 };
 
+const deleteAccount = async(req,res) => {
+  userName = req.params.userName;
+
+  try{
+    const result = await User.deleteOne({name: userName});
+    
+    if(result.deletedCount === 0)
+    {
+      return res.status(404).json({message: 'Account is not found.'});
+    }
+    return res.status(200).json({message: 'Account deleted successfully.'});
+  } catch (error)
+  {
+    return res.status(500).json({message: 'Could not delete account.',error});
+  }
+}
 
 
-module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword };
+module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, emupdatePassword, memupdatePassword,
+  deleteAccount
+ };
