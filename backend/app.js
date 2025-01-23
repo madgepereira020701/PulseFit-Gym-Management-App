@@ -1036,7 +1036,7 @@ app.get('/attendance', protect, async (req, res) => {
 app.get('/memberattendance', protect1, async (req, res) => {
   try {
     // Step 1: Retrieve member details using their memno from the authenticated user
-    const member = await SentEmail1.findOne({ user_id: req.user.memno });
+    const member = await SentEmail1.findOne({ memno: req.user.memno });
 
     // Step 2: If the member is not found, return an error
     if (!member) {
@@ -1045,7 +1045,7 @@ app.get('/memberattendance', protect1, async (req, res) => {
 
     // Step 3: Fetch attendance records for the member
     const attendance = await Attendance.find({ 
-      userId: member.userId, 
+      user_id: member.memno, 
       user_type: "member"   // Ensure the userId matches the member's userId
     })
     .sort({ _id: -1 })           // Sort by _id in descending order
@@ -1071,14 +1071,17 @@ app.get('/memberattendance', protect1, async (req, res) => {
 });
 
 app.get('/employeeattendance', protect2, async (req,res) => {
+
+    console.log('Received emno:', req.user);  // Debugging line
+
   try{
-    const employee = await Employee.findOne({user_id: req.user.emno});
+    const employee = await Employee.findOne({emno: req.user.emno});
 
     if(!employee){
       return res.status(404).json({ status: 'ERROR', message: 'Employee not found'});  
     }
 
-    const attendance = await Attendance.find({userId: employee.userId,
+    const attendance = await Attendance.find({user_id: employee.emno,
       user_type: "employee"
     }).sort({_id: -1}).select('date in_time out_time').lean();
 
