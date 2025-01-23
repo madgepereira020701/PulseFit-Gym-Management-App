@@ -78,7 +78,7 @@ const memberLogin = async (req, res) => {
 
     // Generate JWT token for the member
     const token = jwt.sign(
-      { memberId: member._id, email: member.email, role: member.role }, // Payload
+      { memberId: member._id, email: member.email, role: member.role, memno: member.memno }, // Payload
       JWT_SECRET, // Your JWT secret key
       { expiresIn: '1h' } // Token expiration time (1 hour)
     );
@@ -186,7 +186,7 @@ const employeeLogin = async (req, res) => {
 
     // Generate JWT token for the employee
     const token = jwt.sign(
-      { employeeId: employee._id, email: employee.email, role: employee.role }, // Payload
+      { employeeId: employee._id, email: employee.email, role: employee.role, emno: employee.emno }, // Payload
       JWT_SECRET, // Your JWT secret key
       { expiresIn: '1h' } // Token expiration time (1 hour)
     );
