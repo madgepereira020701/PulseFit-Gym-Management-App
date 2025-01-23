@@ -114,19 +114,45 @@ const Calendar = () => {
     }
   };
 
-  const handleDeleteEvent = (eventIndex) => {
+  const handleDeleteEvent = async (eventIndex) => {
     const eventKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-    setEvents((prevEvents) => {
-      const updatedEvents = prevEvents[eventKey].filter((_, index) => index !== eventIndex);
-      if (updatedEvents.length > 0) {
-        return { ...prevEvents, [eventKey]: updatedEvents };
+    const eventName = events[eventKey][eventIndex];
+  
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('No token found');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:3000/events/${eventName}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        setEvents((prevEvents) => {
+          const updatedEvents = prevEvents[eventKey].filter((_, index) => index !== eventIndex);
+          if (updatedEvents.length > 0) {
+            return { ...prevEvents, [eventKey]: updatedEvents };
+          } else {
+            const { [eventKey]: _, ...rest } = prevEvents;
+            return rest;
+          }
+        });
+        alert('Event deleted successfully!');
       } else {
-        const { [eventKey]: _, ...rest } = prevEvents;
-        return rest;
+        alert(data.message || 'Failed to delete event.');
       }
-    });
-    setSelectedDay(null);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event.');
+    }
   };
+  
 
   const renderMonthView = () => {
     const days = [];
