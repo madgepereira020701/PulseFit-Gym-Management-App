@@ -1,6 +1,7 @@
 import React , { useState, useEffect } from 'react';
 import '../../../../node_modules/datatables.net-dt/css/dataTables.dataTables.css';
 import $ from 'jquery';
+import 'datatables.net';
 import './EAttendance.css';
 
 const EAttendance = () => {
@@ -60,7 +61,6 @@ const EAttendance = () => {
                             <div class="dt-length">
                               Entries per page:
                               <select aria-controls="attendanceTable" class="dt-input" id="dt-length">
-                                <option value="5">5</option>
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
