@@ -26,7 +26,7 @@ import EAttendance from './components/Employee/EAttendance/EAttendance.jsx';
 import EmployeeDetails from './components/Employee/EmployeeDetails/EmployeeDetails.jsx';
 import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-
+import ConfirmEmail from './components/Auth/ConfirmEmail/ConfirmEmail.jsx';
 
 
 
@@ -65,7 +65,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/year" element={<YearCalendar />} />
           <Route path="/changepassword" element={<ChangePassword />} />
-
+          <Route path="/confirmemail" element={<ConfirmEmail/>} />
 
           {/* Use ProtectedRoute for role-specific pages */}
           <Route path="/members" element={<ProtectedRoute element={<AddMember />} requiredRole="Admin" />} />
