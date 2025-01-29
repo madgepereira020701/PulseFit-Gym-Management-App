@@ -34,7 +34,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
   };
 
   const handleClick = () => {
-    navigate('./changepassword');
+    navigate('./confirmemail');
   }
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
