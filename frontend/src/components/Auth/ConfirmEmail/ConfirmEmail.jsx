@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-// import { API } from '../service/api';
+import { API } from '../../service/api';
 
 const initialValue = {
     email: ''
@@ -31,14 +31,28 @@ const EnterEmail = () => {
 
     const verifyUser = async() => {
         if(!verify.email){
-            setError('Email required ');
+            setError('Email required');
             return;
         }
         if(Object.keys(warnings).length > 0) {
             setError('Please resolve all validation warnings.');
             return;
         }
-    }
+        
+        try{
+            const response = await API.passwordresetrequest(verify);
+            if(response){
+                alert('Password reset email sent successfully. Please check your inbox.');
+            }
+            else{
+                alert('An error occured. Please try later.');
+            }
+        } catch(err) {
+            console.error('Error in passwordresetrequest API call:', err);
+            alert('An error occured. Please try later.');
+        }
+        }
+    
 
     return(
         <div className='auth-container'>
