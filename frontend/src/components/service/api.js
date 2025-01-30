@@ -156,4 +156,22 @@ API.employeeLogin = async (loginData) => {
     return await response.json();
 };
 
+API.passwordresetrequest = async (passwordresetrequestData) => {
+    console.log("Request data being sent:", passwordresetrequestData); // Log data
+
+    const response = await fetch('http://localhost:3000/api/passwordresetrequest', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(passwordresetrequestData),
+    });
+    
+    if(!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+return await response.json();
+}
+
 export { API };
