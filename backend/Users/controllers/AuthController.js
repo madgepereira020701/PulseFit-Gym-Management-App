@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User.jsx');
 const Member = require('../../models/members.js');
 const Employee = require('../../models/employees.js');
-const bcrypt = require('bcryptjs');
 const { isDate } = require('moment');
 
 
@@ -223,7 +222,7 @@ const updatePassword = async(req,res) => {
   }
 
   try{
-  const user = await User.findByOne({resetPasswordToken: token,
+  const user = await User.findOne({resetPasswordToken: token,
     resetPasswordExpires: {$gt: Date.now()}}
 
   );
@@ -317,12 +316,89 @@ async function storeTokenForUser(email, token) {
   }
 }
 
+
+async function storeTokenForMember (email,token) {
+  console.log("storeTokenForMember call with email:", email);
+
+  try{
+  const member = await Member.findOne({email: email});
+   
+  if(!member) {
+    console.log("Member not found for email:", email);
+    throw new Error("User not found");
+  }
+  console.log("Member Found:", member);
+
+  member.resetPasswordToken = token;
+  member.resetPasswordExpires = Date.now() + 3600000;
+  await member.save();
+
+  console.log(`Token stored for member ${token}`);
+} catch (error) {
+  console.log(`Error storing token:`, error);
+  throw error;
+}
+}
+
+async function storeTokenForEmployee (email,token) {
+  console.log("storeTokenForEmployee call for email:", email);
+  try{
+
+  const employee = await Employee.findOne({email: email});
+
+  if(!employee) {
+    console.log("Employee not found for email:", email);
+    throw new Error("Employee not found");
+  }
+
+  console.log("Employee Found:", employee);
+
+  employee.resetPasswordToken = token;
+  employee.resetPasswordExpires = Date() + 3600000;
+  await employee.save();
+
+  console.log(`Token stored for employee: ${token}`);
+} catch (error) {
+  console.log(`Error storing token: ${error}`);
+  throw error;
+
+}
+
+
+
+}
+
 const passwordresetrequest = async(req,res) => {
   const { email } = req.body;
 
   try{
-    await sendPasswordResetEmail(email);
-    res.status(200).json({message: 'Password reset email sent'});
+    const memberExists = await Member.findOne({email});
+    console.log("Member Exists:", memberExists);
+
+    if(memberExists) {
+      console.log("Calling storeTokenForMember");
+      await sendPasswordResetEmail(email, storeTokenForMember);
+      return res.status(200).json({message: 'Password reset email sent'});
+    }
+
+    const userExists = await User.findOne({email});
+    console.log("User Exists:", userExists);
+    
+    if(userExists) {
+      console.log("Calling storeTokenForUser");
+      await sendPasswordResetEmail(email, storeTokenForUser);
+      return res.status(200).json({message: 'Password reset email sent'});
+    }
+
+    const employeeExists = await Employee.findOne({email});
+    console.log("Employee Exists:", employeeExists);
+
+    if(employeeExists) {
+      console.log("Calling storeTokenEmployee");
+      await sendPasswordResetEmail(email, storeTokenForEmployee);
+      return res.status(200).json({message: 'Password reset email sent'});
+    }
+    return res.status(404).json({ message: 'Email not found'});
   }
   catch(err){
     console.error('Error sending password reset email:', err);
@@ -331,7 +407,7 @@ const passwordresetrequest = async(req,res) => {
 }
 
 const nodemailer = require('nodemailer');
-async function sendPasswordResetEmail(email) {
+async function sendPasswordResetEmail(email, storeTokenFunction) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -341,7 +417,7 @@ async function sendPasswordResetEmail(email) {
   });
 
   const token = generatePasswordResetToken();
-  await storeTokenForUser(email, token);
+  await storeTokenFunction(email, token);
 
   const resetLink = `http://localhost:3001/changepassword?${token}`
   console.log("Reset Link:", resetLink); // Log the reset link for verification
