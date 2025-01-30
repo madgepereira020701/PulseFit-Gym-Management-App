@@ -499,14 +499,18 @@ app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by
 
 
 //AUTHENTICATION
-const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, emupdatePassword, memupdatePassword, deleteAccount } = require('./Users/controllers/AuthController');
+const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
+  //emupdatePassword, memupdatePassword, 
+  deleteAccount, passwordresetrequest, deleteMemberAccount } = require('./Users/controllers/AuthController');
 app.post('/api/register', userRegister); // Register Route
 app.post('/api/memberregister', memberRegister); // Register Route
 app.post('/api/employeeregister', employeeRegister); // Register Route
 app.post('/api/updatepassword', protect, updatePassword);
-app.post('/api/emupdatepassword', protect2, emupdatePassword);
-app.post('/api/memupdatepassword', protect1, memupdatePassword);
+// app.post('/api/emupdatepassword', protect2, emupdatePassword);
+// app.post('/api/memupdatepassword', protect1, memupdatePassword);
 app.delete('/api/:userName', protect, deleteAccount);
+// app.delete('/api/members/:userName', protect1, deleteMemberAccount);
+app.post('/api/passwordresetrequest', passwordresetrequest)
 
 
 
