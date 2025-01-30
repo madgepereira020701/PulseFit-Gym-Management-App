@@ -78,7 +78,7 @@ const memberLogin = async (req, res) => {
 
     // Generate JWT token for the member
     const token = jwt.sign(
-      { memberId: member._id, email: member.email, role: member.role, memno: member.memno }, // Payload
+      { memberId: member._id, email: member.email, userName: member.fullname, role: member.role, memno: member.memno }, // Payload
       JWT_SECRET, // Your JWT secret key
       { expiresIn: '1h' } // Token expiration time (1 hour)
     );
@@ -97,42 +97,6 @@ const memberLogin = async (req, res) => {
   }
 };
 
-const memupdatePassword = async(req,res) => {
-  const { newpassword, confirmpassword} = req.body;
-  const email = req.user.email;
-
-  if(!newpassword || !confirmpassword)
-  {
-    res.status(400).json({ isSuccess: false, message: 'Both fields are required' });
-  }
-  if(newpassword !== confirmpassword)
-    {
-      res.status(400).json({ isSuccess: false, message: 'Passwords do not match' });
-    }
-
-    try {
-    const user = await Member.findOne({email});
-    if(!user) {
-      res.status(404).json({ isSuccess: false, message: 'User is not in email' });
-    }
-
-    const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
-    if(isMatch){
-      res.status(400).json({ isSuccess: false, message: 'New password cannot be same as the old one' });
-    }
-
-    user.password = newpassword.trim();
-    await user.save();
-
-    console.log('Updated Password:', user.password);
-    res.status(200).json({ isSuccess: true, message: 'Password updated successfully' });
-  } catch(err){
-    console.error('Error in memupdatePassword:', err);
-    res.status(500).json({ isSuccess: true, message: 'An error occured' });
-
-  }
-
-}
 
 
 
@@ -206,43 +170,7 @@ const employeeLogin = async (req, res) => {
 };
 
 
-const emupdatePassword = async (req,res) => {
-  const { newpassword, confirmpassword } = req.body;
-  const email = req.user.email;
 
-  console.log('Recieved new password:', newpassword);
-
-
-  if(!newpassword || !confirmpassword){
-    return res.status(400).json({isSuccess: false, message: 'Both the fields are required'});
-  }
-  if(newpassword !== confirmpassword){
-    return res.status(400).json({isSuccess: false, message: 'Passwords do not match'});
-  }
-
-  try{
-  const user = await Employee.findOne({email});
-  if(!user){
-    return res.status(404).json({isSuccess: false, message: 'User not found in email'});
-  }
-
-  console.log('Current hashed password:', user.password);
-
-  const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
-  if(isMatch){
-    return res.status(400).json({isSuccess: false, message: 'New password cannot be same as the old one'});
-  }
-
-  user.password = newpassword.trim();
-  await user.save();
-
-  console.log('Updated password:', user.password);
-  return res.status(200).json({ isSuccess: true , message: 'Passwords are updated'});
-  } catch(err) {
-    console.log('Error in emupdatePassword', err);
-    return res.status(500).json({ isSuccess: false , message: 'An error occured'});
-  }  
-}
 
 
 
@@ -278,12 +206,13 @@ const userLogin = async(req,res) => {
   }
 }
 
+
+
 const updatePassword = async(req,res) => {
+  const { token } = req.params;
   const { newpassword, confirmpassword} = req.body;
-  const userId = req.user;
 
   console.log('Recieved new password:', newpassword);
-  console.log('Authenticated user ID:', userId);
 
   if(!newpassword || !confirmpassword){
     return res.status(400).json({ isSuccess: false , message: 'Both fields are required'});
@@ -294,19 +223,24 @@ const updatePassword = async(req,res) => {
   }
 
   try{
-  const user = await User.findById(userId);
+  const user = await User.findByOne({resetPasswordToken: token,
+    resetPasswordExpires: {$gt: Date.now()}}
+
+  );
   if(!user){
     return res.status(404).json({ isSuccess: false , message: 'User not found'});
   }
 
-  console.log('Current hashed password:', user.password);
+  // console.log('Current hashed password:', user.password);
   
-  const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
-  if(isMatch){
-    return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
-  }
+  // const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+  // if(isMatch){
+  //   return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
+  // }
 
   user.password = newpassword.trim();
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
   await user.save();
 
   console.log('Updated password:', user.password);
@@ -334,7 +268,101 @@ const deleteAccount = async(req,res) => {
   }
 }
 
+const deleteMemberAccount = async (req,res) => {
+  const userName = req.params.userName;
 
-module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, emupdatePassword, memupdatePassword,
-  deleteAccount
+  console.log(userName);
+
+  try{
+  const result = Member.deleteOne({ fullname: userName });
+
+  if(result.deletedCount === 0)
+  {
+    return res.status(404).json({message: 'Account is not found.'});
+  }
+
+  return res.status(200).json({message: 'Account deleted successfully.'});
+} catch (error)
+  {
+    return res.status(500).json({message: 'Could not delete account.',error});
+  }
+};
+
+function generatePasswordResetToken() {
+  const token = jwt.sign({purpose: 'passwordReset'}, JWT_SECRET, { expiresIn: '1hr'});
+  return token;
+}
+
+async function storeTokenForUser(email, token) {
+  console.log("storeTokenForUser call with email:", email);
+
+  try{
+    const user = await User.findOne({email: email});
+    
+    if(!user) {
+      console.log("User not found for email:", email);
+      throw new Error("User not found");
+    }
+
+    console.log("User Found:", user);
+    
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    console.log(`Token stored for user ${token}`);
+  } catch (error) {
+    console.log("Error storing token:", error);
+    throw error;
+  }
+}
+
+const passwordresetrequest = async(req,res) => {
+  const { email } = req.body;
+
+  try{
+    await sendPasswordResetEmail(email);
+    res.status(200).json({message: 'Password reset email sent'});
+  }
+  catch(err){
+    console.error('Error sending password reset email:', err);
+    res.status(500).json({message: 'An error occurred'});
+  }
+}
+
+const nodemailer = require('nodemailer');
+async function sendPasswordResetEmail(email) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+    user: 'madgepereira020701@gmail.com',
+    pass: 'xezg tgdr tods jpbc', // Use an app-specific password for Gmail
+    }
+  });
+
+  const token = generatePasswordResetToken();
+  await storeTokenForUser(email, token);
+
+  const resetLink = `http://localhost:3001/changepassword?${token}`
+  console.log("Reset Link:", resetLink); // Log the reset link for verification
+
+
+  const mailOptions = {
+    from: 'madgepereira020701@gmail.com',
+    to: email,
+    subject: 'Password Reset for Your Account',
+    html:`
+    <p>Click on the link below to reset your password</p>
+    <a href="${resetLink}">Reset Password</a>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+
+
+
+module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
+  //emupdatePassword, memupdatePassword,
+  deleteAccount, deleteMemberAccount, passwordresetrequest
  };
