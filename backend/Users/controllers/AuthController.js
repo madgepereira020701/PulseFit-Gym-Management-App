@@ -205,51 +205,6 @@ const userLogin = async(req,res) => {
   }
 }
 
-
-
-const updatePassword = async(req,res) => {
-  const { token } = req.params;
-  const { newpassword, confirmpassword} = req.body;
-
-  console.log('Recieved new password:', newpassword);
-
-  if(!newpassword || !confirmpassword){
-    return res.status(400).json({ isSuccess: false , message: 'Both fields are required'});
-  }
-
-  if(newpassword !== confirmpassword){
-    return res.status(404).json({ isSuccess: false , message: 'Passwords do not match'});
-  }
-
-  try{
-  const user = await User.findOne({resetPasswordToken: token,
-    resetPasswordExpires: {$gt: Date.now()}}
-
-  );
-  if(!user){
-    return res.status(404).json({ isSuccess: false , message: 'User not found'});
-  }
-
-  // console.log('Current hashed password:', user.password);
-  
-  // const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
-  // if(isMatch){
-  //   return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
-  // }
-
-  user.password = newpassword.trim();
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
-
-  console.log('Updated password:', user.password);
-  return res.status(200).json({ isSuccess: true , message: 'Passwords are updated'});
-} catch (err){
-  console.error('Error in updatePassword', err);
-  return res.status(500).json({ isSuccess: false , message: 'An error occured'});
-}  
-};
-
 const deleteAccount = async(req,res) => {
   userName = req.params.userName;
 
@@ -287,6 +242,54 @@ const deleteMemberAccount = async (req,res) => {
   }
 };
 
+
+const updatePassword = async(req,res) => {
+  const { token } = req.params;
+  const { newpassword, confirmpassword} = req.body;
+
+  console.log('Recieved new password:', newpassword);
+
+  if(!newpassword || !confirmpassword){
+    return res.status(400).json({ isSuccess: false , message: 'Both fields are required'});
+  }
+
+  if(newpassword !== confirmpassword){
+    return res.status(404).json({ isSuccess: false , message: 'Passwords do not match'});
+  }
+
+  try{
+    console.log('Token:', token)
+  const user = await User.findOne({passwordResetToken: token,
+    passwordResetExpires: {$gt: Date.now()}}
+  );
+          console.log("User found:", user); // Log the result of findOne
+
+  if(!user){
+    return res.status(404).json({ isSuccess: false , message: 'User not found'});
+  }
+
+  // console.log('Current hashed password:', user.password);
+  
+  // const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+  // if(isMatch){
+  //   return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
+  // }
+
+  user.password = newpassword.trim();
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  console.log('Updated password:', user.password);
+  return res.status(200).json({ isSuccess: true , message: 'Passwords are updated'});
+} catch (err){
+  console.error('Error in updatePassword', err);
+  return res.status(500).json({ isSuccess: false , message: 'An error occured'});
+}  
+};
+
+
+
 function generatePasswordResetToken() {
   const token = jwt.sign({purpose: 'passwordReset'}, JWT_SECRET, { expiresIn: '1hr'});
   return token;
@@ -303,10 +306,13 @@ async function storeTokenForUser(email, token) {
       throw new Error("User not found");
     }
 
+
+
+    
     console.log("User Found:", user);
     
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000;
+    user.passwordResetToken = token;
+    user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
     console.log(`Token stored for user ${token}`);
@@ -419,7 +425,7 @@ async function sendPasswordResetEmail(email, storeTokenFunction) {
   const token = generatePasswordResetToken();
   await storeTokenFunction(email, token);
 
-  const resetLink = `http://localhost:3001/changepassword?${token}`
+  const resetLink = `http://localhost:3001/changepassword?token=${token}`
   console.log("Reset Link:", resetLink); // Log the reset link for verification
 
 

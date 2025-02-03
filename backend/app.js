@@ -511,7 +511,7 @@ app.post('/api/updatepassword', protect, updatePassword);
 app.delete('/api/:userName', protect, deleteAccount);
 // app.delete('/api/members/:userName', protect1, deleteMemberAccount);
 app.post('/api/passwordresetrequest', passwordresetrequest)
-app.post('/api/resetpassword/:token', updatePassword );
+app.post('/api/resetpassword/:token',  updatePassword );
 
 
 app.post('/api/login', userLogin); // Login Route
