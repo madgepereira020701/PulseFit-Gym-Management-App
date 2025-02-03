@@ -174,8 +174,8 @@ API.passwordresetrequest = async (passwordresetrequestData) => {
 return await response.json();
 }
 
-API.updatePassword = async (resetpassword) => {
-    const response = await fetch('http://localhost:3000/api/resetpassword/:token', {
+API.updatePassword = async (token, resetpassword) => {
+    const response = await fetch(`http://localhost:3000/api/resetpassword/${token}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
