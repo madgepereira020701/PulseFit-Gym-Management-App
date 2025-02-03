@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { API } from '../../service/api';
+import { useSearchParams } from 'react-router-dom';
 
 const passwordValues = {
     newpassword: '',
@@ -11,6 +12,8 @@ const ChangePassword = () => {
     const [confirm, setConfirm] = useState(passwordValues);
     const [warnings, setWarnings] = useState({});
     const [error, setError] = useState('');
+    const [ searchParams ] = useSearchParams();
+    const token = searchParams.get('token');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -46,8 +49,10 @@ const ChangePassword = () => {
             return;
         }
 
+        console.log("Token in ChangePassword:", token); // <--- Add this line
+
         try {
-            const response = await API.updatePassword(confirm);
+            const response = await API.updatePassword(token,confirm);
             if (response) {
                 console.log('Password updated successfully, redirecting to login page...');
             } else {
