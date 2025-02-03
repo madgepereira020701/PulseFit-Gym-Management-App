@@ -3,6 +3,7 @@ const User = require('../models/User.jsx');
 const Member = require('../../models/members.js');
 const Employee = require('../../models/employees.js');
 const { isDate } = require('moment');
+const bcrypt = require('bcryptjs')
 
 
 // Define your JWT_SECRET directly
@@ -268,12 +269,12 @@ const updatePassword = async(req,res) => {
     return res.status(404).json({ isSuccess: false , message: 'User not found'});
   }
 
-  // console.log('Current hashed password:', user.password);
+  console.log('Current hashed password:', user.password);
   
-  // const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
-  // if(isMatch){
-  //   return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
-  // }
+  const isMatch = await bcrypt.compare(newpassword.trim(), user.password);
+  if(isMatch){
+    return res.status(400).json({ isSuccess: false , message: 'New password cannot be same as the old one '});
+  }
 
   user.password = newpassword.trim();
   user.passwordResetToken = undefined;
