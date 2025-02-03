@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { API } from '../../service/api';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const passwordValues = {
     newpassword: '',
@@ -13,6 +13,7 @@ const ChangePassword = () => {
     const [warnings, setWarnings] = useState({});
     const [error, setError] = useState('');
     const [ searchParams ] = useSearchParams();
+    const navigate = useNavigate();
     const token = searchParams.get('token');
 
     const togglePasswordVisibility = () => {
@@ -54,7 +55,9 @@ const ChangePassword = () => {
         try {
             const response = await API.updatePassword(token,confirm);
             if (response) {
+                alert('Password updated successfully, redirecting to login page...');
                 console.log('Password updated successfully, redirecting to login page...');
+                navigate('/');
             } else {
                 setError('Something went wrong, try again.');
             }
