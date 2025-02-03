@@ -16,8 +16,8 @@ const employeeSchema = new mongoose.Schema({
   doj: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User
   password: { type: String }, // Password field added to schema
-
-  
+  passwordResetToken : String,
+  passwordResetExpires: Date
 });
 
 employeeSchema.pre('save', async function (next) {
