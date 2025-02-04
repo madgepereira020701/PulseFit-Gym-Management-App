@@ -395,6 +395,5 @@ async function sendPasswordResetEmail(model,email,token) {
 }
 
 module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
-  //emupdatePassword, memupdatePassword,
   deleteAccount, deleteMemberAccount, passwordresetrequest
  };
