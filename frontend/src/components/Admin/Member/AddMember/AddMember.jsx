@@ -100,7 +100,7 @@ const AddMembers = () => {
     }
 
     if (field === 'memno' && (value.trim() === '' || isNaN(value))) {
-      newWarnings.memno = 'Member Number should be a valid number';
+      newWarnings.memno = 'Member ID should be a valid number';
     } else {
       delete newWarnings.memno;
     }
