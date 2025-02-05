@@ -10,8 +10,7 @@ const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({
-    emno: '',
-    emphno: '',
+    fullname:'',emno:'', emphno:'',  designation:'', department:'', doj:'',
   });
 
   // Fetch employees data on component mount
@@ -151,9 +150,14 @@ const Employees = () => {
   const handleEdit = (employee) => {
     setEditingEmployee(employee);
     setUpdatedDetails({
-      email: employee.email,
       emno: employee.emno,
+      fullname: employee.fullname,
+      email: employee.email,
       emphno: employee.emphno,
+      doj: employee.doj,
+      designation: employee.designation,
+      department: employee.department
+
     });
   };
 
@@ -199,7 +203,7 @@ const Employees = () => {
 
   const handleCancelEdit = () => {
     setEditingEmployee(null);
-    setUpdatedDetails({ emno: '', emphno: '' });
+    setUpdatedDetails({   emno:'',  fullname:'', emphno:'',  designation:'', department:'', doj:''    });
   };
 
   const handleDeleteEmployee = async (emno) => {
@@ -275,7 +279,7 @@ const Employees = () => {
           {editingEmployee && (
             <div className="edit-form">
               <h3>Edit Employee</h3>
-              <label>Employee Number:</label>
+              <label>Employee ID:</label>
               <input
                 type="text"
                 name="emno"
@@ -283,12 +287,44 @@ const Employees = () => {
                 value={updatedDetails.emno}
                 onChange={handleUpdateChange}
               />
-              <label>Phone Number:</label>
+              <label>Full Name:</label>
               <input
                 type="text"
+                name="fullname"
+                className="input-field"
+                value={updatedDetails.fullname}
+                onChange={handleUpdateChange}
+              />
+              <label>Phone Number:</label>
+              <input
+                type="number"
                 name="emphno"
                 className="input-field"
                 value={updatedDetails.emphno}
+                onChange={handleUpdateChange}
+              />
+               <label>Date of Join:</label>
+              <input
+                type="date"
+                name="department"
+                className="input-field"
+                value={updatedDetails.doj}
+                onChange={handleUpdateChange}
+              />
+               <label>Designation:</label>
+              <input
+                type="text"
+                name="designation"
+                className="input-field"
+                value={updatedDetails.designation}
+                onChange={handleUpdateChange}
+              />
+               <label>Department:</label>
+              <input
+                type="text"
+                name="department"
+                className="input-field"
+                value={updatedDetails.department}
                 onChange={handleUpdateChange}
               />
               <div className="button-group">
