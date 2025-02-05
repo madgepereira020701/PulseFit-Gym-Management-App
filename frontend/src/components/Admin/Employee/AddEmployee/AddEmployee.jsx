@@ -46,9 +46,9 @@ const AddEmployees = () => {
     }
 
     if (field === 'emphno' && (value.trim() === '' || value.length !== 10)) {
-      newWarnings.memphno = 'Phone Number should be a 10-digit number';
+      newWarnings.emphno = 'Phone Number should be a 10-digit number';
     } else {
-      delete newWarnings.memphno;
+      delete newWarnings.emphno;
     }
 
     if (field === 'email' && !validateEmail(value)) {
@@ -191,7 +191,7 @@ const AddEmployees = () => {
           value={addEmployee.emphno}
           onChange={onInputChange}
         />
-        {warnings.emphno && <p className="warning-message">{warnings.memphno}</p>}
+        {warnings.emphno && <p className="warning-message">{warnings.emphno}</p>}
         <br />        <br />
 
 
