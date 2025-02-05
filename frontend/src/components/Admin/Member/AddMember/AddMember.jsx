@@ -209,7 +209,7 @@ const AddMembers = () => {
         <input
           type="number"
           name="memno"
-          placeholder="Member Number"
+          placeholder="Member ID"
           className="input-field"
           value={addMember.memno}
           onChange={onInputChange}
