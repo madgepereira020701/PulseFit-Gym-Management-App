@@ -40,7 +40,7 @@ const AddEmployees = () => {
     }
 
     if (field === 'emno' && (value.trim() === '' || isNaN(value))) {
-      newWarnings.emno = 'Employee Number should be a valid number';
+      newWarnings.emno = 'Employee ID should be a valid number';
     } else {
       delete newWarnings.emno;
     }
