@@ -193,7 +193,6 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
               {showPassword ? 'visibility' : 'visibility_off'}
             </span>
           </div>
-            <p>Forgot Password ?<a href="/" onClick={(event) => {event.preventDefault();handleClick()}} style={{color: 'orange'}}>Reset</a></p>
           <select name="role" value={login.role} onChange={onRoleChange} className="input-field">
             <option value="">Login as</option>
             <option value="Admin">Admin</option>
@@ -207,6 +206,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
           </button>
           <p className="text">OR</p><br />
           <button className="light-button">Sign in with Google</button>
+          <p>Forgot Password ?<a href="/confirmemail" onClick={(event) => {event.preventDefault();handleClick()}} style={{color: 'orange'}}>Reset</a></p>
           <p>Don't have account?<a href="/" onClick={(event) =>{event.preventDefault();toggleSignup()}}
           style={{color:'orange'}}>Register</a></p>
         </div>
