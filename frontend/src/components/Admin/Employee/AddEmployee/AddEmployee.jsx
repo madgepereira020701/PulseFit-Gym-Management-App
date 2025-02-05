@@ -40,9 +40,9 @@ const AddEmployees = () => {
     }
 
     if (field === 'emno' && (value.trim() === '' || isNaN(value))) {
-      newWarnings.memno = 'Employee Number should be a valid number';
+      newWarnings.emno = 'Employee Number should be a valid number';
     } else {
-      delete newWarnings.memno;
+      delete newWarnings.emno;
     }
 
     if (field === 'emphno' && (value.trim() === '' || value.length !== 10)) {
@@ -160,12 +160,12 @@ const AddEmployees = () => {
         <input
           type="number"
           name="emno"
-          placeholder="Member Number"
+          placeholder="Employee ID"
           className="input-field"
           value={addEmployee.emno}
           onChange={onInputChange}
         />
-        {warnings.emno && <p className="warning-message">{warnings.memno}</p>}
+        {warnings.emno && <p className="warning-message">{warnings.emno}</p>}
         </div>
         <div> 
         <label>Start Date</label>
