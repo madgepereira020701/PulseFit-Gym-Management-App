@@ -206,9 +206,9 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
             Login
           </button>
           <p className="text">OR</p><br />
-          <button className="light-button" onClick={toggleSignup}>
-            Create an account
-          </button>
+          <button className="light-button">Sign in with Google</button>
+          <p>Don't have account?<a href="/" onClick={(event) =>{event.preventDefault();toggleSignup()}}
+          style={{color:'orange'}}>Register</a></p>
         </div>
       ) : (
         <div className="form-container register">
@@ -253,7 +253,9 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
           <button className="dark-button" onClick={registerUser}>Signup</button>
           <p className="text">OR</p>
           <br />
-          <button className="light-button" onClick={toggleSignup}>Already have an account</button>
+          <button className="light-button">Sign up with Google</button>
+          <p>Already have account?<a href="/" onClick={(event) =>{event.preventDefault();toggleSignup()}}
+          style={{color:'orange'}}>Login</a></p>
         </div>
       )}
     </div>
