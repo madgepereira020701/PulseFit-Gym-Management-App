@@ -42,14 +42,14 @@ const getPlans = async (req, res) => {
 
 // Delete a plan by amount
 const deletePlan = async (req, res) => {
-  const amount = parseInt(req.params.amount);
+  const planname = req.params.planname;
 
   const client = new MongoClient(url);
 
   try {
     await client.connect();
     const db = client.db();
-    const result = await db.collection('plans').deleteOne({ amount: amount, userId: req.user });
+    const result = await db.collection('plans').deleteOne({ planname: planname, userId: req.user });
     client.close();
 
     if (result.deletedCount === 0) {
@@ -65,8 +65,12 @@ const deletePlan = async (req, res) => {
 
 // Update a plan by amount
 const updatePlan = async (req, res) => {
-  const amount = parseInt(req.params.amount);
-  const updates = req.body;
+  const  planname = req.params.planname;
+  const { validity, amount} = req.body;
+
+  const updates = {}
+  if (validity) updates.validity = validity;
+  if (amount) updates.amount = amount;
 
   const client = new MongoClient(url);
 
@@ -74,7 +78,7 @@ const updatePlan = async (req, res) => {
     await client.connect();
     const db = client.db();
     const result = await db.collection('plans').updateOne(
-      { amount: amount, userId: req.user },
+      { planname: planname, userId: req.user },
       { $set: updates }
     );
     client.close();
