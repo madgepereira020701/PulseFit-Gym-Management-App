@@ -402,13 +402,14 @@ cron.schedule('* * * * *', async () => {
   try {
     // Define the current date and calculate the date 7 days from today
     const today = moment();
-    const sevenDaysAhead = today.add(7, 'days').startOf('day').format('YYYY-MM-DD'); // 7 days from today, start of the day
+    const sevenDaysAhead = moment(today).add(7, 'days').startOf('day').format('YYYY-MM-DD'); // 7 days from today, start of the day
 
     // Fetch renewals where the subscription end date (doe) is exactly 7 days from today
     const renewalsStartingSoon = await SentEmail.find({
       doe: sevenDaysAhead
     });
 
+    console.log(sevenDaysAhead);
     console.log("Renewals starting soon:", renewalsStartingSoon);
 
     // Loop through each renewal
@@ -505,10 +506,12 @@ app.post('/api/register', userRegister); // Register Route
 app.post('/api/memberregister', memberRegister); // Register Route
 app.post('/api/employeeregister', employeeRegister); // Register Route
 app.post('/api/updatepassword', protect, updatePassword);
+
 app.delete('/api/:userName', protect, deleteAccount);
 // app.delete('/api/members/:userName', protect1, deleteMemberAccount);
 app.post('/api/passwordresetrequest', passwordresetrequest)
 app.post('/api/resetpassword/:token',  updatePassword );
+
 
 app.post('/api/login', userLogin); // Login Route
 app.post('/api/memberlogin', memberLogin); // Login Route
@@ -674,7 +677,7 @@ cron.schedule('* * * * *', async () => {
   try {
     console.log("Starting holiday reminder cron job...");
 
-    const today = moment().startOf('day');
+    const today = moment();
     const tomorrow = moment(today).add(1, 'days').startOf('day').format('YYYY-MM-DD');
 
     // Check if tomorrow is a holiday
