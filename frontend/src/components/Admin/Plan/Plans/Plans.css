@@ -60,3 +60,23 @@
     color: #555;
   }
   
+  .plan-table td.actions {
+    white-space: nowrap;
+    font-size: 0.9em;
+    gap: 10px;
+    display: flex
+;
+    flex-direction: row;
+    align-items: center;
+}
+
+.planbutton {
+  padding: 10px;
+  margin: 5px 0; /* Adjusted to ensure there is space between the buttons */
+  border: none;
+  border-radius: 4px;
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+  width: 100%; /* Ensures buttons take full width of the cell */
+}
