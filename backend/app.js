@@ -492,8 +492,8 @@ app.patch('/employees/:email', protect,mongoEmployee.updateEmployee); // Update 
 //ADD PLANS
 app.post('/addplans',protect, mongoPlans.addPlans); // Add a new plan
 app.get('/addplans', protect,mongoPlans.getPlans); // Fetch all plans
-app.delete('/addplans/:amount', protect, mongoPlans.deletePlan); // Delete plan by amount
-app.patch('/addplans/:amount', protect,mongoPlans.updatePlan); // Update plan by amount
+app.delete('/addplans/:planname', protect, mongoPlans.deletePlan); // Delete plan by amount
+app.patch('/addplans/:planname', protect,mongoPlans.updatePlan); // Update plan by amount
 
 //app.post('/addattendance',protect, mongoAttendance.addAttendance); // Add a new plan
 //app.get('/addattendance', protect,mongoAttendance.getAttendance); // Fetch all plans
