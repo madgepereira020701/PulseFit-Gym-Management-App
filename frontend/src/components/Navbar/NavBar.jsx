@@ -122,9 +122,9 @@ const Navbar = () => {
         <li className="account" onClick={toggleDropDown}>
           {userinitials ? userinitials : 'Guest'} <FaAngleDown />
           {isDropDownOpen && (
-            <ul className="dropdown">
-              <li><NavLink onClick={logout} activeClassName="active">Log out</NavLink></li>
-              <li><NavLink onClick={deleteaccount} activeClassName="active">Delete Account</NavLink></li>
+            <ul className="dropdown active : dropdown">
+              <li><NavLink onClick={logout} className={({ isActive }) => isActive ? 'active' : ''}>Log out</NavLink></li>
+              <li><NavLink onClick={deleteaccount} className={({ isActive }) => isActive ? 'active' : ''}>Delete Account</NavLink></li>
             </ul>
           )}
         </li>
