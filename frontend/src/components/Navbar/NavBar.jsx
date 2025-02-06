@@ -8,7 +8,7 @@ import { FaHeartbeat } from 'react-icons/fa';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [user, setUser] = useState('');
+  const [userinitials, setUserInitials] = useState('');
   const [role, setRole] = useState(''); // Track user role
 
   useEffect(() => {
@@ -16,7 +16,9 @@ const Navbar = () => {
     const storedUserRole = localStorage.getItem('role'); // Retrieve role from localStorage
   
     if (storedUserName) {
-      setUser(storedUserName);
+      const initials = storedUserName.split(' ').map((word) => word[0]).join('');
+      setUserInitials(initials.toUpperCase());
+      //setUser(storedUserName);
     }
     if (storedUserRole) {
       setRole(storedUserRole); // Set role correctly
@@ -118,7 +120,7 @@ const Navbar = () => {
     </>
   ) : null}
         <li className="account" onClick={toggleDropDown}>
-          {user ? user : 'Guest'} <FaAngleDown />
+          {userinitials ? userinitials : 'Guest'} <FaAngleDown />
           {isDropDownOpen && (
             <ul className="dropdown">
               <li><NavLink onClick={logout} activeClassName="active">Log out</NavLink></li>
