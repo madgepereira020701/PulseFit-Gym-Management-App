@@ -69,8 +69,8 @@ const updatePlan = async (req, res) => {
   const { validity, amount} = req.body;
 
   const updates = {}
-  if (validity) updates.validity = validity;
-  if (amount) updates.amount = amount;
+  updates.validity = validity;
+  updates.amount = amount;
 
   const client = new MongoClient(url);
 
