@@ -6,7 +6,6 @@ const Plans = () => {
   const [error, setError] = useState(null);
   const [editingPlan, setEditingPlan] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({
-    planname: '',
     validity: '',
     amount: ''
   })
@@ -39,7 +38,6 @@ const Plans = () => {
   const handleEdit = (plan) => {
     setEditingPlan(plan);
     setUpdatedDetails({
-      planname: plan.planname,
       validity: plan.validity,
       amount: plan.amount
     });
@@ -47,7 +45,8 @@ const Plans = () => {
 
   const handleUpdateChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedDetails({ ...updatedDetails, [name]: value });
+    const newValue = name === 'validity' || name === 'amount' ? parseInt(value, 10) || 0 : value;
+    setUpdatedDetails({ ...updatedDetails, [name]: newValue });
   }
   const handleUpdatePlan = async () => {
     const token = localStorage.getItem('token');
