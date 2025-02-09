@@ -6,6 +6,7 @@ const Plans = () => {
   const [error, setError] = useState(null);
   const [editingPlan, setEditingPlan] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({
+    planname: '',
     validity: '',
     amount: ''
   })
@@ -38,6 +39,7 @@ const Plans = () => {
   const handleEdit = (plan) => {
     setEditingPlan(plan);
     setUpdatedDetails({
+      planname: plan.planname,
       validity: plan.validity,
       amount: plan.amount
     });
