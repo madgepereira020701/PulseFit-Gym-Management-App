@@ -11,10 +11,12 @@ const memberSchema = new mongoose.Schema({
   memno: { type: Number, required: true, unique: true },
   memphno: { type: Number, required: true, unique: true },
   email: { type: String, required: true, unique: true },
+  packages: [{
   doj: { type: String, required: true },
   doe: { type: String, required: true },
   plan: { type: String, required: true },
   price: { type: Number, required: true },
+}],
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User
   password: { type: String }, // Password field added to schema
   passwordResetToken : String,
