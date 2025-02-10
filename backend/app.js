@@ -218,16 +218,16 @@ app.get('/members', protect,async (req, res) => {
   }
 });
 
-app.post('/addplans/:id', protect,async (req,res) => {
+app.post('/addplans/:memno', protect,async (req,res) => {
    try {
-    const memberId = req.params.id;
+    const memno = req.params;
     const newPackage = req.body;
     
     if(!newPackage.plan || !newPackage.price || !newPackage.doj || !newPackage.doe){
       return  res.status(400).json({message:'Missing required fields'})
     }
     
-    const updatedMember = await SentEmail1.findByIdAndUpdate(memberId,
+    const updatedMember = await SentEmail1.findOneAndUpdate(memno,
       {$push: {packages: newPackage}},
       {new: true, runValidators: true}
     );
