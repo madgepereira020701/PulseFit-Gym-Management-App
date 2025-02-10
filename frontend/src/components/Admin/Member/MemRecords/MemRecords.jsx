@@ -58,28 +58,23 @@ const ViewPayments = () => {
           </thead>
           <tbody>
             {payments.map((payment, index) => {
-              const totalRows = payment.renewals ? payment.renewals.length + 1 : 1; // Total rows to display for this payment
+              const allitems = [...(payment.packages || []), ...(payment.renewals || [])]
+              const totalRows = allitems ? allitems.length + 1 : 1; // Total rows to display for this payment
 
               return (
                 <React.Fragment key={index}>
                   {/* Render main payment info with rowSpan */}
-                  <tr>
-                    <td rowSpan={totalRows}>{payment.fullname}</td>
-                    <td>{payment.plan}</td>
-                    <td>{payment.price}</td>
-                    <td>{payment.doj}</td>
-                    <td>{payment.doe}</td>
-                  </tr>
-                  
-                  {/* Render renewal plans */}
-                  {payment.renewals && payment.renewals.map((renewal, idx) => (
+                    { allitems && allitems.map((item, idx) => (
                     <tr key={`${index}-${idx}`}>
-                      <td>{renewal.plan}</td>
-                      <td>{renewal.price}</td>
-                      <td>{renewal.dos}</td>
-                      <td>{renewal.doe}</td>
+                    {idx === 0 && 
+                    <td rowSpan={totalRows}>{payment.fullname}</td>}
+                    <td>{item.plan}</td>
+                    <td>{item.price}</td>
+                    <td>{item.doj || item.dos}</td>
+                    <td>{item.doe}</td>
                     </tr>
-                  ))}
+                    ))}
+                 
                 </React.Fragment>
               );
             })}
