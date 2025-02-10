@@ -284,6 +284,7 @@ const Members = () => {
                   <button className="membutton"onClick={() => handleEdit(member)}>Edit</button>
                   <button className="membutton"onClick={() => handleDeleteMember(member.memno)}>Delete</button>
                   <button className="membutton"onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
+                  <button className="membutton">Add Plan</button>
                 </td>
               </tr>
             ))}
