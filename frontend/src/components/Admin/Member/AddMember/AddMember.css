@@ -1,4 +1,4 @@
-.auth-container {
+.auth-container-member {
   display: flex;
   flex-direction: column;
   padding: 2rem;
@@ -6,8 +6,8 @@
 }
 
 
-.form-container {
-  width: 100%;
+.form-container-member {
+  width: 400px;
   background: #ffffff;
   padding: 2rem;
   border-radius: 12px;

@@ -7,16 +7,13 @@ const addMemberInitialValues = {
   memno: '',
   memphno: '',
   email: '',
-  doj: '',
-  doe: '',
-  plan: '',
-  price: '',
 };
 
 const AddMembers = () => {
   const [addMember, setAddMember] = useState(addMemberInitialValues);
   const [plans, setPlans] = useState([]); // Holds the available plans
   const [error, setError] = useState('');
+  const [packages, setPackages] = useState([{plan:'', price:'',doj:'', doe:''}]);
   const [warnings, setWarnings] = useState({});
 
   // Fetch plans data on component mount
@@ -53,37 +50,7 @@ const AddMembers = () => {
     let updatedMember = { ...addMember, [name]: value };
 
     // Update price and end date based on selected plan
-    if (name === 'plan') {
-      const selectedPlan = plans.find((plan) => plan.planname === value);
-      if (selectedPlan) {
-        const validityInMonths = selectedPlan.validity;
-        updatedMember.price = selectedPlan.amount.toString();
-
-        if (addMember.doj) {
-          const startDate = new Date(addMember.doj);
-          const endDate = new Date(startDate);
-          endDate.setMonth(startDate.getMonth() + validityInMonths);
-          updatedMember.doe = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-        }
-      } else {
-        updatedMember.price = '';
-        updatedMember.doe = '';
-      }
-    }
-
-    // Update end date when joining date is modified
-    if (name === 'doj' && addMember.plan) {
-      const selectedPlan = plans.find((plan) => plan.planname === addMember.plan);
-      if (selectedPlan) {
-        const validityInMonths = selectedPlan.validity;
-        const startDate = new Date(value);
-        const endDate = new Date(startDate);
-        endDate.setMonth(startDate.getMonth() + validityInMonths);
-        updatedMember.doe = endDate.toISOString().split('T')[0];
-      } else {
-        updatedMember.doe = '';
-      }
-    }
+    
 
     setAddMember(updatedMember);
     validateFields(name, value);
@@ -150,6 +117,14 @@ const AddMembers = () => {
       return;
     }
 
+    for (const packageItem of packages){
+      if(!packageItem.plan || !packageItem.price || !packageItem.doj || !packageItem.doe)
+      {
+        setError('Please resolve all validation warnings.');
+      return;
+      }
+    }
+
     const token = localStorage.getItem('token'); // Get token from localStorage
     if (!token) {
       console.error('No token found');
@@ -157,10 +132,15 @@ const AddMembers = () => {
     }
 
     const formData = {
-      ...addMember,
+      ...addMember, 
       memno: parseInt(addMember.memno, 10),
       memphno: parseInt(addMember.memphno, 10),
-      price: parseFloat(addMember.price),
+      packages: packages.map((pkg)=> ({
+       plan: pkg.plan,
+       price: parseFloat(pkg.price),
+       doj: pkg.doj,
+       doe: pkg.doe
+      }))
     };
 
     try {
@@ -180,6 +160,7 @@ const AddMembers = () => {
 
       alert('Member added successfully!');
       setAddMember(addMemberInitialValues); // Reset form
+      setPackages([{plan:'', price:'',doj:'',doe:''}]);
       setError('');
     } catch (err) {
       console.error('Error adding member:', err.message);
@@ -187,9 +168,62 @@ const AddMembers = () => {
     }
   };
 
+  const addPackage = () => {
+    setPackages([...packages, {plan:'', price:'',doj:'',doe:''}]);
+  }
+
+  const removePackage = (index) => {
+    const updatedPackages = packages.filter((_,i) => i!== index);
+    setPackages(updatedPackages);
+  }
+
+  const handlePackageChange = (index,field,value) => {
+    setPackages((prevPackages) => {
+      
+  
+    const updatedPackages = [...prevPackages];
+    updatedPackages[index][field] = value;
+    if (field === 'plan') {
+      const selectedPlan = plans.find((plan) => plan.planname === value);
+      if (selectedPlan) {
+        const validityInMonths = selectedPlan.validity;
+        updatedPackages[index].price = selectedPlan.amount.toString();
+        updatedPackages[index].plan = selectedPlan.planname;
+
+
+        if (updatedPackages[index].doj) {
+          const startDate = new Date(updatedPackages[index].doj);
+          const endDate = new Date(startDate);
+          endDate.setMonth(startDate.getMonth() + validityInMonths);
+          updatedPackages[index].doe = endDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        }
+      } else {
+        updatedPackages[index].price = '';
+        updatedPackages[index].doe = '';
+      }
+    }
+
+    // Update end date when joining date is modified
+    if (field === 'doj') {
+      const selectedPlan = plans.find((plan) => plan.planname === updatedPackages[index].plan);
+      if (selectedPlan) {
+        const validityInMonths = selectedPlan.validity;
+        const startDate = new Date(value);
+        const endDate = new Date(startDate);
+        endDate.setMonth(startDate.getMonth() + validityInMonths);
+        updatedPackages[index].doe = endDate.toISOString().split('T')[0];
+      } else {
+        updatedPackages[index].doe = '';
+      }
+    }
+
+    return updatedPackages;
+    });
+  }
+
   return (
-    <div className="auth-container">
-      <div className="form-container">
+    <div className="auth-container-member">
+      <div className="form-container-member">
         <h2>Add Member</h2>
 
         <label>Full Name</label>
@@ -244,69 +278,77 @@ const AddMembers = () => {
         {warnings.email && <p className="warning-message">{warnings.email}</p>}
         <br /><br />
 
-        <div className="input-group">
-         <div> 
-        <label>Plan</label>
-        <select
-          name="plan"
-          className="input-field3"
-          value={addMember.plan}
-          onChange={onInputChange}
-        >
-          <option value="">Select a Plan</option>
-          {plans.map((plan, index) => (
-            <option key={index} value={plan.planname}>
-              {plan.planname} 
-            </option>
-          ))}
-        </select>
-        {warnings.plan && <p className="warning-message">{warnings.plan}</p>}
-        </div>
+       {packages.map((planrow,index) => (
+        <div key={index}>
+          <div className="input-group">
+          <div> 
+          <label>Plan</label>
+          <select
+            name="plan"
+            className="input-field3"
+            value={planrow.plan}
+            onChange={(e) => handlePackageChange(index,'plan', e.target.value) }
+          >
+            <option value="">Select a Plan</option>
+            {plans.map((plan, index) => (
+              <option key={index} value={plan.planname}>
+                {plan.planname} 
+              </option>
+            ))}
+          </select>
+          {warnings.plan && <p className="warning-message">{warnings.plan}</p>}
+          </div>
        
-        <div> 
-        <label>Price</label>
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          className="input-field3"
-          value={addMember.price}
-          onChange={onInputChange}
-        />
-        {warnings.price && <p className="warning-message">{warnings.price}</p>}
-        </div>
-        </div>
-        <br />
-        
-        <div className="input-group">
-        <div> 
-        <label>Start Date</label>
-        <input
-          type="date"
-          name="doj"
-          placeholder="Date of Joining"
-          className="input-field3"
-          value={addMember.doj}
-          onChange={onInputChange}
-        />
-        {warnings.doj && <p className="warning-message">{warnings.doj}</p>}
+          <div> 
+          <label>Price</label>
+          <input
+            type="number"
+            name="price"
+            placeholder="Price"
+            className="input-field3"
+            value={planrow.price}
+            onChange={(e) => handlePackageChange(index,'price',e.target.value)}
+          />
+          {warnings.price && <p className="warning-message">{warnings.price}</p>}
+          </div>
+          </div>
+    
+          <div className="input-group">
+          <div> 
+          <label>Start Date</label>
+          <input
+            type="date"
+            name="doj"
+            placeholder="Date of Joining"
+            className="input-field3"
+            value={planrow.doj}
+            onChange={(e) => handlePackageChange(index,'doj',e.target.value)}
+          />
+          {warnings.doj && <p className="warning-message">{warnings.doj}</p>}
+          </div>
+
+          <div>
+          <label>End Date</label>
+          <input
+            type="date"
+            name="doe"
+            placeholder="End Date"
+            className="input-field3"
+            value={planrow.doe}
+            onChange={(e) => handlePackageChange(index,'doe',e.target.value)}
+            readOnly
+          />
+          {warnings.doe && <p className="warning-message">{warnings.doe}</p>}
+          </div>
+          </div>
+         {index > 0 && (
+          <button type="button"  className="cancel" onClick={() => removePackage(index)}>-</button>)}
         </div>
 
-        <div>
-        <label>End Date</label>
-        <input
-          type="date"
-          name="doe"
-          placeholder="End Date"
-          className="input-field3"
-          value={addMember.doe}
-          onChange={onInputChange}
-          readOnly
-        />
-        {warnings.doe && <p className="warning-message">{warnings.doe}</p>}
-        </div>
-        </div>
+       ))}
+        <button type="button" className="add" onClick={addPackage}>Add</button>
         <br />
+        
 
 
 
