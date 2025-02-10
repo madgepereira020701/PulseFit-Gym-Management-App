@@ -84,7 +84,8 @@ const protect2 = require('./Users/middlewares/emmiddleware'); // Import the midd
 
 // Add the middleware to the POST /members route to authenticate the admin
 app.post('/members', protect, async (req, res) => {
-  const { memno, email, memphno, fullname, plan, price, doj } = req.body;
+  console.log('Packages recieved:', req.body.packages);
+  const { memno, email, memphno, fullname, packages} = req.body;
   const userId = req.user;
 
   // Get token from Authorization header
@@ -95,45 +96,54 @@ app.post('/members', protect, async (req, res) => {
   }
 
   // Fetch available plans for the logged-in user
-  let availablePlans;
   try {
+    
+
       const response = await axios.get('http://localhost:3000/addplans', {
           headers: { Authorization: `Bearer ${token}` }
       });
-      availablePlans = response.data.filter(plan => plan.userId === userId);
-      console.log('Available plans from database:', availablePlans);
-  } catch (error) {
-      console.error('Error fetching available plans:', error.response || error.message);
-      return res.status(500).json({ status: 'ERROR', message: 'Error fetching available plans' });
-  }
+      const availablePlans = response.data.filter(plan => plan.userId === userId);
+      const savedPackages = [];
+      
+      for(const packageItem of packages){
+        const { plan, price, doj,doe } = packageItem;
+      
 
-  // Check if the plan exists in the available plans
+      const selectedPlan = availablePlans.find(
+        (p) =>
+          p.planname &&
+          plan &&
+          p.planname.trim().toLowerCase() === plan.trim().toLowerCase()
+      );
+      if (!selectedPlan) {
+          console.log('No matching plan found.');
+          return res.status(400).json({ status: 'ERROR', message: 'Invalid plan selected for this user' });
+      }
 
-  const selectedPlan = availablePlans.find(
-    (p) =>
-      p.planname &&
-      plan &&
-      p.planname.trim().toLowerCase() === plan.trim().toLowerCase()
-  );
-  if (!selectedPlan) {
-      console.log('No matching plan found.');
-      return res.status(400).json({ status: 'ERROR', message: 'Invalid plan selected for this user' });
-  }
 
-  console.log('Selected plan found:', selectedPlan);
-
-  // Calculate end date (doe) based on the plan's validity
-  let doe;
+       // Calculate end date (doe) based on the plan's validity
+  let calculatedDoe;
   try {
       const startDate = moment(doj, 'YYYY-MM-DD');
-      doe = startDate.add(selectedPlan.validity, 'months').format('YYYY-MM-DD');
+      calculatedDoe = startDate.add(selectedPlan.validity, 'months').format('YYYY-MM-DD');
   } catch (error) {
       console.error('Error calculating end date:', error);
       return res.status(500).json({ status: 'ERROR', message: 'Error calculating end date' });
   }
+  const newPackage = {
+    plan: selectedPlan.planname,
+    price: parseFloat(price),
+    doj: doj,
+    doe: calculatedDoe
+  };
+   savedPackages.push(newPackage);
+  } 
+
+  // Check if the plan exists in the available plans
+
 
   // Prepare and send email content
-  const emailContent = `
+  let emailContent = `
       <h3>Hello ${fullname},</h3>
       <p>Member ID: ${memno}</p>
       <p>Member Phone Number: ${memphno}</p>
@@ -147,13 +157,19 @@ app.post('/members', protect, async (req, res) => {
                   <th>Price</th>
               </tr>
           </thead>
-          <tbody>
+          <tbody>`;
+
+          savedPackages.forEach(pkg => {
+            emailContent +=`
               <tr>
-                  <td>${plan}</td>
-                  <td>${doj}</td>
-                  <td>${doe}</td>
-                  <td>${price}</td>
-              </tr>
+                  <td>${pkg.plan}</td>
+                  <td>${pkg.doj}</td>
+                  <td>${pkg.doe}</td>
+                  <td>${pkg.price}</td>
+              </tr>`;
+          });
+
+          emailContent += `
           </tbody>
       </table>
   `;
@@ -165,16 +181,13 @@ app.post('/members', protect, async (req, res) => {
   }
 
   // Save the new member details
-  try {
+  
       const newMember = new SentEmail1({
           memno,
           email,
           fullname,
           memphno,
-          plan,
-          price,
-          doj,
-          doe,
+          packages: savedPackages,
           userId
       });
 
@@ -226,10 +239,12 @@ app.get('/payments/:memno', protect,async (req, res) => {
       email: member.email,
       fullname: member.fullname,
       memphno: member.memphno,
-      plan: member.plan,
-      price: member.price,
-      doj: member.doj,
-      doe: member.doe,
+      packages:member.packages.map(package => ({
+        plan: package.plan,
+        price: package.price,
+        doj: package.doj,
+        doe: package.doe,
+      })),
       renewals: renewals.map(renewal => ({
         plan: renewal.plan,
         price: renewal.price,
