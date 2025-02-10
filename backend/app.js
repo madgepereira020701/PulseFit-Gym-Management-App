@@ -218,6 +218,29 @@ app.get('/members', protect,async (req, res) => {
   }
 });
 
+app.post('/addplans/:id', protect,async (req,res) => {
+   try {
+    const memberId = req.params.id;
+    const newPackage = req.body;
+    
+    if(!newPackage.plan || !newPackage.price || !newPackage.doj || !newPackage.doe){
+      return  res.status(400).json({message:'Missing required fields'})
+    }
+    
+    const updatedMember = await SentEmail1.findByIdAndUpdate(memberId,
+      {$push: {packages: newPackage}},
+      {new: true, runValidators: true}
+    );
+
+    if(!updatedMember) {
+      return res.status(404).json({message:'Member not found!' });
+    }
+    res.status(200).json(updatedMember);
+   } catch (error) {
+    console.error(error);
+    res.status(500).json({message:'Server Error'});
+   }
+});
 
 app.get('/payments/:memno', protect,async (req, res) => {
   const { memno } = req.params;
