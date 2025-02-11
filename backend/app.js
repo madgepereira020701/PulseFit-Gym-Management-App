@@ -218,28 +218,79 @@ app.get('/members', protect,async (req, res) => {
   }
 });
 
-app.post('/addplans/:memno', protect,async (req,res) => {
-   try {
-    const memno = req.params;
-    const newPackage = req.body;
-    
-    if(!newPackage.plan || !newPackage.price || !newPackage.doj || !newPackage.doe){
-      return  res.status(400).json({message:'Missing required fields'})
-    }
-    
-    const updatedMember = await SentEmail1.findOneAndUpdate(memno,
-      {$push: {packages: newPackage}},
-      {new: true, runValidators: true}
-    );
+app.post('/addplans/:memno', protect, async (req, res) => {
+  const token = req.headers['authorization']?.split(' ')[1];
 
-    if(!updatedMember) {
-      return res.status(404).json({message:'Member not found!' });
-    }
-    res.status(200).json(updatedMember);
-   } catch (error) {
-    console.error(error);
-    res.status(500).json({message:'Server Error'});
-   }
+  if (!token) {
+      return res.status(400).json({ status: 'ERROR', message: 'Token not provided' });
+  }
+  try {
+      const memno = req.params.memno;
+      const newPackages = req.body.packages; 
+      const userId = req.user;
+
+
+      if (!newPackages || !Array.isArray(newPackages) || newPackages.length === 0) {
+          return res.status(400).json({ message: 'Packages are required and must be a non-empty array' });
+      }
+
+      const updatedMember = await SentEmail1.findOne({ memno: memno }); 
+
+      if (!updatedMember) {
+          return res.status(404).json({ message: 'Member not found!' });
+      }
+
+      const response = await axios.get('http://localhost:3000/addplans', {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+      const availablePlans = response.data.filter(plan => plan.userId === userId);
+
+      const savedPackages = [];
+
+      for (const packageItem of newPackages) {
+          const { plan, price, doj } = packageItem; 
+
+          const selectedPlan = availablePlans.find(p => p.planname === plan);
+
+          if (!selectedPlan) {
+              return res.status(400).json({ message: `Plan "${plan}" not found for this user.` });
+          }
+
+          let calculatedDoe;
+          try {
+              const startDate = moment(doj, 'YYYY-MM-DD'); 
+              calculatedDoe = startDate.add(selectedPlan.validity, 'months').format('YYYY-MM-DD');
+          } catch (error) {
+              console.error('Error calculating end date:', error);
+              return res.status(500).json({ message: 'Error calculating end date' });
+          }
+
+          const newPackage = {
+              plan: selectedPlan.planname,
+              price: parseFloat(price),
+              doj: doj,
+              doe: calculatedDoe,
+          };
+
+          savedPackages.push(newPackage);
+      }
+
+
+      const result = await SentEmail1.findOneAndUpdate(
+          { memno: memno },
+          { $push: { packages: { $each: savedPackages } } },
+          { new: true, runValidators: true }
+      );
+
+      if (!result) {
+          return res.status(500).json({ message: "Failed to update member." });  // Or handle the error as needed
+      }
+
+      res.status(200).json(result);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server Error' });
+  }
 });
 
 app.get('/payments/:memno', protect,async (req, res) => {
