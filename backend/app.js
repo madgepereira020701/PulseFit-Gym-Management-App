@@ -968,15 +968,17 @@ app.get('/payments', protect1, async (req, res) => {
       email: member.email,
       fullname: member.fullname || null,
       memphno: member.memphno || null,
-      plan: member.plan || null,
-      price: member.price || null,
-      doj: member.doj || null,
-      doe: member.doe || null,
+      packages:member.packages.map(package => ({
+        plan: package.plan,
+        price: package.price,
+        doj: package.doj,
+        doe: package.doe,
+      })),
       renewals: renewals.map(renewal => ({
-        plan: renewal.plan || null,
-        price: renewal.price || null,
-        dos: renewal.dos || null,
-        doe: renewal.doe || null,
+        plan: renewal.plan,
+        price: renewal.price,
+        dos: renewal.dos,
+        doe: renewal.doe,
       })),
     };
 
