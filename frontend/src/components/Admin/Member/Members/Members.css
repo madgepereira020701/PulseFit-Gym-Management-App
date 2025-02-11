@@ -89,7 +89,7 @@ h2 {
   text-align: center;
 }
 
-.edit-form {
+.edit-form-members {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -99,9 +99,10 @@ h2 {
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  width: 50%;
-  max-width: 600px;
+  width: 390px;
+ 
 }
+
 
 .input-field {
   width: 100%;
@@ -109,6 +110,13 @@ h2 {
   margin: 5px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.input-group-edit {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: flex-start; /* Align input and label to the top */
 }
 
 .error-message {

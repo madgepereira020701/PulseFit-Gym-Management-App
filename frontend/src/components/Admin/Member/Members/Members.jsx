@@ -293,7 +293,7 @@ const Members = () => {
       </div>
 
       {editingMember && (
-        <div className="edit-form">
+        <div className="edit-form-members">
           <h3>Edit Member</h3>
           <label>Member Number:</label>
           <input

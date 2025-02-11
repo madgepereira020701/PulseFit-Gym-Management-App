@@ -222,8 +222,8 @@ const AddMembers = () => {
   }
 
   return (
-    <div className="auth-container-member">
-      <div className="form-container-member">
+    <div className="auth-container">
+      <div className="form-container">
         <h2>Add Member</h2>
 
         <label>Full Name</label>
