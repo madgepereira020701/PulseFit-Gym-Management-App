@@ -89,7 +89,7 @@
         right: 0;
         z-index: 10;
         /* Make sure the nav links are scrollable only on small screens */
-        height: 90vh; /* Maintain height for normal screens */
+        height: 80vh; /* Maintain height for normal screens */
         overflow-y: auto; /* Allow scrolling */
     }
 
@@ -100,8 +100,8 @@
         height: 10vh;
         width: 300px;
         background-color: rgba(242, 203, 136, 0.931);
-        top: 530px;
-        margin-left: 30px;
+        top: 540px;
+        left: 30px;
         right: 0;
         display: block;
         z-index: -10px;
