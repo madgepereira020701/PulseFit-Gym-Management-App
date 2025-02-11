@@ -284,7 +284,7 @@ const Members = () => {
                   <button className="membutton"onClick={() => handleEdit(member)}>Edit</button>
                   <button className="membutton"onClick={() => handleDeleteMember(member.memno)}>Delete</button>
                   <button className="membutton"onClick={() => handleNavigation(`/addrenewals/${member.memno}`)}>Renew</button>
-                  <button className="membutton">Add Plan</button>
+                  <button className="membutton" onClick={() => handleNavigation(`/addplans/${member.memno}`)}>Add Plan</button>
                 </td>
               </tr>
             ))}
@@ -313,23 +313,31 @@ const Members = () => {
             onChange={handleUpdateChange}
           />
 
+         <div className="input-group">  
+          <div>        
           <label>Date of Joining:</label>
           <input
             type="date"
             name="doj"
-            className="input-field"
+            className="input-field3"
             value={updatedDetails.doj}
             onChange={handleUpdateChange}
           />
+          </div>
 
+          
+           <div>
           <label>Date of End:</label>
           <input
             type="date"
             name="doe"
-            className="input-field"
+            className="input-field3"
             value={updatedDetails.doe}
             onChange={handleUpdateChange}
           />
+          </div>
+          </div>
+
 
           {error && <p className="error-message">{error}</p>}
 
