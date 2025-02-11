@@ -49,7 +49,6 @@ const ViewPayments = () => {
         <table className="payments-table">
           <thead>
             <tr>
-              <th>Name</th>
               <th>Plan</th>
               <th>Price</th>
               <th>Join Date</th>
@@ -59,15 +58,12 @@ const ViewPayments = () => {
           <tbody>
             {payments.map((payment, index) => {
               const allitems = [...(payment.packages || []), ...(payment.renewals || [])]
-              const totalRows = allitems ? allitems.length + 1 : 1; // Total rows to display for this payment
 
               return (
                 <React.Fragment key={index}>
                   {/* Render main payment info with rowSpan */}
                     { allitems && allitems.map((item, idx) => (
                     <tr key={`${index}-${idx}`}>
-                    {idx === 0 && 
-                    <td rowSpan={totalRows}>{payment.fullname}</td>}
                     <td>{item.plan}</td>
                     <td>{item.price}</td>
                     <td>{item.doj || item.dos}</td>
