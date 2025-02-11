@@ -27,6 +27,7 @@ import EmployeeDetails from './components/Employee/EmployeeDetails/EmployeeDetai
 import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import ConfirmEmail from './components/Auth/ConfirmEmail/ConfirmEmail.jsx';
+import AddMorePlans from './components/Admin/Member/AddMorePlans/AddMorePlans.jsx';
 
 
 
@@ -87,7 +88,7 @@ function App() {
           <Route path="/memberattendance" element={<ProtectedRoute element={<MAttendance />} requiredRole="Member" />} />
           <Route path="/employeeattendance" element={<ProtectedRoute element={<EAttendance />} requiredRole="Employee"/>}/>
           <Route path="/attendance" element={<ProtectedRoute element={<Attendance />} requiredRole="Admin" />} />
-
+          <Route path="/addplans/:memno" element={<ProtectedRoute element={<AddMorePlans />} requiredRole="Admin" />} />
         </Routes>
       </BrowserRouter>
     </div>
