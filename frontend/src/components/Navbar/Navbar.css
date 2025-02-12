@@ -97,10 +97,10 @@
         justify-content: space-evenly;
         flex-direction: column;
         position: absolute;
-        height: 10vh;
+        height: 15vh;
         width: 300px;
         background-color: rgba(242, 203, 136, 0.931);
-        top: 540px;
+        top: 480px;
         left: 30px;
         right: 0;
         display: block;
@@ -111,4 +111,5 @@
     .nav-links.active {
         top: 80px;
     }
+
 }
