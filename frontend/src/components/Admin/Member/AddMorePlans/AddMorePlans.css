@@ -53,6 +53,7 @@
   
   .input-group {
     display: flex;
+    margin-left: 15px;
     gap: 10px;
     justify-content: center;
     align-items: flex-start; /* Align input and label to the top */
