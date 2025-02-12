@@ -161,7 +161,7 @@ const AddEmployees = () => {
           type="number"
           name="emno"
           placeholder="Employee ID"
-          className="input-field"
+          className="input-field3"
           value={addEmployee.emno}
           onChange={onInputChange}
         />
@@ -173,7 +173,7 @@ const AddEmployees = () => {
           type="date"
           name="doj"
           placeholder="Date of Joining"
-          className="input-field"
+          className="input-field3"
           value={addEmployee.doj}
           onChange={onInputChange}
         />
