@@ -239,31 +239,34 @@ const AddMembers = () => {
         <br /><br />
 
 
+        <div className="input-group">
+        <div>
         <label>Member ID</label>
         <input
           type="number"
           name="memno"
           placeholder="Member ID"
-          className="input-field"
+          className="input-field3"
           value={addMember.memno}
           onChange={onInputChange}
         />
         {warnings.memno && <p className="warning-message">{warnings.memno}</p>}
-        <br />        <br />
+        </div>
 
-
-
+        <div>
         <label>Phone Number</label>
         <input
           type="number"
           name="memphno"
           placeholder="Phone Number"
-          className="input-field"
+          className="input-field3"
           value={addMember.memphno}
           onChange={onInputChange}
         />
         {warnings.memphno && <p className="warning-message">{warnings.memphno}</p>}
-        <br />        <br />
+        </div>
+        </div>
+        <br />       
 
 
         <label>Email</label>
