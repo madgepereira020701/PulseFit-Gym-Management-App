@@ -3,8 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const connectDB = require('./Users/db'); // Database connection
-const SentEmail = require('./models/renewal_email'); // Schema for renewal emails
-const SentEmail1 = require('./models/members'); // Schema for members
+const Renewals = require('./models/renewals'); // Schema for renewal emails
+const Members = require('./models/members'); // Schema for members
 const Event = require('./models/addevent'); // Corrected model import
 const Settings = require('./models/settings');
 const Employee = require('./models/employees');
@@ -182,7 +182,7 @@ app.post('/members', protect, async (req, res) => {
 
   // Save the new member details
   
-      const newMember = new SentEmail1({
+      const newMember = new Members({
           memno,
           email,
           fullname,
@@ -210,7 +210,7 @@ app.post('/members', protect, async (req, res) => {
 
 app.get('/members', protect,async (req, res) => {
   try {
-    const members = await SentEmail1.find({ userId: req.user });
+    const members = await Members.find({ userId: req.user });
     res.status(200).json({ status: 'SUCCESS', data: members });
   } catch (error) {
     console.error('Error fetching members:', error);
@@ -234,7 +234,7 @@ app.post('/addplans/:memno', protect, async (req, res) => {
           return res.status(400).json({ message: 'Packages are required and must be a non-empty array' });
       }
 
-      const updatedMember = await SentEmail1.findOne({ memno: memno }); 
+      const updatedMember = await Members.findOne({ memno: memno }); 
 
       if (!updatedMember) {
           return res.status(404).json({ message: 'Member not found!' });
@@ -276,7 +276,7 @@ app.post('/addplans/:memno', protect, async (req, res) => {
       }
 
 
-      const result = await SentEmail1.findOneAndUpdate(
+      const result = await Members.findOneAndUpdate(
           { memno: memno },
           { $push: { packages: { $each: savedPackages } } },
           { new: true, runValidators: true }
@@ -298,14 +298,26 @@ app.get('/payments/:memno', protect,async (req, res) => {
 
   try {
     // Find the member based on memno in the "members" collection
-    const member = await SentEmail1.findOne({ memno });
+    const member = await Members.findOne({ memno });
 
     if (!member) {
       return res.status(404).json({ status: 'ERROR', message: 'Member not found' });
     }
 
     // Find renewal details from the "renewal_email" collection
-    const renewals = await SentEmail.find({ memno });
+    const renewalDocuments = await Renewals.find({ memno });
+
+    const renewals = [];
+
+    for(const renewalDoc of renewalDocuments) {
+      if(renewalDoc.packages && Array.isArray(renewalDoc.packages))
+      {
+        for(pkg of renewalDoc.packages) {
+          renewals.push({ plan: pkg.plan, price: pkg.price, dos: pkg.dos, doe: pkg.doe, })
+        }
+      }
+    }
+
 
     // Construct the response JSON
     const paymentData = {
@@ -313,18 +325,14 @@ app.get('/payments/:memno', protect,async (req, res) => {
       email: member.email,
       fullname: member.fullname,
       memphno: member.memphno,
-      packages:member.packages.map(package => ({
+      packages: member.packages && Array.isArray(member.packages) ? member.packages.map(package => ({
         plan: package.plan,
         price: package.price,
         doj: package.doj,
         doe: package.doe,
-      })),
-      renewals: renewals.map(renewal => ({
-        plan: renewal.plan,
-        price: renewal.price,
-        dos: renewal.dos,
-        doe: renewal.doe,
-      })),
+      })) : [], // Handle cases where member.packages is undefined or not an array
+      renewals: renewals,
+  // Handle cases where renewals is undefined or not an array
       userId: req.user
     };
 
@@ -352,7 +360,7 @@ app.patch('/members/:email',protect, async (req, res) => {
 
   try {
     // Find and update the member by email
-    const updatedMember = await SentEmail1.findOneAndUpdate(
+    const updatedMember = await Members.findOneAndUpdate(
       { email },
       { memno, memphno, doj, doe },
       { new: true }  // This ensures the updated member data is returned
@@ -407,16 +415,55 @@ app.patch('/members/:email',protect, async (req, res) => {
 
 //RENEWALS
 // Endpoint to Add Renewals and Send Email
-app.post('/send-email', protect,async (req, res) => {
-  const { memno, email, fullname, dos, doe, plan, price } = req.body;
+app.post('/renewals', protect,async (req, res) => {
+  const { memno, email, fullname, packages } = req.body;
+  const userId = req.user;
 
-  if (!memno || !email || !fullname || !dos || !doe || !plan || ! price) {
-    return res.status(400).json({ status: 'ERROR', message: 'Missing required fields' });
+
+  const token = req.headers['authorization']?.split(' ')[1];
+  if(!token) {
+    return res.status(400).json({status: 'ERROR', message: 'Token not provided' });
   }
 
   //const totalPrice = dateGroups.reduce((total, group) => total + parseFloat(group.price), 0).toFixed(2);
 
-  const emailContent = `
+  try {
+    const response = await axios.get('http://localhost:3000/addplans', { 
+       headers: { Authorization: `Bearer ${token}` }
+    });
+    const availablePlans = response.data.filter(plan => plan.userId === userId);
+    const savedPackages = [];
+
+    for(const packageItem of packages) {
+      const { plan, price, dos, doe } = packageItem;
+
+      const selectedPlan = availablePlans.find(
+        (p) => p.planname && plan && p.planname.trim().toLowerCase() === plan.trim().toLowerCase()
+      );
+      if(!selectedPlan) {
+        console.log('No matching plan found.');
+        return res.status(400).json({ status: 'ERROR', message: 'Invalid plan selected for this user '});
+      }
+      let calculatedDoe;
+      try {
+        const startDate = moment(dos, 'YYYY-MM-DD');
+        calculatedDoe = startDate.add(selectedPlan.validity, 'months').format('YYYY-MM-DD');
+      } catch (error) {
+        console.error('Error calculating end date', error);
+        return res.status(500).json({ status: 'ERROR', message: 'Error calculating end date' });
+      }
+      const newPackage = {
+        plan: selectedPlan.planname,
+        price: parseFloat(price),
+        dos: dos,
+        doe: calculatedDoe
+      }
+      savedPackages.push(newPackage);
+
+
+    }
+
+  let emailContent = `
     <h3>Hello ${fullname},</h3>
     <p>Member Number: ${memno}</p>
     <p>Your subscription details are as follows:</p>
@@ -429,15 +476,18 @@ app.post('/send-email', protect,async (req, res) => {
           <th>Price</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody>`;
+
+      savedPackages.forEach(pkg => {
+        emailContent +=`
           <tr>
-            <td>${plan}</td>
-            <td>${dos}</td>
-            <td>${doe}</td>
-            <td>${price}</td>
-          </tr>
-        <tr>
-        </tr>
+            <td>${pkg.plan}</td>
+            <td>${pkg.dos}</td>
+            <td>${pkg.doe}</td>
+            <td>${pkg.price}</td>
+          </tr>`;
+          });
+          emailContent += `
       </tbody>
     </table>
   `;
@@ -448,18 +498,13 @@ app.post('/send-email', protect,async (req, res) => {
     return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
   }
 
-  try {
-    const newRenewal = new SentEmail({
-      memno,
-      email,
-      fullname,
-     plan,
-        price,
-       dos,
-      doe,
-      userId: req.user,
-      //totalPrice,
-    });
+    const newRenewal = await Renewals.findOneAndUpdate(
+      { memno: memno },
+      { $push: { packages: { $each: savedPackages } } },
+      { new: true, runValidators: true }
+    );
+
+ 
 
     await newRenewal.save();
 
@@ -478,7 +523,7 @@ app.post('/send-email', protect,async (req, res) => {
 // Endpoint to Fetch Renewals
 app.get('/renewals', protect, async (req, res) => {
   try {
-    const renewals = await SentEmail.find({userId: req.user});
+    const renewals = await Renewals.find({userId: req.user});
     res.status(200).json({ status: 'SUCCESS', data: renewals });
   } catch (error) {
     console.error('Error fetching renewals:', error);
@@ -494,7 +539,7 @@ cron.schedule('* * * * *', async () => {
     const sevenDaysAhead = moment(today).add(7, 'days').startOf('day').format('YYYY-MM-DD'); // 7 days from today, start of the day
 
     // Fetch renewals where the subscription end date (doe) is exactly 7 days from today
-    const renewalsStartingSoon = await SentEmail.find({
+    const renewalsStartingSoon = await Renewals.find({
       doe: sevenDaysAhead
     });
 
@@ -504,7 +549,7 @@ cron.schedule('* * * * *', async () => {
     // Loop through each renewal
     for (const renewal of renewalsStartingSoon) {
       // Find the corresponding member added by the logged-in user
-      const member = await SentEmail1.findOne({
+      const member = await Members.findOne({
         memno: renewal.memno,
         userId: renewal.userId // Ensure it matches the logged-in user
       }).select('fullname email');
@@ -796,7 +841,7 @@ cron.schedule('* * * * *', async () => {
 
         // Send reminders to members if member_h_r = 1
         if (userSettings.member_h_r === 1) {
-          const members = await SentEmail1.find({ userId });
+          const members = await Members.find({ userId });
           for (const member of members) {
             await sendReminderEmail(member.email, event.eventName);
             console.log(`Reminder sent to member: ${member.email}`);
@@ -834,13 +879,13 @@ app.get('/conditional', protect, async (req, res) => {
       let employees = [];
 
       if (member_h_r === 1 && employee_h_r === 0) {
-          members = await SentEmail1.find({ userId: req.user });
+          members = await Members.find({ userId: req.user });
           res.status(200).json({ members });
       } else if (member_h_r === 0 && employee_h_r === 1) {
           employees = await Employee.find({ userId: req.user });
           res.status(200).json({ employees });
       } else if (member_h_r === 1 && employee_h_r === 1) {
-          members = await SentEmail1.find({ userId: req.user });
+          members = await Members.find({ userId: req.user });
           employees = await Employee.find({ userId: req.user });
           res.status(200).json({ members, employees });
       } else {
@@ -890,7 +935,7 @@ app.get('/eventsformembers',protect1, async (req, res) => {
       const memberEmail = req.user.email;
 
       // Find the employee in the database
-      const member = await SentEmail1.findOne({ email: memberEmail });
+      const member = await Members.findOne({ email: memberEmail });
       if (!member) {
           return res.status(404).json({ message: "Employee not found" });
       }
@@ -917,7 +962,7 @@ app.get('/eventsformembers',protect1, async (req, res) => {
 app.get('/details', protect1, async (req, res) => {
   try {
     // Query the Members collection using the email from the decoded token
-    const members = await SentEmail1.find({ email: req.user.email });
+    const members = await Members.find({ email: req.user.email });
 
     // If no members found for the email, return a not found message
     if (!members || members.length === 0) {
@@ -953,14 +998,14 @@ app.get('/details2', protect2, async (req, res) => {
 app.get('/payments', protect1, async (req, res) => {
   try {
     // Find the member based on the email in the "members" collection
-    const member = await SentEmail1.findOne({ email: req.user.email });
+    const member = await Members.findOne({ email: req.user.email });
 
     if (!member) {
       return res.status(404).json({ status: 'ERROR', message: 'Member not found' });
     }
 
     // Find renewal details from the "renewal_email" collection
-    const renewals = await SentEmail.find({ email: req.user.email });
+    const renewals = await Members.find({ email: req.user.email });
 
     // Construct the response JSON
     const paymentData = {
@@ -1004,7 +1049,7 @@ app.post('/attendance', protect1, async (req, res) => {
 
   // Check for missing email, member or employee, etc. (existing checks)
   
-  const member = await SentEmail1.findOne({ email: userEmail });
+  const member = await Members.findOne({ email: userEmail });
   const employee = await Employee.findOne({ email: userEmail });
 
   // Existing code...
@@ -1099,7 +1144,7 @@ app.get('/attendance', protect, async (req, res) => {
 
         // Fetch fullname from Members collection using memno
         if (record.user_type === 'member') {
-          const member = await SentEmail1.findOne({ memno: record.user_id }, 'fullname');
+          const member = await Members.findOne({ memno: record.user_id }, 'fullname');
           if (member) {
             fullname = member.fullname;
           }
@@ -1130,7 +1175,7 @@ app.get('/attendance', protect, async (req, res) => {
 app.get('/memberattendance', protect1, async (req, res) => {
   try {
     // Step 1: Retrieve member details using their memno from the authenticated user
-    const member = await SentEmail1.findOne({ memno: req.user.memno });
+    const member = await Members.findOne({ memno: req.user.memno });
 
     // Step 2: If the member is not found, return an error
     if (!member) {
