@@ -507,7 +507,7 @@ app.post('/renewals', protect,async (req, res) => {
   }
     const newRenewal = await Renewals.findOneAndUpdate(
       { memno: memno },
-      updateObject,
+      updatedObject,
       { new: true, upsert: true, runValidators: true }
     );
 
