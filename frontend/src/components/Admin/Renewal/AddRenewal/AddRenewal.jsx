@@ -5,17 +5,15 @@ const AddRenewal = () => {
   const [errors, setErrors] = useState({});
   const [members, setMembers] = useState([]); 
   const [plans, setPlans] = useState([]); 
+  const [packages, setPackages] = useState([{ plan:'', price:'', dos:'', doe:''}])
   const [status, setStatus] = useState("Submit");
   const [formData, setFormData] = useState({
     memno: "",
     fullname: "",
     email: "",
-    dos: "",
-    doe: "",
-    price: "",
-    plan: "",
   });
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,19 +56,17 @@ const AddRenewal = () => {
     fetchData();
   }, []);
 
-  const validateFields = (values) => {
-    if (
-      !values.fullname ||
-      !values.memno ||
-      !values.email ||
-      !values.dos ||
-      !values.doe ||
-      !values.price ||
-      !values.plan
-    ) {
+  const validateFields = () => {
+    if (!formData.fullname || !formData.memno || !formData.email) 
+    {
       return "Please fill in all required fields.";
     }
-    return "";
+
+    for (const pkg of packages){
+      if(!pkg.plan || !pkg.price || !pkg.dos || !pkg.doe) {
+        return "Please fill in all required fields.";
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -78,9 +74,8 @@ const AddRenewal = () => {
     setStatus("Sending...");
 
     // Validate form data
-    const errorMessage = validateFields(formData);
+    const errorMessage = validateFields();
     if (errorMessage) {
-      setErrors({ message: errorMessage });
       setStatus("Submit");
       return;
     }
@@ -88,19 +83,21 @@ const AddRenewal = () => {
     setErrors({}); // Clear errors if all fields are valid
 
     const token = localStorage.getItem('token');
+    
     if (!token) {
       console.log('No token found');
       return;
     }
    
     try {
-      const response = await fetch("http://localhost:3000/send-email", {
+      const datatosend = {...formData, packages}
+      const response = await fetch("http://localhost:3000/renewals", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json", // Make sure we send JSON content
         },
-        body: JSON.stringify(formData), // Send form data as the request body
+        body: JSON.stringify(datatosend), // Send form data as the request body
       });
 
       const result = await response.json();
@@ -116,6 +113,7 @@ const AddRenewal = () => {
   const onInputChange = (e) => {
     const { name, value } = e.target;
 
+
     if (name === "fullname") {
       const selectedMember = members.find((member) => member.fullname === value);
       if (selectedMember) {
@@ -126,62 +124,75 @@ const AddRenewal = () => {
           fullname: value,
         }));
       }
-    } else if (name === "plan") {
-      const selectedPlan = plans.find((plan) => plan.planname === value);
-      if (selectedPlan) {
-        setFormData((prevData) => {
-          const validityMonths = selectedPlan.validity;
-          let newDoe = prevData.doe;
-          if (prevData.dos) {
-            const startDate = new Date(prevData.dos);
-            startDate.setMonth(startDate.getMonth() + validityMonths);
-            newDoe = startDate.toISOString().split("T")[0];
+    } 
+  }
+
+    const handlePackageChange = (index, field, value) => {
+      setPackages((prevPackages) => {
+        const updatedPackages = [...prevPackages];
+        updatedPackages[index][field] = value;
+
+        if (field === 'plan') {
+            const selectedPlan = plans.find((plan) => plan.planname === value);
+            if (selectedPlan) {
+              const validityInMonths = selectedPlan.validity;
+              updatedPackages[index].price = selectedPlan.amount.toString();
+              updatedPackages[index].plan = selectedPlan.planname;
+
+
+              if(updatedPackages[index].dos) {
+                const startDate = new Date(updatedPackages[index].dos);
+                const endDate = new Date(startDate);
+                endDate.setMonth(startDate.getMonth() + validityInMonths);
+                updatedPackages[index].doe = endDate.toISOString().split('T')[0];
+              }
+            }
+              else {
+                updatedPackages[index].price = '';
+                updatedPackages[index].doe = '';
+              }
           }
 
-          return {
-            ...prevData,
-            price: selectedPlan.amount.toString(),
-            plan: value,
-            doe: newDoe, // Update doe if applicable
-          };
-        });
-      }
-    } else if (name === "dos") {
-      setFormData((prevData) => {
-        if (prevData.plan) {
-          const selectedPlan = plans.find((plan) => plan.planname === prevData.plan);
+        if(field === 'dos') {
+          const selectedPlan = plans.find((plan) => plan.planname === updatedPackages[index].plan);
+          if (selectedPlan) {
+          const validityInMonths = selectedPlan.validity;
           const startDate = new Date(value);
-          const validityMonths = selectedPlan?.validity || 0;
-          startDate.setMonth(startDate.getMonth() + validityMonths);
-          const endDate = startDate.toISOString().split("T")[0];
-
-          return {
-            ...prevData,
-            dos: value,
-            doe: endDate, // Ensure doe is updated based on the new start date
-          };
+          const endDate = new Date(startDate);
+          endDate.setMonth(startDate.getMonth() + validityInMonths);
+          updatedPackages[index].doe = endDate.toISOString().split('T')[0];
         } else {
-          return { ...prevData, dos: value };
+          updatedPackages[index].doe = '';
         }
+      }
+
+      return updatedPackages;
+
       });
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+
     }
-  };
+  
+    const addPackage = () => {
+      setPackages([...packages, { plan:'', price:'', dos:'', doe:''}]);
+    };
+
+    const removePackage = (index) => {
+      const updatedPackages = packages.filter((_,i) => i!== index);
+      setPackages(updatedPackages);
+    }
+          
+ 
 
   const handleCancel = () => {
     setFormData({
       memno: "",
       fullname: "",
       email: "",
-      dos: "",
-      doe: "",
-      price: "",
-      plan: "",
     });
+  setPackages([{dos: "",
+    doe: "",
+    price: "",
+    plan: "",}]);
     setErrors({});
   };
 
@@ -189,8 +200,11 @@ const AddRenewal = () => {
     return <p>Loading members and plans...</p>;
   }
 
+
+  
   return (
     <div className="auth-container">
+
       <div className="form-container">
         <h2>Add Renewal</h2>
         <form onSubmit={handleSubmit}>
@@ -238,12 +252,17 @@ const AddRenewal = () => {
           />
           <br /><br />
 
+          {packages.map((pkg, index) => (
+          <div key={index}>
+          <div className="input-group">
+          <div>
           <label>Plan</label>
           <select
             name="plan"
-            className="input-field"
-            value={formData.plan}
-            onChange={onInputChange}
+            className="input-field3"
+            value={pkg.plan}
+            onChange={(e) => handlePackageChange(index,'plan', e.target.value) }
+
           >
             <option value="">Select a Plan</option>
             {plans.map((plan, i) => (
@@ -252,17 +271,21 @@ const AddRenewal = () => {
               </option>
             ))}
           </select>
-          <br /><br />
+          </div>
 
+          <div>
           <label>Price</label>
           <input
             type="number"
             name="price"
             placeholder="Price"
-            className="input-field"
-            value={formData.price}
+            className="input-field3"
+            value={pkg.price}
+            onChange={(e) => handlePackageChange(index,'price',e.target.value)}
           />
+          </div>
           <br /><br />
+          </div>
 
 
           <div className="input-group">
@@ -272,8 +295,8 @@ const AddRenewal = () => {
                 type="date"
                 name="dos"
                 className="input-field3"
-                value={formData.dos}
-                onChange={onInputChange}
+                value={pkg.dos}
+                onChange={(e) => handlePackageChange(index, 'dos', e.target.value)}
               />
             </div>
             <div>
@@ -282,11 +305,18 @@ const AddRenewal = () => {
                 type="date"
                 name="doe"
                 className="input-field3"
-                value={formData.doe}
+                value={pkg.doe}
                 readOnly
               />
             </div>
           </div>
+          {index > 0 && (
+                <button type="button" className="cancel" onClick={() => removePackage(index)}>
+                  -</button>)}
+          </div>
+          ))}
+                  <button type="button" className="add" onClick={addPackage}>Add</button>
+
           <br />
 
 
