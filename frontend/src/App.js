@@ -28,7 +28,7 @@ import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import ConfirmEmail from './components/Auth/ConfirmEmail/ConfirmEmail.jsx';
 import AddMorePlans from './components/Admin/Member/AddMorePlans/AddMorePlans.jsx';
-import Payments from './components/Admin/Renewal/Payments/Payments.jsx';
+import Payments from './components/Admin/Member/Payments/Payments.jsx';
 
 
 
