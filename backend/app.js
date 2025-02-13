@@ -498,10 +498,17 @@ app.post('/renewals', protect,async (req, res) => {
     return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
   }
 
+  const updatedObject = {
+    memno,
+    email,
+    fullname,
+    userId,
+    packages: savedPackages
+  }
     const newRenewal = await Renewals.findOneAndUpdate(
       { memno: memno },
-      { $push: { packages: { $each: savedPackages } } },
-      { new: true, runValidators: true }
+      updateObject,
+      { new: true, upsert: true, runValidators: true }
     );
 
  
