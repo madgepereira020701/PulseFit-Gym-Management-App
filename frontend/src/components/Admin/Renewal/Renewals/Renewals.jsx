@@ -42,7 +42,7 @@ const fetchPayments = async () => {
 }, [memno]);
 
 const handleNavigation = () => {
-  navigate('/addrenewals');
+  navigate(`/addrenewals/${memno}`);
 };
 
 return(
@@ -53,8 +53,7 @@ return(
       <table className='payments-table'>
         <thead>
           <tr>
-            <th>Plan</th>
-            <th>Price</th>
+              <th>Plan</th>
               <th>Join Date</th>
               <th>End Date</th>
               <th>Actions</th>
@@ -78,7 +77,6 @@ return(
                 {uniqueItems && uniqueItems.map((item,idx) => (
                   <tr key={`${index}-${idx}`}>
                     <td>{item.plan}</td>
-                    <td>{item.price}</td>
                     <td>{item.doj || item.dos}</td>
                     <td>{item.doe}</td>
                     <td className='actions'>
