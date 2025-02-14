@@ -313,7 +313,7 @@ app.get('/payments/:memno', protect,async (req, res) => {
       if(renewalDoc.packages && Array.isArray(renewalDoc.packages))
       {
         for(pkg of renewalDoc.packages) {
-          renewals.push({ plan: pkg.plan, price: pkg.price, dos: pkg.dos, doe: pkg.doe, })
+          renewals.push({ plan: pkg.plan, price: pkg.price, dos: pkg.dos, doe: pkg.doe,paymentdate: pkg.paymentdate })
         }
       }
     }
@@ -433,6 +433,7 @@ app.post('/renewals', protect,async (req, res) => {
     });
     const availablePlans = response.data.filter(plan => plan.userId === userId);
     const savedPackages = [];
+    let paymentdate = moment().format('YYYY-MM-DD');
 
     for(const packageItem of packages) {
       const { plan, price, dos, doe } = packageItem;
@@ -456,7 +457,8 @@ app.post('/renewals', protect,async (req, res) => {
         plan: selectedPlan.planname,
         price: parseFloat(price),
         dos: dos,
-        doe: calculatedDoe
+        doe: calculatedDoe,
+        paymentdate: paymentdate
       }
       savedPackages.push(newPackage);
 
@@ -503,7 +505,7 @@ app.post('/renewals', protect,async (req, res) => {
     email,
     fullname,
     userId,
-    packages: savedPackages
+    packages: savedPackages,
   }
     const newRenewal = await Renewals.findOneAndUpdate(
       { memno: memno },
@@ -547,8 +549,10 @@ cron.schedule('* * * * *', async () => {
 
     // Fetch renewals where the subscription end date (doe) is exactly 7 days from today
     const renewalsStartingSoon = await Renewals.find({
-      doe: sevenDaysAhead
+      "packages.doe": sevenDaysAhead
     });
+
+    
 
     console.log(sevenDaysAhead);
     console.log("Renewals starting soon:", renewalsStartingSoon);
@@ -1025,12 +1029,14 @@ app.get('/payments', protect1, async (req, res) => {
         price: package.price,
         doj: package.doj,
         doe: package.doe,
+        doe: package.doe,
       })),
       renewals: renewals.map(renewal => ({
         plan: renewal.plan,
         price: renewal.price,
         dos: renewal.dos,
         doe: renewal.doe,
+        paymentdate: renewal.paymentdate
       })),
     };
 
