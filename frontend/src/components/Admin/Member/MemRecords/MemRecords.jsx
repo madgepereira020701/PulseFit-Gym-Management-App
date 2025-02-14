@@ -53,6 +53,7 @@ const ViewPayments = () => {
               <th>Price</th>
               <th>Join Date</th>
               <th>End Date</th>
+              <th>Payment Date</th>
             </tr>
           </thead>
           <tbody>
@@ -68,6 +69,7 @@ const ViewPayments = () => {
                     <td>{item.price}</td>
                     <td>{item.doj || item.dos}</td>
                     <td>{item.doe}</td>
+                    <td>{item.paymentdate}</td>
                     </tr>
                     ))}
                  
