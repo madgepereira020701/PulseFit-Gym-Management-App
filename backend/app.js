@@ -316,13 +316,13 @@ app.get('/payments/:memno', protect,async (req, res) => {
       email: member.email,
       fullname: member.fullname,
       memphno: member.memphno,
-      packages: member.packages && Array.isArray(member.packages) ? member.packages.map(package => ({
+      packages:member.packages.map(package => ({
         plan: package.plan,
         price: package.price,
         doj: package.doj,
         doe: package.doe,
         paymentdate: package.paymentdate
-      })) : [], // Handle cases where member.packages is undefined or not an array
+      })) , // Handle cases where member.packages is undefined or not an array
   // Handle cases where renewals is undefined or not an array
       userId: req.user
     };
@@ -422,12 +422,12 @@ app.post('/renewals/:memno', protect,async (req, res) => {
     const memno = req.params.memno;
     console.log("req.body:", req.body); // <-- Crucial debugging step
 
-    const { packages } = req.body;
+    const newPackages = req.body.packages;
     const userId = req.user;
 
 
 
-    if (!packages || !Array.isArray(packages) || packages.length === 0) {
+    if (!newPackages || !Array.isArray(newPackages) || newPackages.length === 0) {
       return res.status(400).json({ message: 'Packages are required and must be a non-empty array' });
   }
 
@@ -445,7 +445,7 @@ app.post('/renewals/:memno', protect,async (req, res) => {
     const savedPackages = [];
     let paymentdate = moment().format('YYYY-MM-DD');
 
-    for(const packageItem of packages) {
+    for(const packageItem of newPackages) {
       const { plan, price, doj } = packageItem;
 
       const selectedPlan = availablePlans.find(
@@ -473,55 +473,54 @@ app.post('/renewals/:memno', protect,async (req, res) => {
       savedPackages.push(newPackage);
 
 
-    }
+
 
   let emailContent = `
-    <h3>Hello ${member.fullname},</h3>
-    <p>Member Number: ${member.memno}</p>
-    <p>Your subscription details are as follows:</p>
-    <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
-      <thead>
+  <h3>Hello ${member.fullname},</h3>
+  <p>Member Number: ${member.memno}</p>
+  <p>Your subscription details are as follows:</p>
+  <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
+    <thead>
+      <tr>
+        <th>Plan</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+    savedPackages.forEach(pkg => {
+      emailContent +=`
         <tr>
-          <th>Plan</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>`;
+          <td>${pkg.plan}</td>
+          <td>${pkg.doj}</td>
+          <td>${pkg.doe}</td>
+          <td>${pkg.price}</td>
+        </tr>`;
+        });
+        emailContent += `
+    </tbody>
+  </table>
+`;
 
-      savedPackages.forEach(pkg => {
-        emailContent +=`
-          <tr>
-            <td>${pkg.plan}</td>
-            <td>${pkg.doj}</td>
-            <td>${pkg.doe}</td>
-            <td>${pkg.price}</td>
-          </tr>`;
-          });
-          emailContent += `
-      </tbody>
-    </table>
-  `;
+const emailSent = await sendEmail(member.email, 'Plan Subscription Details', emailContent);
 
-  const emailSent = await sendEmail(member.email, 'Plan Subscription Details', emailContent);
+if (!emailSent) {
+  return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
+}
 
-  if (!emailSent) {
-    return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
-  }
+}
 
-  const updatedObject = {
-    packages: savedPackages,
-  }
+
     const newRenewal = await Members.findOneAndUpdate(
       { memno: memno },
-      updatedObject,
+      { $push: { packages: {$each: savedPackages}}},
       { new: true, upsert: true, runValidators: true }
     );
 
  
 
-    await newRenewal.save();
 
     res.status(200).json({
       status: 'SUCCESS',
