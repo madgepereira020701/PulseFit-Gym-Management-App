@@ -9,8 +9,10 @@ const renewalSchema = new mongoose.Schema({
     plan: { type: String, required: true }, // plan as a required field
     price: { type: Number, required: true }, // price as a required field
     dos: { type: String, required: true }, // dos (date of start) as Date type
-    doe: { type: String, required: true },  // doe (date of end) as Date type
+    doe: { type: String, required: true }, 
+    paymentdate:{ type: String, required: true }, // dos (date of start) as Date type
   }],
+
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User
 
   //totalPrice: { type: String, required: true }, // totalPrice as a required field (calculated later)
