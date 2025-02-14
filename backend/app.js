@@ -3,7 +3,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const connectDB = require('./Users/db'); // Database connection
-const Renewals = require('./models/renewals'); // Schema for renewal emails
 const Members = require('./models/members'); // Schema for members
 const Event = require('./models/addevent'); // Corrected model import
 const Settings = require('./models/settings');
@@ -104,6 +103,7 @@ app.post('/members', protect, async (req, res) => {
       });
       const availablePlans = response.data.filter(plan => plan.userId === userId);
       const savedPackages = [];
+      let paymentdate = moment().format('YYYY-MM-DD');
       
       for(const packageItem of packages){
         const { plan, price, doj,doe } = packageItem;
@@ -134,7 +134,8 @@ app.post('/members', protect, async (req, res) => {
     plan: selectedPlan.planname,
     price: parseFloat(price),
     doj: doj,
-    doe: calculatedDoe
+    doe: calculatedDoe,
+    paymentdate: paymentdate
   };
    savedPackages.push(newPackage);
   } 
@@ -246,6 +247,7 @@ app.post('/addplans/:memno', protect, async (req, res) => {
       const availablePlans = response.data.filter(plan => plan.userId === userId);
 
       const savedPackages = [];
+      let paymentdate = moment().format('YYYY-MM-DD');
 
       for (const packageItem of newPackages) {
           const { plan, price, doj } = packageItem; 
@@ -270,6 +272,7 @@ app.post('/addplans/:memno', protect, async (req, res) => {
               price: parseFloat(price),
               doj: doj,
               doe: calculatedDoe,
+              paymentdate: paymentdate
           };
 
           savedPackages.push(newPackage);
@@ -305,19 +308,7 @@ app.get('/payments/:memno', protect,async (req, res) => {
     }
 
     // Find renewal details from the "renewal_email" collection
-    const renewalDocuments = await Renewals.find({ memno });
-
-    const renewals = [];
-
-    for(const renewalDoc of renewalDocuments) {
-      if(renewalDoc.packages && Array.isArray(renewalDoc.packages))
-      {
-        for(pkg of renewalDoc.packages) {
-          renewals.push({ plan: pkg.plan, price: pkg.price, dos: pkg.dos, doe: pkg.doe,paymentdate: pkg.paymentdate })
-        }
-      }
-    }
-
+    
 
     // Construct the response JSON
     const paymentData = {
@@ -330,8 +321,8 @@ app.get('/payments/:memno', protect,async (req, res) => {
         price: package.price,
         doj: package.doj,
         doe: package.doe,
+        paymentdate: package.paymentdate
       })) : [], // Handle cases where member.packages is undefined or not an array
-      renewals: renewals,
   // Handle cases where renewals is undefined or not an array
       userId: req.user
     };
@@ -415,9 +406,7 @@ app.patch('/members/:email',protect, async (req, res) => {
 
 //RENEWALS
 // Endpoint to Add Renewals and Send Email
-app.post('/renewals', protect,async (req, res) => {
-  const { memno, email, fullname, packages } = req.body;
-  const userId = req.user;
+app.post('/renewals/:memno', protect,async (req, res) => {
 
 
   const token = req.headers['authorization']?.split(' ')[1];
@@ -427,7 +416,28 @@ app.post('/renewals', protect,async (req, res) => {
 
   //const totalPrice = dateGroups.reduce((total, group) => total + parseFloat(group.price), 0).toFixed(2);
 
+
+
   try {
+    const memno = req.params.memno;
+    console.log("req.body:", req.body); // <-- Crucial debugging step
+
+    const { packages } = req.body;
+    const userId = req.user;
+
+
+
+    if (!packages || !Array.isArray(packages) || packages.length === 0) {
+      return res.status(400).json({ message: 'Packages are required and must be a non-empty array' });
+  }
+
+  
+
+    const member  = await Members.findOne({memno: memno});
+    if (!member) {
+      return res.status(404).json({ message: "Member not found" });
+  }
+
     const response = await axios.get('http://localhost:3000/addplans', { 
        headers: { Authorization: `Bearer ${token}` }
     });
@@ -436,7 +446,7 @@ app.post('/renewals', protect,async (req, res) => {
     let paymentdate = moment().format('YYYY-MM-DD');
 
     for(const packageItem of packages) {
-      const { plan, price, dos, doe } = packageItem;
+      const { plan, price, doj } = packageItem;
 
       const selectedPlan = availablePlans.find(
         (p) => p.planname && plan && p.planname.trim().toLowerCase() === plan.trim().toLowerCase()
@@ -447,7 +457,7 @@ app.post('/renewals', protect,async (req, res) => {
       }
       let calculatedDoe;
       try {
-        const startDate = moment(dos, 'YYYY-MM-DD');
+        const startDate = moment(doj, 'YYYY-MM-DD');
         calculatedDoe = startDate.add(selectedPlan.validity, 'months').format('YYYY-MM-DD');
       } catch (error) {
         console.error('Error calculating end date', error);
@@ -456,7 +466,7 @@ app.post('/renewals', protect,async (req, res) => {
       const newPackage = {
         plan: selectedPlan.planname,
         price: parseFloat(price),
-        dos: dos,
+        doj: doj,
         doe: calculatedDoe,
         paymentdate: paymentdate
       }
@@ -466,8 +476,8 @@ app.post('/renewals', protect,async (req, res) => {
     }
 
   let emailContent = `
-    <h3>Hello ${fullname},</h3>
-    <p>Member Number: ${memno}</p>
+    <h3>Hello ${member.fullname},</h3>
+    <p>Member Number: ${member.memno}</p>
     <p>Your subscription details are as follows:</p>
     <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
       <thead>
@@ -484,7 +494,7 @@ app.post('/renewals', protect,async (req, res) => {
         emailContent +=`
           <tr>
             <td>${pkg.plan}</td>
-            <td>${pkg.dos}</td>
+            <td>${pkg.doj}</td>
             <td>${pkg.doe}</td>
             <td>${pkg.price}</td>
           </tr>`;
@@ -494,20 +504,16 @@ app.post('/renewals', protect,async (req, res) => {
     </table>
   `;
 
-  const emailSent = await sendEmail(email, 'Plan Subscription Details', emailContent);
+  const emailSent = await sendEmail(member.email, 'Plan Subscription Details', emailContent);
 
   if (!emailSent) {
     return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
   }
 
   const updatedObject = {
-    memno,
-    email,
-    fullname,
-    userId,
     packages: savedPackages,
   }
-    const newRenewal = await Renewals.findOneAndUpdate(
+    const newRenewal = await Members.findOneAndUpdate(
       { memno: memno },
       updatedObject,
       { new: true, upsert: true, runValidators: true }
@@ -532,7 +538,7 @@ app.post('/renewals', protect,async (req, res) => {
 // Endpoint to Fetch Renewals
 app.get('/renewals', protect, async (req, res) => {
   try {
-    const renewals = await Renewals.find({userId: req.user});
+    const renewals = await Members.find({userId: req.user});
     res.status(200).json({ status: 'SUCCESS', data: renewals });
   } catch (error) {
     console.error('Error fetching renewals:', error);
@@ -541,32 +547,28 @@ app.get('/renewals', protect, async (req, res) => {
 });
 
 const cron = require('node-cron');
-cron.schedule('* * * * *', async () => {
+
+cron.schedule('* * * * *', async () => { // Adjust cron schedule as needed
   try {
-    // Define the current date and calculate the date 7 days from today
-    const today = moment();
-    const sevenDaysAhead = moment(today).add(7, 'days').startOf('day').format('YYYY-MM-DD'); // 7 days from today, start of the day
+    const sevenDaysAhead = moment().add(7, 'days').startOf('day').format('YYYY-MM-DD');
 
-    // Fetch renewals where the subscription end date (doe) is exactly 7 days from today
-    const renewalsStartingSoon = await Renewals.find({
-      "packages.doe": sevenDaysAhead
-    });
 
-    
+    // 2. Find renewals where packages.doe is 7 days ahead
+    const renewalsExpiringSoon = await Members.find({ "packages.doe": sevenDaysAhead }).populate('userId');
 
+    // Combine and deduplicate based on memno
+   
     console.log(sevenDaysAhead);
-    console.log("Renewals starting soon:", renewalsStartingSoon);
+    console.log("Renewals starting soon:", renewalsExpiringSoon);
 
-    // Loop through each renewal
-    for (const renewal of renewalsStartingSoon) {
-      // Find the corresponding member added by the logged-in user
+    for (const renewal of renewalsExpiringSoon) {
       const member = await Members.findOne({
         memno: renewal.memno,
         userId: renewal.userId // Ensure it matches the logged-in user
       }).select('fullname email');
 
       if (member) {
-        const emailContent = `
+        let emailContent = `
           <h3>Hello ${member.fullname},</h3>
           <p>Your plan will expire within 7 days. Please subscribe if you want to continue your next plan.</p>
           <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
@@ -581,7 +583,7 @@ cron.schedule('* * * * *', async () => {
             <tbody>
               <tr>
                 <td>${renewal.plan}</td>
-                <td>${renewal.dos}</td>
+                <td>${renewal.doj}</td>  
                 <td>${renewal.doe}</td>
                 <td>${renewal.price}</td>
               </tr>
@@ -590,7 +592,6 @@ cron.schedule('* * * * *', async () => {
           <p>Get ready to enjoy our services starting soon!</p>
         `;
 
-        // Send the email to the member
         const emailSent = await sendEmail(member.email, 'Reminder: Your Subscription is Ending Soon', emailContent);
 
         if (emailSent) {
@@ -599,7 +600,7 @@ cron.schedule('* * * * *', async () => {
           console.error(`Failed to send reminder email to ${member.email}`);
         }
       } else {
-        console.log(`No member found for memno: ${renewal.memno} and userId: ${renewal.userId}`);
+        console.log(`No member found for memno: ${expiringItem.memno}`);
       }
     }
   } catch (error) {
@@ -1016,7 +1017,6 @@ app.get('/payments', protect1, async (req, res) => {
     }
 
     // Find renewal details from the "renewal_email" collection
-    const renewals = await Members.find({ email: req.user.email });
 
     // Construct the response JSON
     const paymentData = {
@@ -1029,14 +1029,7 @@ app.get('/payments', protect1, async (req, res) => {
         price: package.price,
         doj: package.doj,
         doe: package.doe,
-        doe: package.doe,
-      })),
-      renewals: renewals.map(renewal => ({
-        plan: renewal.plan,
-        price: renewal.price,
-        dos: renewal.dos,
-        doe: renewal.doe,
-        paymentdate: renewal.paymentdate
+        paymentdate: package.paymentdate
       })),
     };
 
