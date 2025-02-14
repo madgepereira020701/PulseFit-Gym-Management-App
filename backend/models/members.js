@@ -16,6 +16,7 @@ const memberSchema = new mongoose.Schema({
   doe: { type: String, required: true },
   plan: { type: String, required: true },
   price: { type: Number, required: true },
+  paymentdate:{ type: String, required: true }, // dos (date of start) as Date type
 }],
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User
   password: { type: String }, // Password field added to schema
