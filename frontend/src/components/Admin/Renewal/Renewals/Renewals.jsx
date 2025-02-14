@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './Renewals.css';
+import moment from 'moment';
 
 
 
@@ -45,6 +46,13 @@ const handleNavigation = () => {
   navigate(`/addrenewals/${memno}`);
 };
 
+const isExpiringSoon = (doe) => {
+  if(!doe) return false;
+  const expirationDate = moment(doe);
+  const sevenDaysAhead = moment().add(7, 'days').startOf('day');
+  return expirationDate.isSame(sevenDaysAhead, 'day');
+}
+
 return(
   <div className="table-container">
     <h2>Renewals</h2>
@@ -62,10 +70,10 @@ return(
         <tbody>
           {payments.map((payment, index) => {
             const latestPlans = {};
-            const allitems = [...(payment.packages || []), ...(payment.renewals || [])];
+            const allitems = [...(payment.packages || [])];
             
             allitems.forEach(item => {
-              if(!latestPlans[item.plan] || new Date(item.dos || item.doj) > new Date(latestPlans[item.plan].dos || latestPlans[item.plan].doj) )
+              if(!latestPlans[item.plan] || new Date(item.doj) > new Date(latestPlans[item.plan].doj) )
               {
                 latestPlans[item.plan] = item;
               }
@@ -75,9 +83,9 @@ return(
             return (
               <React.Fragment key={index}>
                 {uniqueItems && uniqueItems.map((item,idx) => (
-                  <tr key={`${index}-${idx}`}>
+                  <tr key={`${index}-${idx}`} className={isExpiringSoon(item.doe) ? 'expiring-soon' : ''}>
                     <td>{item.plan}</td>
-                    <td>{item.doj || item.dos}</td>
+                    <td>{item.doj}</td>
                     <td>{item.doe}</td>
                     <td className='actions'>
                       <button className='membutton' onClick={() => handleNavigation()}>Renew</button>

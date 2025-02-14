@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./AddRenewal.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AddRenewal = () => {
   const [errors, setErrors] = useState({});
@@ -9,6 +9,7 @@ const AddRenewal = () => {
   const [status, setStatus] = useState("Submit");
   const [loading, setLoading] = useState(true);
   const { memno } = useParams();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -89,6 +90,7 @@ const AddRenewal = () => {
 
       const result = await response.json();
       alert(result.status); // Show success message or handle error from backend
+      navigate(`/payments/${memno}`)
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred. Please try again.");

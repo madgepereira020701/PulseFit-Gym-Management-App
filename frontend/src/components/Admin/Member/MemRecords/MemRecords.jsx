@@ -58,7 +58,7 @@ const ViewPayments = () => {
           </thead>
           <tbody>
             {payments.map((payment, index) => {
-              const allitems = [...(payment.packages || []), ...(payment.renewals || [])]
+              const allitems = [...(payment.packages || [])]
 
               return (
                 <React.Fragment key={index}>
@@ -67,7 +67,7 @@ const ViewPayments = () => {
                     <tr key={`${index}-${idx}`}>
                     <td>{item.plan}</td>
                     <td>{item.price}</td>
-                    <td>{item.doj || item.dos}</td>
+                    <td>{item.doj}</td>
                     <td>{item.doe}</td>
                     <td>{item.paymentdate}</td>
                     </tr>
