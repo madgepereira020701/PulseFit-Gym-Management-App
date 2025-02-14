@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./AddRenewal.css";
+import { useParams } from "react-router-dom";
 
 const AddRenewal = () => {
   const [errors, setErrors] = useState({});
-  const [members, setMembers] = useState([]); 
   const [plans, setPlans] = useState([]); 
-  const [packages, setPackages] = useState([{ plan:'', price:'', dos:'', doe:''}])
+  const [packages, setPackages] = useState([{ plan:'', price:'', doj:'', doe:''}])
   const [status, setStatus] = useState("Submit");
-  const [formData, setFormData] = useState({
-    memno: "",
-    fullname: "",
-    email: "",
-  });
   const [loading, setLoading] = useState(true);
+  const { memno } = useParams();
 
 
   useEffect(() => {
@@ -26,19 +22,6 @@ const AddRenewal = () => {
       try {
         setLoading(true);
         console.log("Fetching members and plans...");
-
-        const membersResponse = await fetch("http://localhost:3000/members", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const membersData = await membersResponse.json();
-        console.log("Members Response:", membersData);
-
-        if (membersData.status === "SUCCESS") {
-          setMembers(membersData.data);
-        } else {
-          console.error("Failed to load members data");
-          alert("Failed to load members data");
-        }
 
         const plansResponse = await fetch("http://localhost:3000/addplans", {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,13 +40,9 @@ const AddRenewal = () => {
   }, []);
 
   const validateFields = () => {
-    if (!formData.fullname || !formData.memno || !formData.email) 
-    {
-      return "Please fill in all required fields.";
-    }
-
+ 
     for (const pkg of packages){
-      if(!pkg.plan || !pkg.price || !pkg.dos || !pkg.doe) {
+      if(!pkg.plan || !pkg.price || !pkg.doj || !pkg.doe) {
         return "Please fill in all required fields.";
       }
     }
@@ -88,16 +67,24 @@ const AddRenewal = () => {
       console.log('No token found');
       return;
     }
+
+    const formData = {
+      packages: packages.map((pkg) => ({
+          plan: pkg.plan,
+          price: parseFloat(pkg.price),
+          doj: pkg.doj,
+          doe: pkg.doe
+      }))
+  };
    
     try {
-      const datatosend = {...formData, packages}
-      const response = await fetch("http://localhost:3000/renewals", {
+      const response = await fetch(`http://localhost:3000/renewals/${memno}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json", // Make sure we send JSON content
         },
-        body: JSON.stringify(datatosend), // Send form data as the request body
+        body: JSON.stringify(formData), // Send form data as the request body
       });
 
       const result = await response.json();
@@ -109,23 +96,6 @@ const AddRenewal = () => {
 
     setStatus("Submit");
   };
-
-  const onInputChange = (e) => {
-    const { name, value } = e.target;
-
-
-    if (name === "fullname") {
-      const selectedMember = members.find((member) => member.fullname === value);
-      if (selectedMember) {
-        setFormData((prevData) => ({
-          ...prevData,
-          memno: selectedMember.memno,
-          email: selectedMember.email,
-          fullname: value,
-        }));
-      }
-    } 
-  }
 
     const handlePackageChange = (index, field, value) => {
       setPackages((prevPackages) => {
@@ -140,8 +110,8 @@ const AddRenewal = () => {
               updatedPackages[index].plan = selectedPlan.planname;
 
 
-              if(updatedPackages[index].dos) {
-                const startDate = new Date(updatedPackages[index].dos);
+              if(updatedPackages[index].doj) {
+                const startDate = new Date(updatedPackages[index].doj);
                 const endDate = new Date(startDate);
                 endDate.setMonth(startDate.getMonth() + validityInMonths);
                 updatedPackages[index].doe = endDate.toISOString().split('T')[0];
@@ -153,7 +123,7 @@ const AddRenewal = () => {
               }
           }
 
-        if(field === 'dos') {
+        if(field === 'doj') {
           const selectedPlan = plans.find((plan) => plan.planname === updatedPackages[index].plan);
           if (selectedPlan) {
           const validityInMonths = selectedPlan.validity;
@@ -173,7 +143,7 @@ const AddRenewal = () => {
     }
   
     const addPackage = () => {
-      setPackages([...packages, { plan:'', price:'', dos:'', doe:''}]);
+      setPackages([...packages, { plan:'', price:'', doj:'', doe:''}]);
     };
 
     const removePackage = (index) => {
@@ -184,12 +154,7 @@ const AddRenewal = () => {
  
 
   const handleCancel = () => {
-    setFormData({
-      memno: "",
-      fullname: "",
-      email: "",
-    });
-  setPackages([{dos: "",
+  setPackages([{doj: "",
     doe: "",
     price: "",
     plan: "",}]);
@@ -213,44 +178,6 @@ const AddRenewal = () => {
               <p style={{ color: "red" }}>{errors.message}</p>
             </div>
           )}
-
-          <label>Full Name</label>
-          <select
-            name="fullname"
-            className="input-field"
-            value={formData.fullname}
-            onChange={onInputChange}
-          >
-            <option value="">Select a Member</option>
-            {members && members.length > 0 && members.map((member, index) => (
-              <option key={index} value={member.fullname}>
-                {member.fullname}
-              </option>
-            ))}
-          </select>
-          <br /><br />
-
-          <label>Member ID</label>
-          <input
-            type="number"
-            name="memno"
-            placeholder="Member Number"
-            className="input-field"
-            value={formData.memno}
-            readOnly
-          />
-          <br /><br />
-
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            className="input-field"
-            value={formData.email}
-            readOnly
-          />
-          <br /><br />
 
           {packages.map((pkg, index) => (
           <div key={index}>
@@ -293,10 +220,10 @@ const AddRenewal = () => {
               <label>Start Date</label>
               <input
                 type="date"
-                name="dos"
+                name="doj"
                 className="input-field3"
-                value={pkg.dos}
-                onChange={(e) => handlePackageChange(index, 'dos', e.target.value)}
+                value={pkg.doj}
+                onChange={(e) => handlePackageChange(index, 'doj', e.target.value)}
               />
             </div>
             <div>
