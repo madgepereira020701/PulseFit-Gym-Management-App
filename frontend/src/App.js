@@ -11,8 +11,8 @@ import Employees from './components/Admin/Employee/Employees/Employees.jsx';
 import Settings from './components/Admin/Settings/Settings.jsx';
 import AddRenewal from './components/Admin/Renewal/AddRenewal/AddRenewal.jsx';
 import Renewals from './components/Admin/Renewal/Renewals/Renewals.jsx';
-import Auth from './components/Auth/Auth';
-import ChangePassword from './components/Auth/ChangePassword/ChangePassword.jsx';
+import Auth from './components/Authentication/Auth/Auth';
+import ChangePassword from './components/Authentication/ChangePassword/ChangePassword.jsx';
 import MemRecords from './components/Admin/Member/MemRecords/MemRecords.jsx';
 import Calendar from './components/Admin/Calendar/Calendar.jsx';
 import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
@@ -26,7 +26,7 @@ import EAttendance from './components/Employee/EAttendance/EAttendance.jsx';
 import EmployeeDetails from './components/Employee/EmployeeDetails/EmployeeDetails.jsx';
 import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import ConfirmEmail from './components/Auth/ConfirmEmail/ConfirmEmail.jsx';
+import ConfirmEmail from './components/Authentication/ConfirmEmail/ConfirmEmail.jsx';
 import AddMorePlans from './components/Admin/Member/AddMorePlans/AddMorePlans.jsx';
 
 
