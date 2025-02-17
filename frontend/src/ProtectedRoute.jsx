@@ -12,14 +12,8 @@ const ProtectedRoute = ({ element, requiredRole }) => {
 
   if (requiredRole && userRole !== requiredRole) {
     // Redirect based on roles
-    if (userRole === 'Admin') {
+    if (userRole) {
       return <Navigate to="/home" />;
-    }
-    if (userRole === 'Member') {
-      return <Navigate to="/home2" />;
-    }
-    if (userRole === 'Employee') {
-      return <Navigate to="/home3" />;
     }
     // Default fallback
     return <Navigate to="/" />;
