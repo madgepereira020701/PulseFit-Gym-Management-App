@@ -20,7 +20,7 @@ const Details = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/details', {
+        const response = await fetch('http://localhost:3000/memberdetails', {
           headers: {
             Authorization: `Bearer ${token}`,  // Add token in Authorization header
           },

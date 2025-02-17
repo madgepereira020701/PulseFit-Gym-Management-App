@@ -20,7 +20,7 @@ const EmployeeDetails = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/details2', {
+        const response = await fetch('http://localhost:3000/employeedetails', {
           headers: {
             Authorization: `Bearer ${token}`,  // Add token in Authorization header
           },
