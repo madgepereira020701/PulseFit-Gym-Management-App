@@ -35,7 +35,22 @@ const addEmployees = async (req, res) => {
   };
   
 
-
+  const getEmployees = async (req, res) => {
+    try {
+      const userId = req.user;
+  
+      if (!userId) {
+        return res.status(400).json({ message: 'User ID not found in request' });
+      }
+  
+      const employees = await Employee.find({ userId });
+  
+      res.status(200).json({ employees });
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
 
   
 
@@ -106,5 +121,6 @@ const addEmployees = async (req, res) => {
 
 
 exports.addEmployees = addEmployees;
+exports.getEmployees = getEmployees;
 exports.deleteEmployee = deleteEmployee;
 exports.updateEmployee = updateEmployee;
