@@ -1138,8 +1138,8 @@ app.get('/attendance', protect, async (req, res) => {
                                        .sort({ _id: -1 }) // Sort by _id in descending order
                                        .lean();
 
-    if (attendance.length === 0) {
-      return res.status(404).json({ status: 'ERROR', message: 'No attendance found' });
+     if(!attendance){
+      return res.status(404).json({ status: 'ERROR', message: 'Attendance not found'});  
     }
 
     // Enhance attendance records with fullnames from Members and Employees
@@ -1197,8 +1197,8 @@ app.get('/memberattendance', protect1, async (req, res) => {
     .lean();
 
     // Step 4: If no attendance records are found, return an error
-    if (attendance.length === 0) {
-      return res.status(404).json({ status: 'ERROR', message: 'No attendance found for this member' });
+    if(!attendance){
+      return res.status(404).json({ status: 'ERROR', message: 'Attendance not found'});  
     }
 
     // Step 5: Enhance attendance records with member details (email, doj, doe, plan, etc.)
