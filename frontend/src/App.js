@@ -17,7 +17,7 @@ import MemRecords from './components/Admin/Member/MemRecords/MemRecords.jsx';
 import Calendar from './components/Admin/Calendar/Calendar.jsx';
 import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
 import MemCalendar from './components/Members/MemCalendar/MemCalendar.jsx';
-import YearCalendar from './components/Year Calendar/Year Calendar';
+//import YearCalendar from './components/Year Calendar/Year Calendar';
 import Details from './components/Members/Details /Details.jsx';
 import MarkAttendance from './components/MarkAttendance/MarkAttendance.jsx';
 import Attendance from './components/Admin/Attendance/Attendance.jsx';
@@ -65,7 +65,7 @@ function App() {
 
           {/* Make '/home' accessible to all roles */}
           <Route path="/home" element={<Home />} />
-          <Route path="/year" element={<YearCalendar />} />
+          {/* <Route path="/year" element={<YearCalendar />} /> */}
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/confirmemail" element={<ConfirmEmail/>} />
 
