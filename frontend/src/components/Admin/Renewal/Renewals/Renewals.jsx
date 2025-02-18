@@ -58,7 +58,8 @@ return(
     <h2>Renewals</h2>
     {error && <p className='error-message'>{error}</p>}
     {payments.length > 0 && (
-      <table className='payments-table'>
+    <div className='renewals-table-wrapper'>
+      <table className='renewals-table'>
         <thead>
           <tr>
               <th>Plan</th>
@@ -97,6 +98,7 @@ return(
           })}
         </tbody>
       </table>
+      </div>
     )}
   </div>
 );

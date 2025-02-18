@@ -14,6 +14,13 @@
     border-collapse: collapse;
     margin-top: 20px;
   }
+
+  .payments-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+  }
   
   .payments-table th,
   .payments-table td {

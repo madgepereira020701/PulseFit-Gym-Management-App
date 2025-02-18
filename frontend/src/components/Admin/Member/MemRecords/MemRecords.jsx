@@ -134,6 +134,7 @@ const ViewPayments = () => {
       <h2>Payments Details</h2>
       {error && <p className="error-message">{error}</p>}
       {payments.length > 0 && (
+        <div className="payments-table-wrapper">
         <table className="payments-table" id="paymentsTable">
           <thead>
             <tr>
@@ -166,6 +167,7 @@ const ViewPayments = () => {
             })}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );
