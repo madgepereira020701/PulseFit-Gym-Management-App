@@ -10,12 +10,11 @@ const Attendance = () => {
   const [loading, setLoading] = useState(true);
 
   // Get today's date in YYYY-MM-DD format
-  const getTodayDate = () => {
+  const getCurrentMonth = () => {
     const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    return `${yyyy}-${mm}-${dd}`;
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    return `${year}-${month}`;
   };
 
   useEffect(() => {
@@ -78,8 +77,8 @@ const Attendance = () => {
               </div>
               <div class="dt-layout-cell dt-layout-end">
                 <div class="dt-search">
-                  Search by Date:
-                  <input type="date" class="dt-input" id="dt-date-search" aria-controls="attendanceTable">
+                  Search by Month:
+                  <input type="month" class="dt-input" id="dt-month-search" aria-controls="attendanceTable">
                 </div>
               </div>
             </div>
@@ -146,7 +145,7 @@ const Attendance = () => {
           });
 
           // Handle date search functionality
-          $('#dt-date-search').on('change', function () {
+          $('#dt-month-search').on('change', function () {
             const searchValue = $(this).val(); // Input value will already be in YYYY-MM-DD format
             $('#attendanceTable').DataTable().column(0).search(searchValue).draw();
           });
@@ -154,16 +153,20 @@ const Attendance = () => {
 
         // Initially filter by today's date if it matches any row
         rowCallback: function (row, data) {
-          const todayDate = getTodayDate();
-          if (data[0] !== todayDate) {
+          const todayDate = getCurrentMonth();
+          const rowDate = data[0];
+
+          const rowMonthYear = rowDate.slice(0,7);
+
+          if (rowMonthYear !== todayDate) {
             // Allow all records, don't hide any rows
-            $(row).show();
+            $(row).hide();
           }
         },
       });
 
       // Trigger search for today's date by default
-      $('#dt-date-search').val(getTodayDate()).trigger('change');
+      $('#dt-month-search').val(getCurrentMonth()).trigger('change');
     }
   }, [attendances]);
 
