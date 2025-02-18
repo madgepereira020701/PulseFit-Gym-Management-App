@@ -3,8 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./Users/db'); // Database connection
 
-
- // Schema for members
+// Schema for members
 const mongoPlans = require('./mongo/addplan_mongo'); // Assuming plans API is in this file
 const mongoMember = require('./mongo/member_mongo');
 const mongoEmployee = require('./mongo/employee_mongo');
@@ -18,27 +17,17 @@ const mongoPayments = require('./mongo/payments_mongo');
 const app = express();
 const port = 3000;
 
-// Middleware
-app.use(cors({
-  origin: 'http://localhost:3001', // Replace with your frontend URL
-  credentials: true,
-}));
+app.use(cors({ origin: 'http://localhost:3001', credentials: true,}));
 app.use(bodyParser.json());
 app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
 
-
-// Endpoint to Add Member and Send Emailconst moment = require('moment'); // For date manipulation
-const axios = require('axios'); // Make sure to install axios
-
-
-//MEMBERS
+//MIDDLEWARES
 const protect = require('./Users/middlewares/authmiddleware'); // Import the middleware
 const protect1 = require('./Users/middlewares/memmiddleware'); // Import the middleware
 const protect2 = require('./Users/middlewares/emmiddleware'); // Import the middleware
-
 
 //MEMBERS
 app.post('/members', protect, mongoMember.addMembers);
@@ -47,13 +36,11 @@ app.delete('/members/:memno', protect,mongoMember.deleteMember); // Delete membe
 app.patch('/members/:email',protect, mongoMember.updateMember);
 app.post('/addplans/:memno', protect, mongoMember.addMorePlans);
 
-
-
 //RENEWALS
 app.post('/renewals/:memno', protect, mongoRenewals.addRenewals);
 app.get('/renewals', protect, mongoRenewals.getRenewals);
 
-
+//EMPLOYEES
 app.post('/employees',protect, mongoEmployee.addEmployees); // Add a new plan
 app.get('/employees', protect, mongoEmployee.getEmployees);
 app.delete('/employees/:emno', protect, mongoEmployee.deleteEmployee); // Delete plan by amount
@@ -69,7 +56,6 @@ app.get('/addplans', protect,mongoPlans.getPlans); // Fetch all plans
 app.delete('/addplans/:planname', protect, mongoPlans.deletePlan); // Delete plan by amount
 app.patch('/addplans/:planname', protect,mongoPlans.updatePlan); // Update plan by amount
 
-
 //AUTHENTICATION
 const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
   deleteAccount, passwordresetrequest, deleteMemberAccount } = require('./Users/controllers/AuthController');
@@ -77,17 +63,14 @@ app.post('/api/register', userRegister); // Register Route
 app.post('/api/memberregister', memberRegister); // Register Route
 app.post('/api/employeeregister', employeeRegister); // Register Route
 app.post('/api/updatepassword', protect, updatePassword);
-
 app.delete('/api/:userName', protect, deleteAccount);
 // app.delete('/api/members/:userName', protect1, deleteMemberAccount);
 app.post('/api/passwordresetrequest', passwordresetrequest)
 app.post('/api/resetpassword/:token',  updatePassword );
-
 //LOGIN
 app.post('/api/login', userLogin); // Login Route
 app.post('/api/memberlogin', memberLogin); // Login Route
 app.post('/api/employeelogin', employeeLogin); // Login Route
-
 
 //EVENTS
 app.post('/addevent', protect, mongoEvents.addEvents);
@@ -104,14 +87,11 @@ app.get('/settings', protect, mongoSettings.getsettings);
 app.get('/memberdetails', protect1, mongoDetails.memberdetails);
 app.get('/employeedetails', protect2, mongoDetails.employeedetails);
 
-
 //ATTENDANCE
 app.post('/attendance', protect1, mongoAttendance.addAttendance);
 app.get('/attendance', protect, mongoAttendance.getAttendance);
 app.get('/memberattendance', protect1, mongoAttendance.getMemberAttendance);
 app.get('/employeeattendance', protect2, mongoAttendance.getEmployeeAttendance);
-
-
 
 // Start server
 app.listen(port, () => {
