@@ -10,7 +10,7 @@ const Employees = () => {
   const [loading, setLoading] = useState(true);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({
-    fullname:'',emno:'', emphno:'',  designation:'', department:'', doj:'',
+    fullname:'', emphno:'',  designation:'', department:'', doj:'',
   });
 
   // Fetch employees data on component mount
@@ -150,7 +150,6 @@ const Employees = () => {
   const handleEdit = (employee) => {
     setEditingEmployee(employee);
     setUpdatedDetails({
-      emno: employee.emno,
       fullname: employee.fullname,
       email: employee.email,
       emphno: employee.emphno,
@@ -203,7 +202,7 @@ const Employees = () => {
 
   const handleCancelEdit = () => {
     setEditingEmployee(null);
-    setUpdatedDetails({   emno:'',  fullname:'', emphno:'',  designation:'', department:'', doj:''    });
+    setUpdatedDetails({    fullname:'', emphno:'',  designation:'', department:'', doj:''    });
   };
 
   const handleDeleteEmployee = async (emno) => {
@@ -279,14 +278,6 @@ const Employees = () => {
           {editingEmployee && (
             <div className="edit-form">
               <h3>Edit Employee</h3>
-              <label>Employee ID:</label>
-              <input
-                type="text"
-                name="emno"
-                className="input-field"
-                value={updatedDetails.emno}
-                onChange={handleUpdateChange}
-              />
               <label>Full Name:</label>
               <input
                 type="text"
@@ -301,14 +292,6 @@ const Employees = () => {
                 name="emphno"
                 className="input-field"
                 value={updatedDetails.emphno}
-                onChange={handleUpdateChange}
-              />
-               <label>Date of Join:</label>
-              <input
-                type="date"
-                name="department"
-                className="input-field"
-                value={updatedDetails.doj}
                 onChange={handleUpdateChange}
               />
                <label>Designation:</label>

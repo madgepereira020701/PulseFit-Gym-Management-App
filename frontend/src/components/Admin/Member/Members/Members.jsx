@@ -12,10 +12,7 @@ const Members = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({
     email: '',
-    memno: '',
     memphno: '',
-    doj: '',
-    doe: ''
   });
 
   const navigate = useNavigate();
@@ -156,10 +153,7 @@ const Members = () => {
     setEditingMember(member);
     setUpdatedDetails({
       email: member.email,
-      memno: member.memno,
       memphno: member.memphno,
-      doj: member.doj,
-      doe: member.doe
     });
   };
 
@@ -210,10 +204,7 @@ const Members = () => {
     setEditingMember(null);
     setUpdatedDetails({
       email: '',
-      memno: '',
       memphno: '',
-      doj: '',
-      doe: ''
     });
   };
 
@@ -295,14 +286,6 @@ const Members = () => {
       {editingMember && (
         <div className="edit-form-members">
           <h3>Edit Member</h3>
-          <label>Member Number:</label>
-          <input
-            type="text"
-            name="memno"
-            className="input-field"
-            value={updatedDetails.memno}
-            onChange={handleUpdateChange}
-          />
 
           <label>Phone Number:</label>
           <input
@@ -312,31 +295,6 @@ const Members = () => {
             value={updatedDetails.memphno}
             onChange={handleUpdateChange}
           />
-
-         <div className="input-group">  
-          <div>        
-          <label>Date of Joining:</label>
-          <input
-            type="date"
-            name="doj"
-            className="input-field3"
-            value={updatedDetails.doj}
-            onChange={handleUpdateChange}
-          />
-          </div>
-
-          
-           <div>
-          <label>Date of End:</label>
-          <input
-            type="date"
-            name="doe"
-            className="input-field3"
-            value={updatedDetails.doe}
-            onChange={handleUpdateChange}
-          />
-          </div>
-          </div>
 
 
           {error && <p className="error-message">{error}</p>}
