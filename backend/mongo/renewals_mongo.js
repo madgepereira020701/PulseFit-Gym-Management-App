@@ -197,17 +197,43 @@ const transporter = nodemailer.createTransport({
             return;
         }
 
-        console.log('Found renewals expiring soon:', renewalsExpiringSoon);
 
         for (const renewal of renewalsExpiringSoon) {
+          let allPlansHaveRenewal = true;
+          const expiringWithoutRenewal = [];
             if (!renewal || !renewal.packages || !Array.isArray(renewal.packages)) {
                 console.error('Invalid renewal data:', renewal);
                 continue;
             }
 
+            renewal.packages.sort((a,b) => new Date(b.doe) - new Date(a.doe));
+            
+            const latestPlans = {};
+            renewal.packages.forEach(item => {
+              if(!latestPlans[item.plan] || new Date(item.doj) > new Date(latestPlans[item.plan].doj)){
+                latestPlans[item.plan] = item;
+              }
+            });
+
             const expiringPackages = renewal.packages.filter(pkg => pkg.doe === sevenDaysAhead);
 
-            if (expiringPackages.length > 0) { // Check if there are any expiring packages for this member
+            for(const expiringPkg of expiringPackages) {
+              const latestPlanForType = latestPlans[expiringPkg.plan];
+
+              const hasMatchingRenewal = latestPlanForType && 
+              new Date(latestPlanForType.doj) > new Date(expiringPkg.doj) &&
+              latestPlanForType.doe !== sevenDaysAhead;
+              
+              if(!hasMatchingRenewal) {
+                allPlansHaveRenewal = false;
+                expiringWithoutRenewal.push(expiringPkg);
+              }
+            }
+
+            if(!allPlansHaveRenewal) {
+              console.log('Found renewals expiring soon:', expiringWithoutRenewal);
+            
+            for (const expiringPkg of expiringWithoutRenewal) { // Check if there are any expiring packages for this member
                 const member = await Members.findOne({
                     memno: renewal.memno,
                     userId: renewal.userId
@@ -229,15 +255,13 @@ const transporter = nodemailer.createTransport({
                             </thead>
                             <tbody>`;
 
-                    expiringPackages.forEach(pkg => { // Iterate over the FILTERED expiring packages
                         emailContent += `
                             <tr>
-                                <td>${pkg.plan}</td>
-                                <td>${pkg.doj}</td>
-                                <td>${pkg.doe}</td>
-                                <td>${pkg.price}</td>
+                                <td>${expiringPkg.plan}</td>
+                                <td>${expiringPkg.doj}</td>
+                                <td>${expiringPkg.doe}</td>
+                                <td>${expiringPkg.price}</td>
                             </tr>`;
-                    });
 
                     emailContent += `
                             </tbody>
@@ -246,15 +270,26 @@ const transporter = nodemailer.createTransport({
                     const emailSent = await sendEmail(member.email, 'Reminder: Your Subscription is Ending Soon', emailContent);
 
                     if (emailSent) {
-                        console.log(`Reminder email sent to ${member.email}`);
+                        console.log(`Reminder email sent to ${member.fullname}`);
                     } else {
                         console.error(`Failed to send reminder email to ${member.email}`);
                     }
                 } else {
                     console.log(`No member found for memno: ${renewal.memno}`);
                 }
-            } // End of if (expiringPackages.length > 0)
-        } // End of for (const renewal of renewalsExpiringSoon)
+              }
+            } 
+            else {
+              const member = await Members.findOne({
+                memno: renewal.memno,
+                userId: renewal.userId
+              }).select('fullname');
+              
+              if (member) {
+                console.log(`${member.fullname} has all expiring plans covered by newer plans. Skipping.`)
+        }
+       }
+       } 
     } catch (error) {
         console.error('Error during cron job execution:', error);
     }
