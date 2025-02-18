@@ -4,6 +4,7 @@ import '../../../../../node_modules/datatables.net-dt/css/dataTables.dataTables.
 import $ from 'jquery';
 import 'datatables.net';
 import './Members.css';
+import moment from 'moment';
 
 const Members = () => {
   const [members, setMembers] = useState([]);
@@ -240,6 +241,28 @@ const Members = () => {
     navigate(`/payments/${memno}`);
   };
 
+  const isMemberExpiringSoon = (member) => {
+    if(!member || !member.packages || !Array.isArray(member.packages)) {
+      return false;
+    }
+
+    const sevenDaysAhead = moment().add(7, 'days').startOf('day');
+
+    return member.packages.some(expiringPlan => {
+      const expiringDate = moment(expiringPlan.doe).startOf('day');
+      if(!expiringDate.isSame(sevenDaysAhead, 'day')){
+        return false;
+      }
+      
+      const newerPlansWithSameName = member.packages.filter(pkg => {
+        const pkgDate = moment(pkg.doe).startOf('day');
+        return pkg.plan === expiringPlan.plan && pkgDate.isAfter(expiringDate);
+      });
+      
+      return newerPlansWithSameName.length === 0;
+    });
+  };
+  
   return (
     <div className="table-members-container">
   {loading ? (
@@ -262,8 +285,10 @@ const Members = () => {
             </tr>
           </thead>
           <tbody>
-            {members.map((member) => (
-              <tr key={member.memno}>
+            {members.map((member) => {
+              const isExpiring = isMemberExpiringSoon(member);
+              return(
+              <tr key={member.memno} className={isExpiring ? 'expiring-soon' : ''}>
                 <td>{member.memno}</td>
                 <td>{member.fullname}</td>
                 <td>{member.email}</td>
@@ -278,7 +303,8 @@ const Members = () => {
                   <button className="membutton" onClick={() => handleNavigation(`/addplans/${member.memno}`)}>Add Plan</button>
                 </td>
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>
