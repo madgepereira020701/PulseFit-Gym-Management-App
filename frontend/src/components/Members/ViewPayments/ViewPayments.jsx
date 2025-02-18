@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../../../../../node_modules/datatables.net-dt/css/dataTables.dataTables.css';
+import '../../../../node_modules/datatables.net-dt/css/dataTables.dataTables.css';
 import $ from 'jquery';
 import 'datatables.net';
-import './MemRecords.css';
 import './ViewPayments.css';
 
 const ViewPayments1 = () => {
@@ -133,7 +132,7 @@ const ViewPayments1 = () => {
       <h2>Payments Details</h2>
       {error && <p className="error-message">{error}</p>}
       {payments.length > 0 && (
-        <table className="payments-table">
+        <table className="payments-table" id="paymentsTable">
           <thead>
             <tr>
               <th>Plan</th>
