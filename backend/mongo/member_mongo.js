@@ -363,6 +363,41 @@ const addMorePlans = async (req, res) => {
           return res.status(500).json({ message: "Failed to update member." });  // Or handle the error as needed
       }
 
+      let emailContent = `
+        <h3>Hello ${updatedMember.fullname},</h3>
+        <p>Member ID: ${updatedMember.memno}</p>
+        <p>Your membership details have been updated. Here are your new subscription details:</p>
+        <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
+        <thead>
+          <tr>
+            <th>Plan Name</th>
+            <th>Price</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+          </tr>
+        </thead>
+        <tbody>
+        `;
+
+        result.packages.forEach(pkg => {
+          emailContent += `
+          <tr>
+            <td>${pkg.plan}</td>
+            <td>${pkg.price}</td>
+            <td>${pkg.doj}</td>
+            <td>${pkg.doe}</td>
+          </tr>`;
+        });
+
+        emailContent += `
+          </tbody>
+        </table>`;
+
+        const emailSent = await sendEmail(updatedMember.email, 'Your Membership Details Have Been Updated', emailContent);
+
+        if(!emailSent) {
+          return res.status(500).json({ status: 'ERROR', message: 'Error sending updated email'});
+        }
       res.status(200).json(result);
   } catch (error) {
       console.error(error);
