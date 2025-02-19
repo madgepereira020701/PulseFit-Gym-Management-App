@@ -262,15 +262,11 @@ const updateMember =  async (req, res) => {
         <thead>
           <tr>
             <th>Phone Number</th>
-            <th>Start Date</th>
-            <th>End Date</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>${memphno}</td>
-            <td>${updatedMember.doj}</td>
-            <td>${updatedMember.doe}</td>
           </tr>
         </tbody>
       </table>
