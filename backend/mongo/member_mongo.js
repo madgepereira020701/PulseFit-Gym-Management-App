@@ -199,38 +199,6 @@ const deleteMember = async (req, res, next) => {
   }
 };
 
-// Update a member by memno
-// const updateMember = async (req, res, next) => {
-//   const memno = parseInt(req.params.memno);
-//   const { memphno, doj, doe } = req.body; // Destructure the fields you want to update
-
-//   // Create an updates object with only allowed fields
-//   const updates = {};
-//   if (memphno) updates.memphno = memphno;
-//   if (doj) updates.doj = doj;
-//   if (doe) updates.doe = doe;
-
-//   const client = new MongoClient(url);
-
-//   try {
-//     await client.connect();
-//     const db = client.db();
-//     const result = await db.collection('members').updateOne(
-//       { memno: memno },
-//       { $set: updates }
-//     );
-//     client.close();
-
-//     if (result.matchedCount === 0) {
-//       return res.status(404).json({ message: 'Member not found!' });
-//     }
-
-//     res.status(200).json({ message: 'Member updated successfully!' });
-//   } catch (error) {
-//     client.close();
-//     res.status(500).json({ message: 'Could not update member.', error });
-//   }
-// };
 
 const updateMember =  async (req, res) => {
   const { email } = req.params;
