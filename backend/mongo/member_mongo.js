@@ -234,10 +234,10 @@ const deleteMember = async (req, res, next) => {
 
 const updateMember =  async (req, res) => {
   const { email } = req.params;
-  const { memphno, doj, doe, memno } = req.body;
+  const { memphno } = req.body;
 
   // Validate the required fields
-  if (!memphno || !doj || !doe || !memno) {
+  if (!memphno) {
     return res.status(400).json({ status: 'ERROR', message: 'Missing required fields: memphno, doj, and doe' });
   }
 
@@ -245,7 +245,7 @@ const updateMember =  async (req, res) => {
     // Find and update the member by email
     const updatedMember = await Members.findOneAndUpdate(
       { email },
-      { memno, memphno, doj, doe },
+      { memphno},
       { new: true }  // This ensures the updated member data is returned
     );
 
@@ -256,7 +256,7 @@ const updateMember =  async (req, res) => {
     // Continue with email sending and response...
     const emailContent = `
       <h3>Hello ${updatedMember.fullname},</h3>
-      <p>Member ID: ${memno}</p>
+      <p>Member ID: ${updatedMember.memno}</p>
       <p>Your membership details have been updated. Here are your new subscription details:</p>
       <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
         <thead>
@@ -269,8 +269,8 @@ const updateMember =  async (req, res) => {
         <tbody>
           <tr>
             <td>${memphno}</td>
-            <td>${doj}</td>
-            <td>${doe}</td>
+            <td>${updatedMember.doj}</td>
+            <td>${updatedMember.doe}</td>
           </tr>
         </tbody>
       </table>
