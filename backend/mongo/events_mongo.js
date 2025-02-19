@@ -1,7 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb+srv://gym:workout@cluster0.ie8js.mongodb.net/Gym-Admin?retryWrites=true&w=majority&appName=Cluster0';
 const Employee = require('../models/employees');
-const Event = require('../models/addevent');
+const Event = require('../models/events');
 const Members = require('../models/members');
 const moment = require('moment');
 
