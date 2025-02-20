@@ -87,7 +87,7 @@ app.get('/settings', protect, mongoSettings.getsettings);
 //DEPARTMENT
 app.post('/departments', protect, mongoDepartment.addDepartments);
 app.get('/departments', protect, mongoDepartment.getDepartments);
-app.post('/departments/:department', protect, mongoDepartment.addDepartments);
+app.delete('/departments/:department', protect, mongoDepartment.addDepartments);
 
 
 //DETAILS
