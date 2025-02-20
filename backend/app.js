@@ -13,6 +13,7 @@ const mongoEvents = require('./mongo/events_mongo');
 const mongoDetails = require('./mongo/details_mongo');
 const mongoSettings = require('./mongo/settings_mongo');
 const mongoPayments = require('./mongo/payments_mongo');
+const mongoDepartment = require('./mongo/department_mongo');
 
 const app = express();
 const port = 3000;
@@ -82,6 +83,12 @@ app.get('/eventsformembers',protect1, mongoEvents.getMemberEvents);
 //SETTINGS
 app.post('/updateSettings', protect, mongoSettings.updateSettings );
 app.get('/settings', protect, mongoSettings.getsettings);
+
+//DEPARTMENT
+app.post('/departments', protect, mongoDepartment.addDepartments);
+app.get('/departments', protect, mongoDepartment.getDepartments);
+app.post('/departments/:department', protect, mongoDepartment.addDepartments);
+
 
 //DETAILS
 app.get('/memberdetails', protect1, mongoDetails.memberdetails);
