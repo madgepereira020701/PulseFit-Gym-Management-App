@@ -44,7 +44,7 @@ const deleteDepartment = async(req, res) => {
     try {
       await client.connect();
       const db = client.db();
-      const result = await db.collection('departments').deleteOne({ department: department});
+      const result = await db.collection('departments').deleteOne({ department: department, userId: req.user});
       client.close();
 
       if(result.deletedCount === 0) {
