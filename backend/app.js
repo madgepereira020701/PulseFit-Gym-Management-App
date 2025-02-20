@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const connectDB = require('./Users/db'); // Database connection
 
 // Schema for members
-const mongoPlans = require('./mongo/addplan_mongo'); // Assuming plans API is in this file
+const mongoPlans = require('./mongo/plans_mongo'); // Assuming plans API is in this file
 const mongoMember = require('./mongo/member_mongo');
 const mongoEmployee = require('./mongo/employee_mongo');
 const mongoAttendance = require('./mongo/addattendance_mongo');
