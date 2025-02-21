@@ -1,0 +1,130 @@
+.auth-dept-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    align-items: center;
+  }
+  
+  .flex-dept-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .form-dept-container {
+    flex: 1;
+    max-width: 45%;
+    width: 100%;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .Departments {
+    flex: 1;
+    max-width: 45%;
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+
+  .form-department-container:hover {
+    transform: scale(1.02);
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 0.75rem 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  .save {
+    background-color: orange;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    margin: 1rem 0;
+    padding: 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .save:hover {
+    background-color: lightsalmon;
+  }
+  
+  .cancel {
+    background-color: white;
+    color: orange;
+    border-radius: 8px;
+    border: none;
+    margin: 1rem 0;
+    padding: 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: orange solid 1px;
+    transition: background-color 0.3s;
+  }
+
+  .save:hover {
+    color: lightsalmon;
+    background-color: #fff;
+  }
+
+  p {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1rem;
+    color: #666;
+  }
+
+  label {
+    margin-right: 310px;
+  }
+
+  @media(max-width:768px) {
+    .form-department-container {
+      max-width: 360px;
+      width: 100%;
+      background:#ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+  }
+
+
+  
+  
+
+
+  
+
+  
+  
+
+
+
+
+
+
