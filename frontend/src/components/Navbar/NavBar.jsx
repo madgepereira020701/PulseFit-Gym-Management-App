@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [userinitials, setUserInitials] = useState('');
+  const [isOthersDropDownOpen, setIsOthersDropDownOpen] = useState(false);
   const [role, setRole] = useState(''); // Track user role
 
   useEffect(() => {
@@ -31,6 +32,10 @@ const Navbar = () => {
 
   const toggleDropDown = () => {
     setIsDropDownOpen(!isDropDownOpen);
+  };
+
+  const toggleOthersDropDown = () => {
+    setIsOthersDropDownOpen(!isOthersDropDownOpen);
   };
 
   const logout = () => {
@@ -97,9 +102,19 @@ const Navbar = () => {
       <li><NavLink to="/viewmembers" className={({ isActive }) => isActive ? 'active' : ''}>Members</NavLink></li>
       <li><NavLink to="/employees" className={({ isActive }) => isActive ? 'active' : ''}>Add Employees</NavLink></li>
       <li><NavLink to="/viewemployees" className={({ isActive }) => isActive ? 'active' : ''}>Employees</NavLink></li>
-      <li><NavLink to="/addplans" className={({ isActive }) => isActive ? 'active' : ''}>Package</NavLink></li>
       <li><NavLink to="/calendar" className={({ isActive }) => isActive ? 'active' : ''}>Calendar</NavLink></li>
       <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>Settings</NavLink></li>
+      <li className='account' onClick={toggleOthersDropDown}>
+        Others <FaAngleDown />
+        {isOthersDropDownOpen && (
+          <ul className="othersdropdown active : othersdropdown">
+            <div className="others-dropdown-container">
+            <li><NavLink to="/addplans" className={({ isActive }) => isActive ? 'active' : ''}>Package</NavLink></li>
+            <li><NavLink to="/adddepartments" className={({ isActive }) => isActive ? 'active' : ''}>Department</NavLink></li>
+            </div>
+          </ul>
+        )}
+      </li>
     </>
   ) : role === 'Member' ? (
     <>
