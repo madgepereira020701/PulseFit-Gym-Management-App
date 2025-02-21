@@ -189,6 +189,7 @@ fetchDepartments();
           className="input-field3"
           value={addEmployee.emno}
           onChange={onInputChange}
+          readOnly
         />
         {warnings.emno && <p className="warning-message">{warnings.emno}</p>}
         </div>

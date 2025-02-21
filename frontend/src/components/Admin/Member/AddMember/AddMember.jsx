@@ -249,6 +249,7 @@ const AddMembers = () => {
           className="input-field3"
           value={addMember.memno}
           onChange={onInputChange}
+          readOnly
         />
         {warnings.memno && <p className="warning-message">{warnings.memno}</p>}
         </div>
