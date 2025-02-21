@@ -40,8 +40,37 @@ const AddMembers = () => {
       }
     };
 
+    const fetchLastMemNo = async () => {
+      const token = localStorage.getItem('token');
+      if(!token) {
+        console.error('No token found');
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:3000/members/lastmemno', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        if(!response.ok) {
+          throw new Error(data.message || 'Failed to fetch last memo');
+        }
+        
+        if(data && data.lastMemNo) {
+          setAddMember({...addMember, memno: (data.lastMemNo + 1).toString()});
+        } else {
+          setAddMember({...addMember, memno: 1});
+        }
+      } catch (err) {
+        console.error('Error fetching last memno:', err.message);
+        setAddMember({ ...addMember, memno: 1})
+      }
+    }
+    
+    fetchLastMemNo();
     fetchPlans();
-  }, []);
+  }, );
 
   // Handle form input changes
   const onInputChange = (e) => {
