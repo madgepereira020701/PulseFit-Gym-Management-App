@@ -58,12 +58,12 @@ const transporter = nodemailer.createTransport({
       const memno = req.params.memno;
       console.log("req.body:", req.body); // <-- Crucial debugging step
   
-      const newPackages = req.body.packages;
+      const newPackage = req.body.packages;
       const userId = req.user;
   
   
   
-      if (!newPackages || !Array.isArray(newPackages) || newPackages.length === 0) {
+      if (!newPackage || typeof newPackage!== 'object' || Object.keys(newPackage).length === 0) {
         return res.status(400).json({ message: 'Packages are required and must be a non-empty array' });
     }
   
@@ -78,11 +78,9 @@ const transporter = nodemailer.createTransport({
          headers: { Authorization: `Bearer ${token}` }
       });
       const availablePlans = response.data.filter(plan => plan.userId === userId);
-      const savedPackages = [];
       let paymentdate = moment().format('YYYY-MM-DD');
   
-      for(const packageItem of newPackages) {
-        const { plan, price, doj } = packageItem;
+        const { plan, price, doj } = newPackage;
   
         const selectedPlan = availablePlans.find(
           (p) => p.planname && plan && p.planname.trim().toLowerCase() === plan.trim().toLowerCase()
@@ -99,14 +97,13 @@ const transporter = nodemailer.createTransport({
           console.error('Error calculating end date', error);
           return res.status(500).json({ status: 'ERROR', message: 'Error calculating end date' });
         }
-        const newPackage = {
+        const savedPackage = {
           plan: selectedPlan.planname,
           price: parseFloat(price),
           doj: doj,
           doe: calculatedDoe,
           paymentdate: paymentdate
         }
-        savedPackages.push(newPackage);
   
   
   
@@ -124,18 +121,13 @@ const transporter = nodemailer.createTransport({
           <th>Price</th>
         </tr>
       </thead>
-      <tbody>`;
-  
-      savedPackages.forEach(pkg => {
-        emailContent +=`
+      <tbody>
           <tr>
-            <td>${pkg.plan}</td>
-            <td>${pkg.doj}</td>
-            <td>${pkg.doe}</td>
-            <td>${pkg.price}</td>
-          </tr>`;
-          });
-          emailContent += `
+            <td>${savedPackage.plan}</td>
+            <td>${savedPackage.doj}</td>
+            <td>${savedPackage.doe}</td>
+            <td>${savedPackage.price}</td>
+          </tr>
       </tbody>
     </table>
   `;
@@ -146,12 +138,11 @@ const transporter = nodemailer.createTransport({
     return res.status(500).json({ status: 'ERROR', message: 'Error sending renewal email' });
   }
   
-  }
   
   
       const newRenewal = await Members.findOneAndUpdate(
         { memno: memno },
-        { $push: { packages: {$each: savedPackages}}},
+        { $push: { packages: savedPackage}},
         { new: true, upsert: true, runValidators: true }
       );
   

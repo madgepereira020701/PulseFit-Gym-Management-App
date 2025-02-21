@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const AddRenewal = () => {
   const [errors, setErrors] = useState({});
   const [plans, setPlans] = useState([]); 
-  const [packages, setPackages] = useState([{ plan:'', price:'', doj:'', doe:''}])
+  const [packageData, setPackageData] = useState([{ plan:'', price:'', doj:'', doe:''}])
   const [status, setStatus] = useState("Submit");
   const [loading, setLoading] = useState(true);
   const { memno } = useParams();
@@ -42,11 +42,9 @@ const AddRenewal = () => {
 
   const validateFields = () => {
  
-    for (const pkg of packages){
-      if(!pkg.plan || !pkg.price || !pkg.doj || !pkg.doe) {
+      if(!packageData.plan || !packageData.price || !packageData.doj || !packageData.doe) {
         return "Please fill in all required fields.";
       }
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -70,12 +68,12 @@ const AddRenewal = () => {
     }
 
     const formData = {
-      packages: packages.map((pkg) => ({
-          plan: pkg.plan,
-          price: parseFloat(pkg.price),
-          doj: pkg.doj,
-          doe: pkg.doe
-      }))
+      packages: {
+          plan: packageData.plan,
+          price: parseFloat(packageData.price),
+          doj: packageData.doj,
+          doe: packageData.doe
+      }
   };
    
     try {
@@ -99,64 +97,56 @@ const AddRenewal = () => {
     setStatus("Submit");
   };
 
-    const handlePackageChange = (index, field, value) => {
-      setPackages((prevPackages) => {
-        const updatedPackages = [...prevPackages];
-        updatedPackages[index][field] = value;
+    const handlePackageChange = (field, value) => {
+      setPackageData((prevData) => {
+        const newData = {...prevData,[field]: value};
 
         if (field === 'plan') {
             const selectedPlan = plans.find((plan) => plan.planname === value);
             if (selectedPlan) {
               const validityInMonths = selectedPlan.validity;
-              updatedPackages[index].price = selectedPlan.amount.toString();
-              updatedPackages[index].plan = selectedPlan.planname;
+              newData.price = selectedPlan.amount.toString();
+              newData.plan = selectedPlan.planname;
 
 
-              if(updatedPackages[index].doj) {
-                const startDate = new Date(updatedPackages[index].doj);
+              if(prevData.doj) {
+                const startDate = new Date(prevData.doj);
                 const endDate = new Date(startDate);
                 endDate.setMonth(startDate.getMonth() + validityInMonths);
-                updatedPackages[index].doe = endDate.toISOString().split('T')[0];
+                newData.doe = endDate.toISOString().split('T')[0];
               }
             }
               else {
-                updatedPackages[index].price = '';
-                updatedPackages[index].doe = '';
+                newData.price = '';
+                newData.doe = '';
               }
           }
 
         if(field === 'doj') {
-          const selectedPlan = plans.find((plan) => plan.planname === updatedPackages[index].plan);
+          const selectedPlan = plans.find((plan) => plan.planname === prevData.plan);
           if (selectedPlan) {
           const validityInMonths = selectedPlan.validity;
           const startDate = new Date(value);
           const endDate = new Date(startDate);
           endDate.setMonth(startDate.getMonth() + validityInMonths);
-          updatedPackages[index].doe = endDate.toISOString().split('T')[0];
+          newData.doe = endDate.toISOString().split('T')[0];
         } else {
-          updatedPackages[index].doe = '';
+          newData.doe = '';
         }
       }
 
-      return updatedPackages;
+      return newData;
 
       });
 
     }
   
-    const addPackage = () => {
-      setPackages([...packages, { plan:'', price:'', doj:'', doe:''}]);
-    };
-
-    const removePackage = (index) => {
-      const updatedPackages = packages.filter((_,i) => i!== index);
-      setPackages(updatedPackages);
-    }
+  
           
  
 
   const handleCancel = () => {
-  setPackages([{doj: "",
+  setPackageData([{doj: "",
     doe: "",
     price: "",
     plan: "",}]);
@@ -181,16 +171,14 @@ const AddRenewal = () => {
             </div>
           )}
 
-          {packages.map((pkg, index) => (
-          <div key={index}>
           <div className="input-group">
           <div>
           <label>Plan</label>
           <select
             name="plan"
             className="input-field3"
-            value={pkg.plan}
-            onChange={(e) => handlePackageChange(index,'plan', e.target.value) }
+            value={packageData.plan}
+            onChange={(e) => handlePackageChange('plan', e.target.value) }
 
           >
             <option value="">Select a Plan</option>
@@ -209,8 +197,8 @@ const AddRenewal = () => {
             name="price"
             placeholder="Price"
             className="input-field3"
-            value={pkg.price}
-            onChange={(e) => handlePackageChange(index,'price',e.target.value)}
+            value={packageData.price}
+            onChange={(e) => handlePackageChange('price',e.target.value)}
           />
           </div>
           <br /><br />
@@ -224,8 +212,8 @@ const AddRenewal = () => {
                 type="date"
                 name="doj"
                 className="input-field3"
-                value={pkg.doj}
-                onChange={(e) => handlePackageChange(index, 'doj', e.target.value)}
+                value={packageData.doj}
+                onChange={(e) => handlePackageChange('doj', e.target.value)}
               />
             </div>
             <div>
@@ -234,18 +222,12 @@ const AddRenewal = () => {
                 type="date"
                 name="doe"
                 className="input-field3"
-                value={pkg.doe}
+                value={packageData.doe}
                 readOnly
               />
             </div>
           </div>
-          {index > 0 && (
-                <button type="button" className="cancel" onClick={() => removePackage(index)}>
-                  -</button>)}
-          </div>
-          ))}
-                  <button type="button" className="add" onClick={addPackage}>Add</button>
-
+          
           <br />
 
 
