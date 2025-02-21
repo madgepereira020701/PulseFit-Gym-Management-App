@@ -119,9 +119,9 @@ const addEmployees = async (req, res) => {
 
           const getlastemno = async (req, res) => {
             try {
-              const lastEmployee = await Employee.findOne({}, { emno: 1}, { sort: {emno: -1}});
+              const lastEmployee = await Employee.findOne({}, { emno: 1 }, { sort: { emno: -1 }});
               if(lastEmployee) {
-                res.json({ lastEmNo: lastEmployee.emno});
+                res.json({ lastEmNo: lastEmployee.emno });
               } else {
                 res.json({ lastEmNo: 0});
               }
