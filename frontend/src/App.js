@@ -28,6 +28,7 @@ import ViewPayments from './components/Members/ViewPayments/ViewPayments.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import ConfirmEmail from './components/Authentication/ConfirmEmail/ConfirmEmail.jsx';
 import AddMorePlans from './components/Admin/Member/AddMorePlans/AddMorePlans.jsx';
+import AddDepartment from './components/Admin/Department/AddDepartment/AddDepartment.jsx';
 
 
 
@@ -75,6 +76,7 @@ function App() {
           <Route path="/viewmembers" element={<ProtectedRoute element={<Members />} requiredRole="Admin" />} />
           <Route path="/viewemployees" element={<ProtectedRoute element={<Employees />} requiredRole="Admin" />} />
           <Route path="/addplans" element={<ProtectedRoute element={<AddPackage />} requiredRole="Admin" />} />
+          <Route path="/adddepartments" element={<ProtectedRoute element={<AddDepartment />} requiredRole="Admin" />} />
           <Route path="/addrenewals/:memno" element={<ProtectedRoute element={<AddRenewal />} requiredRole="Admin" />} />
           <Route path="/viewrenewals" element={<ProtectedRoute element={<Renewals />} requiredRole="Admin" />} />
           <Route path="/payments/:memno" element={<ProtectedRoute element={<MemRecords />} requiredRole="Admin" />} />
