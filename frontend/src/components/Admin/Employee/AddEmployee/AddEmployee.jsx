@@ -234,6 +234,7 @@ fetchDepartments();
         {warnings.doj && <p className="warning-message">{warnings.doj}</p>}
         </div>
        </div>
+       <br />
 
 
         <label>Phone Number</label>
