@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import './AddDepartment.css';
+import Departments from "../Departments/Departments";
 
 const adddepartmentInitialValue = {
     department: ''
@@ -88,7 +90,7 @@ return (
   <div className="auth-container">
     <div className="flex-container">
         <div className="form-container">
-            <h3>Add Department</h3>
+            <h2>Add Department</h2>
             <label>Department</label>
             <input 
             type="text"
@@ -106,6 +108,7 @@ return (
             <button className="add" onClick={adddepartment}>Add</button>
         </div>
         </div>
+        <Departments />
     </div>
   </div>
 );
