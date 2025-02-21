@@ -1,0 +1,74 @@
+.table-department-container {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 1200px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} 
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.department-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.department-table th,
+.department-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.department-table th {
+  background-color: orange;
+  color: white;
+}
+
+.department-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.department-table tr:hover {
+  background-color: #ddd;
+}
+
+p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.department-table td.actions {
+  white-space: nowrap;
+  font-size: 0.9rem;
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.deptbutton {
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 4px;
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+}
