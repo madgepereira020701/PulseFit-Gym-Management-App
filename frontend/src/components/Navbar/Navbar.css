@@ -9,11 +9,10 @@
     position: relative;
 }
 
-.others-dropdown-content {
-    display: flex; /* or grid if you prefer */
-    flex-direction: column; /* or row if you want them side by side */
-    /* Add other styles as needed, e.g., padding, gap, etc. */
-  }
+.other-dropdown-content {
+    display: flex;
+    flex-direction: column;
+}
 
 
 .company-title {
@@ -113,18 +112,16 @@
         overflow-y: auto; /* Allow scrolling */
     }
 
- 
-
-
     .dropdown, .othersdropdown {
-        width: 90%; /* or a fixed width */
-        left: 5%; /* or a fixed left value */
-        top: auto; /* reset the top value */
-        bottom: 70px; /* position at the bottom */
-        height: auto; /* let the height adjust to content */
-        max-height: 200px; /* set a maximum height and allow scroll */
-        overflow-y: auto; /* enable vertical scrolling */
+        width: 90%;
+        left: 5%;
+        top: auto;
+        bottom: 70px;
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
     }
+ 
 
     .nav-links.active {
         top: 80px;
@@ -135,12 +132,13 @@
       }
 
     .othersdropdown {
-        bottom: -8px; /* Adjust as needed to position below the user dropdown */
+        bottom: -8px;
     }
 
     .dropdown {
-        bottom: -70px; /* Adjust as needed to position below the user dropdown */
+        bottom: -70px;
     }
+   
 
     /* If the nav-links are active, adjust position */
     .nav-links.active {
