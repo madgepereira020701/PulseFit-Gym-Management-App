@@ -58,19 +58,19 @@ const AddMembers = () => {
         }
         
         if(data && data.lastMemNo) {
-          setAddMember({...addMember, memno: (data.lastMemNo + 1).toString()});
+          setAddMember(prevaddMember => ({...prevaddMember, memno: (data.lastMemNo + 1).toString()}));
         } else {
-          setAddMember({...addMember, memno: 1});
+          setAddMember(prevaddMember => ({...prevaddMember, memno: 1}));
         }
       } catch (err) {
         console.error('Error fetching last memno:', err.message);
-        setAddMember({ ...addMember, memno: 1})
+        setAddMember(prevaddMember => ({...prevaddMember, memno: 1}));
       }
     }
     
     fetchLastMemNo();
     fetchPlans();
-  }, );
+  }, []);
 
   // Handle form input changes
   const onInputChange = (e) => {

@@ -59,17 +59,19 @@ const AddEmployees = () => {
       throw new Error(data.message || 'Error fetching lastemno');
     }
     if(data && data.lastEmNo) {
-      setAddEmployee({...addEmployee, emno: (data.lastEmNo + 1).toString()});
+      setAddEmployee(prevaddEmployee => ({...prevaddEmployee, emno: (data.lastEmNo + 1).toString()}));
+    } else {
+      setAddEmployee(prevaddEmployee => ({...prevaddEmployee, emno: 1}));
     }
   } catch (err) {
-    console.error('Error fetching lastemno:', error);
-    setAddEmployee({...addEmployee, emno: 1})
+    console.error('Error fetching lastemno:', err);
+    setAddEmployee(prevaddEmployee => ({...prevaddEmployee, emno: 1}));
   }
 }
 
 fetchLastEmNo();
 fetchDepartments();
-}, );
+}, []);
   
 
   // Handle form input changes
