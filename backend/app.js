@@ -48,6 +48,7 @@ app.post('/employees',protect, mongoEmployee.addEmployees); // Add a new plan
 app.get('/employees', protect, mongoEmployee.getEmployees);
 app.delete('/employees/:emno', protect, mongoEmployee.deleteEmployee); // Delete plan by amount
 app.patch('/employees/:email', protect,mongoEmployee.updateEmployee); // Update plan by amount
+app.get('/employees/lastemno', protect, mongoEmployee.getlastemno);
 
 //PAYMENTS
 app.get('/payments/:memno', protect, mongoPayments.paymentsForAdmin);

@@ -116,6 +116,20 @@ const addEmployees = async (req, res) => {
               res.status(500).json({ message: 'Server error' });
             }
           };
+
+          const getlastemno = async (req, res) => {
+            try {
+              const lastEmployee = await Employee.findOne({}, { emno: 1}, { sort: {emno: -1}});
+              if(lastEmployee) {
+                res.json({ lastEmNo: lastEmployee.emno});
+              } else {
+                res.json({ lastEmNo: 0});
+              }
+            } catch (error) {
+              console.error('Error fetching emno:' , error);
+              res.status(500).json({ message:'Error fetching emno' });
+            }
+          }
           
           
 
@@ -124,3 +138,4 @@ exports.addEmployees = addEmployees;
 exports.getEmployees = getEmployees;
 exports.deleteEmployee = deleteEmployee;
 exports.updateEmployee = updateEmployee;
+exports.getlastemno = getlastemno;
