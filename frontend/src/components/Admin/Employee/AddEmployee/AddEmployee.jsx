@@ -41,9 +41,35 @@ const AddEmployees = () => {
       console.error('Error fetching departments:', err.message)
     }
   };
+  
+  const fetchLastEmNo = async () => {
+    const token = localStorage.getItem('token');
+    if(!token) {
+      console.error('No token found');
+      return;
+    }
+    try {
+    const response = await fetch('http://localhost:3000/employees/lastemno', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    const data = await response.json();
+    if(!response.ok) {
+      throw new Error(data.message || 'Error fetching lastemno');
+    }
+    if(data && data.lastEmNo) {
+      setAddEmployee({...addEmployee, emno: (data.lastEmNo + 1).toString()});
+    }
+  } catch (err) {
+    console.error('Error fetching lastemno:', error);
+    setAddEmployee({...addEmployee, emno: 1})
+  }
+}
 
+fetchLastEmNo();
 fetchDepartments();
-}, []);
+}, );
   
 
   // Handle form input changes
