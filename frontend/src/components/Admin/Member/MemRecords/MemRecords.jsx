@@ -9,6 +9,7 @@ const ViewPayments = () => {
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState('');
   const { memno } = useParams(); // Get `memno` from URL params
+  const [ totalPrice, setTotalPrice ] = useState(0);
 
   // Fetch payments data on component mount
   useEffect(() => {
@@ -43,6 +44,26 @@ const ViewPayments = () => {
       fetchPayments();
     }
   }, [memno]);
+
+useEffect(() => {
+  let sum = 0;
+  if(payments.length > 0) {
+    payments.forEach(payment => {
+      if(payment.packages) {
+        payment.packages.forEach(item => {
+        const price = parseFloat(item.price);
+        if(!isNaN(price))
+        {
+          sum += price;
+        } else {
+          console.error("Invalid price:", item.price, "in payment:", payment);
+        }
+        })
+      }
+    });
+  }
+  setTotalPrice(sum);
+}, [payments]);
 
   useEffect(() => {
     if(payments.length > 0) {
@@ -169,6 +190,9 @@ const ViewPayments = () => {
         </table>
         </div>
       )}
+      <div className="total-price">
+        <strong>Total Price:</strong>{totalPrice}
+      </div>
     </div>
   );
 };
