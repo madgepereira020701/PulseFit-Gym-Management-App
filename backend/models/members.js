@@ -8,7 +8,7 @@ const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;  // At least one speci
 // Define the schema for a Member
 const memberSchema = new mongoose.Schema({
   fullname: { type: String, required: true },
-  memno: { type: Number, required: true, unique: true },
+  memno: { type: Number, required: true},
   memphno: { type: Number, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   packages: [{
