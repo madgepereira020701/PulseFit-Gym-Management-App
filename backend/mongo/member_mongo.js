@@ -369,6 +369,20 @@ const addMorePlans = async (req, res) => {
   }
 };
 
+const getlastmemno = async (req, res) => {
+  try {
+    const lastMember = await Members.findOne({}, { memno: 1}, { sort: {memno: -1}});
+    if(lastMember) {
+      res.json({ lastMemNo: lastMember.memno});
+    } else {
+      res.json({ lastMemNo: 0});
+    }
+  } catch (error){
+   console.error("Error fetching last memno:", error);
+   res.status(500).json({ message: 'Error fetching last memno'});
+  }
+}
+
 
 // Export functions
 exports.addMembers = addMembers;
@@ -376,4 +390,5 @@ exports.getMembers = getMembers;
 exports.deleteMember = deleteMember;
 exports.updateMember = updateMember;
 exports.addMorePlans = addMorePlans;
+exports.getlastmemno = getlastmemno;
 

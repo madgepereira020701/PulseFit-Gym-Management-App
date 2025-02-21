@@ -36,6 +36,8 @@ app.get('/members', protect, mongoMember.getMembers);
 app.delete('/members/:memno', protect,mongoMember.deleteMember); // Delete member by memno
 app.patch('/members/:email',protect, mongoMember.updateMember);
 app.post('/addplans/:memno', protect, mongoMember.addMorePlans);
+app.get('/members/lastmemno', protect, mongoMember.getlastmemno); // Add authentication middleware
+
 
 //RENEWALS
 app.post('/renewals/:memno', protect, mongoRenewals.addRenewals);
