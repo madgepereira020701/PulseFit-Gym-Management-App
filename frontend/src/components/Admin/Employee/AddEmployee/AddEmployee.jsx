@@ -1,5 +1,5 @@
 
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import './AddEmployee.css';
 
 const addEmployeeInitialValues = {
@@ -16,8 +16,34 @@ const AddEmployees = () => {
   const [addEmployee, setAddEmployee] = useState(addEmployeeInitialValues);
   const [error, setError] = useState('');
   const [warnings, setWarnings] = useState({});
+  const [departments, setDepartments] = useState([]);
 
-  // Fetch plans data on component mount
+  // Fetch departments data on component mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      const token = localStorage.getItem('token');
+      if(!token) {
+        console.error('No token found');
+      }
+
+      try {
+      const response = await fetch('http://localhost:3000/departments', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }    
+      });
+      const data = await response.json();
+      if(!response.ok) {
+        throw new Error(data.message || 'Failed to fetch departments');
+      }
+      setDepartments(data);
+    } catch (err) {
+      console.error('Error fetching departments:', err.message)
+    }
+  };
+
+fetchDepartments();
+}, []);
   
 
   // Handle form input changes
@@ -56,7 +82,6 @@ const AddEmployees = () => {
     } else {
       delete newWarnings.email;
     }
-
 
 
     if (field === 'designation' && value.trim() === '') {
@@ -219,14 +244,19 @@ const AddEmployees = () => {
         {warnings.designation && <p className="warning-message">{warnings.fullname}</p>}
         <br /><br />
         <label>Department</label>
-        <input
+        <select
           type="text"
           name="department"
           placeholder="Department"
           className="input-field"
           value={addEmployee.department}
           onChange={onInputChange}
-        />
+        >
+        <option value="">Select plan</option>
+        {departments.map((dept, index) => (
+          <option key={index} value={dept.department}>{dept.department}</option>
+        ))}
+        </select>
         {warnings.department && <p className="warning-message">{warnings.fullname}</p>}
         <br /><br />
         
