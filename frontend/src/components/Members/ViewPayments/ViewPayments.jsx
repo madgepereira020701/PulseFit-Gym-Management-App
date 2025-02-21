@@ -7,6 +7,7 @@ import './ViewPayments.css';
 const ViewPayments1 = () => {
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState('');
+  const [ totalPrice, setTotalPrice] = useState(0);
 
   // Fetch payments data on component mount
   useEffect(() => {
@@ -41,6 +42,25 @@ const ViewPayments1 = () => {
     
   }, []);
 
+  useEffect(() => {
+    let sum = 0;
+    if(payments.length > 0) {
+      payments.forEach(payment => {
+        if(payment.packages) {
+          payment.packages.forEach(item => {
+           const price = parseFloat(item.price);
+           if(!isNaN(price)){
+            sum += price;
+           }
+           else {
+            console.error("Invalid price:", item.price, "in payment:", payment);
+           }
+          });
+        }
+      });
+    }
+    setTotalPrice(sum);
+  }, [payments])
 
   useEffect(() => {
     if(payments.length > 0) {
@@ -132,7 +152,7 @@ const ViewPayments1 = () => {
       <h2>Payments Details</h2>
       {error && <p className="error-message">{error}</p>}
       {payments.length > 0 && (
-      <div className="payments-table" id="paymentsTable">
+      <div className="payments-table-wrapper">
         <table className="payments-table" id="paymentsTable">
           <thead>
             <tr>
@@ -167,6 +187,9 @@ const ViewPayments1 = () => {
         </table>
         </div>
       )}
+      <div className="total-price">
+        <strong>Total Price: </strong>{totalPrice}
+      </div>
     </div>
   );
 };

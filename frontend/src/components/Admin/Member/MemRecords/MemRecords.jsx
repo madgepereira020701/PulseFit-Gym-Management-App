@@ -191,7 +191,7 @@ useEffect(() => {
         </div>
       )}
       <div className="total-price">
-        <strong>Total Price:</strong>{totalPrice}
+        <strong>Total Price: </strong>{totalPrice}
       </div>
     </div>
   );
