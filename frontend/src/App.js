@@ -18,7 +18,7 @@ import Calendar from './components/Admin/Calendar/Calendar.jsx';
 import EmCalendar  from './components/Employee/EmCalendar/EmCalendar.jsx';
 import MemCalendar from './components/Members/MemCalendar/MemCalendar.jsx';
 //import YearCalendar from './components/Year Calendar/Year Calendar';
-import Details from './components/Members/Details /Details.jsx';
+import Details from './components/Members/Details/Details.jsx';
 import MarkAttendance from './components/MarkAttendance/MarkAttendance.jsx';
 import Attendance from './components/Admin/Attendance/Attendance.jsx';
 import MAttendance from './components/Members/MAttendance/MAttendance.jsx';
@@ -77,7 +77,7 @@ function App() {
           <Route path="/viewemployees" element={<ProtectedRoute element={<Employees />} requiredRole="Admin" />} />
           <Route path="/addplans" element={<ProtectedRoute element={<AddPackage />} requiredRole="Admin" />} />
           <Route path="/adddepartments" element={<ProtectedRoute element={<AddDepartment />} requiredRole="Admin" />} />
-          <Route path="/addrenewals/:memno" element={<ProtectedRoute element={<AddRenewal />} requiredRole="Admin" />} />
+          <Route path="/addrenewals/:plan" element={<ProtectedRoute element={<AddRenewal />} requiredRole="Admin" />} />
           <Route path="/viewrenewals" element={<ProtectedRoute element={<Renewals />} requiredRole="Admin" />} />
           <Route path="/payments/:memno" element={<ProtectedRoute element={<MemRecords />} requiredRole="Admin" />} />
           <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} requiredRole="Admin" />} />
