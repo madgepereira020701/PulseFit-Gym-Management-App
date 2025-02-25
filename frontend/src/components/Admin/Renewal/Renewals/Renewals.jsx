@@ -42,8 +42,8 @@ const fetchPayments = async () => {
  }
 }, [memno]);
 
-const handleNavigation = () => {
-  navigate(`/addrenewals/${memno}`);
+const handleNavigation = (selectedPlan) => {
+  navigate(`/addrenewals/${selectedPlan}`);
 };
 
 const isExpiringSoon = (doe) => {
@@ -89,7 +89,7 @@ return(
                     <td>{item.doj}</td>
                     <td>{item.doe}</td>
                     <td className='actions'>
-                      <button className='membutton' onClick={() => handleNavigation()}>Renew</button>
+                      <button className='membutton' onClick={() => handleNavigation(item.plan)}>Renew</button>
                     </td>
                   </tr>
                 ))}
