@@ -42,6 +42,8 @@ app.get('/members/lastmemno', protect, mongoMember.getlastmemno); // Add authent
 //RENEWALS
 app.post('/renewals/:memno', protect, mongoRenewals.addRenewals);
 app.get('/renewals', protect, mongoRenewals.getRenewals);
+app.get('/renewals/:fullname', protect, mongoRenewals.getLatestRenewals);
+
 
 //EMPLOYEES
 app.post('/employees',protect, mongoEmployee.addEmployees); // Add a new plan
@@ -62,13 +64,12 @@ app.patch('/addplans/:planname', protect,mongoPlans.updatePlan); // Update plan 
 
 //AUTHENTICATION
 const { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
-  deleteAccount, passwordresetrequest, deleteMemberAccount } = require('./Users/controllers/AuthController');
+  deleteAccount, passwordresetrequest } = require('./Users/controllers/AuthController');
 app.post('/api/register', userRegister); // Register Route
 app.post('/api/memberregister', memberRegister); // Register Route
 app.post('/api/employeeregister', employeeRegister); // Register Route
 app.post('/api/updatepassword', protect, updatePassword);
-app.delete('/api/:userName', protect, deleteAccount);
-// app.delete('/api/members/:userName', protect1, deleteMemberAccount);
+//app.delete('/api/:userName', protect, deleteAccount);
 app.post('/api/passwordresetrequest', passwordresetrequest)
 app.post('/api/resetpassword/:token',  updatePassword );
 //LOGIN
