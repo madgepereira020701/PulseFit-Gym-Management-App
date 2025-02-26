@@ -64,7 +64,7 @@ const Navbar = () => {
       <li><NavLink to="/viewemployees" className={({ isActive }) => isActive ? 'active' : ''}>Employees</NavLink></li>
       <li><NavLink to="/calendar" className={({ isActive }) => isActive ? 'active' : ''}>Calendar</NavLink></li>
       <li><NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>Settings</NavLink></li>
-      <li className='account' onClick={toggleOthersDropDown}>
+      <li className='others' onClick={toggleOthersDropDown}>
         Others <FaAngleDown />
         {isOthersDropDownOpen && (
           <ul className="othersdropdown active : othersdropdown">
