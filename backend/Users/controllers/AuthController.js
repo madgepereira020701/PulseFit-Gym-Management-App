@@ -205,42 +205,23 @@ const userLogin = async(req,res) => {
   }
 }
 
-const deleteAccount = async(req,res) => {
-  userName = req.params.userName;
+// const deleteAccount = async(req,res) => {
+//   userName = req.params.userName;
 
-  try{
-    const result = await User.deleteOne({name: userName});
+//   try{
+//     const result = await User.deleteOne({name: userName});
     
-    if(result.deletedCount === 0)
-    {
-      return res.status(404).json({message: 'Account is not found.'});
-    }
-    return res.status(200).json({message: 'Account deleted successfully.'});
-  } catch (error)
-  {
-    return res.status(500).json({message: 'Could not delete account.',error});
-  }
-}
+//     if(result.deletedCount === 0)
+//     {
+//       return res.status(404).json({message: 'Account is not found.'});
+//     }
+//     return res.status(200).json({message: 'Account deleted successfully.'});
+//   } catch (error)
+//   {
+//     return res.status(500).json({message: 'Could not delete account.',error});
+//   }
+// }
 
-const deleteMemberAccount = async (req,res) => {
-  const userName = req.params.userName;
-
-  console.log(userName);
-
-  try{
-  const result = Member.deleteOne({ fullname: userName });
-
-  if(result.deletedCount === 0)
-  {
-    return res.status(404).json({message: 'Account is not found.'});
-  }
-
-  return res.status(200).json({message: 'Account deleted successfully.'});
-} catch (error)
-  {
-    return res.status(500).json({message: 'Could not delete account.',error});
-  }
-};
 
 
 const updatePassword = async(req,res) => {
@@ -394,5 +375,5 @@ async function sendPasswordResetEmail(model,email,token) {
 }
 
 module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
-  deleteAccount, deleteMemberAccount, passwordresetrequest
+  passwordresetrequest
  };
