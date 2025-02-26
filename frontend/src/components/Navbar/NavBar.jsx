@@ -45,46 +45,6 @@ const Navbar = () => {
     window.location.href = '/'; // Redirect to login page
   };
 
-  const deleteaccount = async () => {
-    const userName = localStorage.getItem('userName'); // Get the logged-in user's email from localStorage
-    const token = localStorage.getItem('token'); // Get token from localStorage
-  
-    console.log('Name:', userName);  // Check the email value
-    console.log('Token:', token);  // Check the token value
-  
-    if (!token || !userName) {
-      console.log('No token or email found');
-      return;
-    }
-  
-    try {
-      const response = await fetch(`http://localhost:3000/api/${userName}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to delete account');
-      }
-  
-      localStorage.removeItem('token'); // Remove token
-      localStorage.removeItem('userName'); // Remove username
-      localStorage.removeItem('role'); // Remove role
-  
-      alert('Your account has been deleted successfully.');
-  
-      window.location.href = '/'; // Redirect to the login page
-  
-    } catch (error) {
-      console.error('Error deleting account:', error.message);
-      alert('Error deleting account. Please try again.');
-    }
-  };
-  
 
   return (
     <nav className="nav">
@@ -139,7 +99,6 @@ const Navbar = () => {
           {isDropDownOpen && (
             <ul className="dropdown active : dropdown">
               <li><NavLink onClick={logout} className={({ isActive }) => isActive ? 'active' : ''}>Log out</NavLink></li>
-              <li><NavLink onClick={deleteaccount} className={({ isActive }) => isActive ? 'active' : ''}>Delete Account</NavLink></li>
             </ul>
           )}
         </li>
