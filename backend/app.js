@@ -42,7 +42,7 @@ app.get('/members/lastmemno', protect, mongoMember.getlastmemno); // Add authent
 //RENEWALS
 app.post('/renewals/:memno', protect, mongoRenewals.addRenewals);
 app.get('/renewals', protect, mongoRenewals.getRenewals);
-app.get('/renewals/:fullname', protect, mongoRenewals.getLatestRenewals);
+app.get('/renewals/:memno/:plan', protect, mongoRenewals.getLatestRenewals);
 
 
 //EMPLOYEES

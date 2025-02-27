@@ -172,6 +172,32 @@ const transporter = nodemailer.createTransport({
     }
   };
 
+  const getLatestRenewals = async (req, res) => {
+    try {
+      const { memno, plan } = req.params;
+
+      const member = await Members.findOne({userId: req.user, memno: memno, 'packages.plan': plan});
+      if(!member) {
+        return res.status(404).json({ status: 'ERROR', message: 'Member not found'});
+      }
+      const planPackages = member.packages.filter(pkg => pkg.plan === plan);
+      if(planPackages.length === 0) {
+        return res.status(404).json({ status: 'ERROR', message: 'No packages found for this plan'});
+      }
+
+      let latestPackage = planPackages.reduce((latest, current ) => {
+        const latestDate = new Date(latest.doe);
+        const currentDate = new Date(current.doe);
+        return currentDate > latestDate ? current : latest;
+      })
+
+      res.status(200).json({ status: 'SUCCESS', data: latestPackage });
+    } catch (error) {
+      console.error('Error fetching renewals:', error);
+      res.status(500).json({ status: 'ERROR', message: 'Error fetching renewals' });
+    }
+  };
+
 
     
   cron.schedule('* * * * *', async () => {
@@ -289,4 +315,4 @@ const transporter = nodemailer.createTransport({
 
 exports.addRenewals = addRenewals;
 exports.getRenewals = getRenewals;
-
+exports.getLatestRenewals = getLatestRenewals;
