@@ -77,7 +77,7 @@ function App() {
           <Route path="/viewemployees" element={<ProtectedRoute element={<Employees />} requiredRole="Admin" />} />
           <Route path="/addplans" element={<ProtectedRoute element={<AddPackage />} requiredRole="Admin" />} />
           <Route path="/adddepartments" element={<ProtectedRoute element={<AddDepartment />} requiredRole="Admin" />} />
-          <Route path="/addrenewals/:plan" element={<ProtectedRoute element={<AddRenewal />} requiredRole="Admin" />} />
+          <Route path="/addrenewals/:memno/:plan" element={<ProtectedRoute element={<AddRenewal />} requiredRole="Admin" />} />
           <Route path="/viewrenewals" element={<ProtectedRoute element={<Renewals />} requiredRole="Admin" />} />
           <Route path="/payments/:memno" element={<ProtectedRoute element={<MemRecords />} requiredRole="Admin" />} />
           <Route path="/calendar" element={<ProtectedRoute element={<Calendar />} requiredRole="Admin" />} />
