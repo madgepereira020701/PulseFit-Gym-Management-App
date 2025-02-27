@@ -24,18 +24,8 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-.input-field {
-  width: 100%;
-  padding: 12px;
-  margin: 0.75rem 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
-}
 
-.input-field2, .input-field3 {
+.input-field2 {
   width: 199px;
   padding: 12px;
   margin: 0.75rem 0;
@@ -47,18 +37,8 @@ h2 {
 }
 
 
-.input-field4{
-  width: 300px;
-  padding: 12px;
-  margin: 0.75rem 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
-}
 
-.input-field2:focus, .input-field3:focus, .input-field:focus {
+.input-field2:focus {
   border-color: lightsalmon;
   outline: none;
 }
@@ -139,7 +119,7 @@ p {
       padding: 1rem;
   }
 
-  .input-field2, .input-field3 {
+  .input-field2 {
       width: 100%;
   }
 
