@@ -214,7 +214,7 @@ fetchDepartments();
           type="number"
           name="emno"
           placeholder="Employee ID"
-          className="input-field3"
+          className="input-field2"
           value={addEmployee.emno}
           onChange={onInputChange}
           readOnly
@@ -227,7 +227,7 @@ fetchDepartments();
           type="date"
           name="doj"
           placeholder="Date of Joining"
-          className="input-field3"
+          className="input-field2"
           value={addEmployee.doj}
           onChange={onInputChange}
         />
