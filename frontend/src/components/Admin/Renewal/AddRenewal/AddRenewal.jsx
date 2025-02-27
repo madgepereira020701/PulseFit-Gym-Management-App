@@ -1,248 +1,217 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./AddRenewal.css";
 import { useNavigate, useParams } from "react-router-dom";
+import moment from 'moment';
 
 const AddRenewal = () => {
-  const [errors, setErrors] = useState({});
-  const [plans, setPlans] = useState([]); 
-  const [packageData, setPackageData] = useState([{ plan:'', price:'', doj:'', doe:''}])
-  const [status, setStatus] = useState("Submit");
-  const [loading, setLoading] = useState(true);
-  const { memno } = useParams();
-  const navigate = useNavigate();
+    const [plans, setPlans] = useState([]);
+    const [packageData, setPackageData] = useState({
+        plan: "",
+        price: "",
+        doj: "",
+        doe: "",
+    });
+    const [status, setStatus] = useState("Submit");
+    const { memno, plan: initialPlan, fullname } = useParams();
+    const navigate = useNavigate();
 
+    const calculateDoe = useCallback((planName, doj) => {
+        const plan = plans.find((p) => p.planname === planName);
+        if (!plan || !plan.validity || !doj) return "";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token'); 
-      if (!token) {
-        console.log('No token found');
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        console.log("Fetching members and plans...");
+        const startDate = moment(doj);
+        const endDate = moment(startDate).add(plan.validity, 'months');
+        return endDate.format('YYYY-MM-DD');
+    }, [plans]);
 
-        const plansResponse = await fetch("http://localhost:3000/addplans", {
-          headers: { Authorization: `Bearer ${token}` },
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.log("No token found");
+                return;
+            }
+
+            try {
+
+                const plansResponse = await fetch("http://localhost:3000/addplans", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const plansData = await plansResponse.json();
+                setPlans(plansData);
+
+                const packagesResponse = await fetch(`http://localhost:3000/renewals/${fullname || memno}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!packagesResponse.ok) {
+                    const errorData = await packagesResponse.json();
+                    throw new Error(errorData.message || "Failed to fetch data");
+                }
+
+                const packagesData = await packagesResponse.json();
+
+                if (initialPlan) {
+                    const foundPlan = plansData.find(plan => plan.planname === initialPlan);
+
+                    const latestPackage = findLatestPackage(initialPlan, packagesData.data.packages);
+                    if (latestPackage) {
+                        const nextDay = moment(latestPackage.doe).add(1, 'day').format('YYYY-MM-DD');
+                        setPackageData({
+                            plan: initialPlan,
+                            price: foundPlan ? foundPlan.amount.toString() : "",
+                            doj: nextDay,
+                            doe: calculateDoe(initialPlan, nextDay),
+                        });
+                    } else {
+                        setPackageData({
+                            plan: initialPlan,
+                            price: foundPlan ? foundPlan.amount.toString() : "",
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert(`Error fetching data: ${error.message}`);
+            } 
+        };
+
+        fetchData();
+    }, [initialPlan, navigate, fullname, memno, plans, calculateDoe]);
+
+    const findLatestPackage = (planName, packages) => {
+        if (!packages || packages.length === 0) return null;
+
+        const packagesForPlan = packages.filter((pkg) => pkg.plan === planName);
+        if (packagesForPlan.length === 0) return null;
+
+        return packagesForPlan.reduce((latest, current) => {
+            const latestDate = moment(latest.doe);
+            const currentDate = moment(current.doe);
+            return currentDate.isAfter(latestDate) ? current : latest;
         });
-        const plansData = await plansResponse.json();
-        setPlans(plansData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        alert(`Error fetching data: ${error.message}`);
-      } finally {
-        setLoading(false);
-      }
     };
 
-    fetchData();
-  }, []);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus("Sending...");
 
-  const validateFields = () => {
- 
-      if(!packageData.plan || !packageData.price || !packageData.doj || !packageData.doe) {
-        return "Please fill in all required fields.";
-      }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("Sending...");
-
-    // Validate form data
-    const errorMessage = validateFields();
-    if (errorMessage) {
-      setStatus("Submit");
-      return;
-    }
-
-    setErrors({}); // Clear errors if all fields are valid
-
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      console.log('No token found');
-      return;
-    }
-
-    const formData = {
-      packages: {
-          plan: packageData.plan,
-          price: parseFloat(packageData.price),
-          doj: packageData.doj,
-          doe: packageData.doe
-      }
-  };
-   
-    try {
-      const response = await fetch(`http://localhost:3000/renewals/${memno}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", // Make sure we send JSON content
-        },
-        body: JSON.stringify(formData), // Send form data as the request body
-      });
-
-      const result = await response.json();
-      alert(result.status); // Show success message or handle error from backend
-      navigate(`/payments/${memno}`)
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred. Please try again.");
-    }
-
-    setStatus("Submit");
-  };
-
-    const handlePackageChange = (field, value) => {
-      setPackageData((prevData) => {
-        const newData = {...prevData,[field]: value};
-
-        if (field === 'plan') {
-            const selectedPlan = plans.find((plan) => plan.planname === value);
-            if (selectedPlan) {
-              const validityInMonths = selectedPlan.validity;
-              newData.price = selectedPlan.amount.toString();
-              newData.plan = selectedPlan.planname;
-
-
-              if(prevData.doj) {
-                const startDate = new Date(prevData.doj);
-                const endDate = new Date(startDate);
-                endDate.setMonth(startDate.getMonth() + validityInMonths);
-                newData.doe = endDate.toISOString().split('T')[0];
-              }
-            }
-              else {
-                newData.price = '';
-                newData.doe = '';
-              }
-          }
-
-        if(field === 'doj') {
-          const selectedPlan = plans.find((plan) => plan.planname === prevData.plan);
-          if (selectedPlan) {
-          const validityInMonths = selectedPlan.validity;
-          const startDate = new Date(value);
-          const endDate = new Date(startDate);
-          endDate.setMonth(startDate.getMonth() + validityInMonths);
-          newData.doe = endDate.toISOString().split('T')[0];
-        } else {
-          newData.doe = '';
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No token found');
+            return;
         }
-      }
 
-      return newData;
+        const formData = {
+            packages: {
+                plan: packageData.plan,
+                price: parseFloat(packageData.price),
+                doj: packageData.doj,
+                doe: packageData.doe
+            }
+        };
 
-      });
+        try {
+            const response = await fetch(`http://localhost:3000/renewals/${fullname || memno}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
 
-    }
-  
-  
-          
- 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to submit renewal");
+            }
 
-  const handleCancel = () => {
-  setPackageData([{doj: "",
-    doe: "",
-    price: "",
-    plan: "",}]);
-    setErrors({});
-  };
+            const result = await response.json();
+            alert(result.status);
+            navigate(`/payments/${fullname || memno}`);
 
-  if (loading) {
-    return <p>Loading members and plans...</p>;
-  }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            alert(error.message || "An error occurred. Please try again.");
+        } finally {
+            setStatus("Submit");
+        }
+    };
+
+    const handleCancel = () => {
+        setPackageData({ plan: "", price: "", doj: "", doe: "" });
+        // Set other states to their initial values if needed
+    };
 
 
-  
-  return (
-    <div className="auth-container">
+    return (
+        <div className="auth-container">
+            <div className="form-container">
+                <h2>Add Renewal</h2>
+                <form onSubmit={handleSubmit}>
 
-      <div className="form-container">
-        <h2>Add Renewal</h2>
-        <form onSubmit={handleSubmit}>
-          {errors.message && (
-            <div className="warning-message">
-              <p style={{ color: "red" }}>{errors.message}</p>
+                    <div className="input-group" style={{ marginLeft: "20px"}}>
+                        <div>
+                            <label>Plan</label>
+                            <input
+                                type="text"
+                                name="plan"
+                                className="input-field2"
+                                value={packageData.plan}
+                                readOnly
+                            />
+                        </div>
+
+                        <div>
+                            <label>Price</label>
+                            <input
+                                type="number"
+                                name="price"
+                                placeholder="Price"
+                                className="input-field2"
+                                value={packageData.price}
+                            />
+                        </div>
+                        <br /><br />
+                    </div>
+
+                    <div className="input-group">
+                        <div>
+                            <label>Start Date</label>
+                            <input
+                                type="date"
+                                name="doj"
+                                className="input-field2"
+                                value={packageData.doj}
+                                onChange={(e) => setPackageData({ ...packageData, doj: e.target.value, doe: calculateDoe(packageData.plan, e.target.value) })}
+                            />
+                        </div>
+                        <div>
+                            <label>End Date</label>
+                            <input
+                                type="date"
+                                name="doe"
+                                className="input-field2"
+                                value={packageData.doe}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div className="button-group">
+                        <button type="submit" className="add">
+                            {status}
+                        </button>
+                        <button type="button" className="cancel" onClick={handleCancel}>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
-          )}
-
-          <div className="input-group">
-          <div>
-          <label>Plan</label>
-          <select
-            name="plan"
-            className="input-field3"
-            value={packageData.plan}
-            onChange={(e) => handlePackageChange('plan', e.target.value) }
-
-          >
-            <option value="">Select a Plan</option>
-            {plans.map((plan, i) => (
-              <option key={i} value={plan.planname}>
-                {plan.planname}
-              </option>
-            ))}
-          </select>
-          </div>
-
-          <div>
-          <label>Price</label>
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            className="input-field3"
-            value={packageData.price}
-            onChange={(e) => handlePackageChange('price',e.target.value)}
-          />
-          </div>
-          <br /><br />
-          </div>
-
-
-          <div className="input-group">
-            <div>
-              <label>Start Date</label>
-              <input
-                type="date"
-                name="doj"
-                className="input-field3"
-                value={packageData.doj}
-                onChange={(e) => handlePackageChange('doj', e.target.value)}
-              />
-            </div>
-            <div>
-              <label>End Date</label>
-              <input
-                type="date"
-                name="doe"
-                className="input-field3"
-                value={packageData.doe}
-                readOnly
-              />
-            </div>
-          </div>
-          
-          <br />
-
-
-          <div className="button-group">
-            <button type="submit" className="add">
-              {status}
-            </button>
-            <button type="button" className="cancel" onClick={handleCancel}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default AddRenewal;

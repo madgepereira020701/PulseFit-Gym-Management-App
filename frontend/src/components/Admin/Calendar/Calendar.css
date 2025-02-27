@@ -193,9 +193,6 @@ button {
 
     /* Make all tables scrollable on smaller screens */
    
-    .week-view-table,
-    .day-table,
-    .agenda-table,
     .calendar-grid {
         display: block; /* Make the tables block-level elements */
         width: 100%;
@@ -204,14 +201,7 @@ button {
         white-space: nowrap; /* Prevent text wrapping */
     }
 
-    .week-view-table th,
-    .agenda-table th,
-    .week-view-table td,
-    .agenda-table td {
-        white-space: nowrap; /* Prevent text from wrapping */
-        overflow: hidden;
-        text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-    }
+    
 }
 
 @media (max-width: 480px) {
@@ -229,19 +219,6 @@ button {
         font-size: 12px;
     }
     
-
-    .week-view-table,
-    .day-table,
-    .agenda-table {
-        font-size: 12px; /* Adjust font size for smaller screens */
-    }
-
-    .week-view-table th,
-    .agenda-table th,
-    .week-view-table td,
-    .agenda-table td {
-        padding: 4px; /* Adjust padding for better space usage */
-    }
 }
 
 /* Highlight today's date in light orange */
@@ -287,43 +264,7 @@ button {
     background-color: orange;
 }
 
-.day-table td,
-.day-table th,
-.agenda-table th,
-.week-view-table th,
-.week-view-table td,
-.agenda-table td {
-    padding: 5px;
-    text-align: center;
-    border: 1px solid #ddd;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
-.week-view-table th,
-.day-table th,
-.agenda-table th {
-    color: white;
-    background-color: orange;
-}
-
-.week-view-table,
-.day-table,
-.agenda-table {
-    width: 100%;
-}
-
-
-
-.current-day {
-    background-color: #ffcc80; /* Light gray background */
-    font-weight: bold;
-}
-
-.current-day .time-slot {
-    background-color: #e0f7fa; /* Light blue background for time slots */
-}
 
 .delete-btn {
     background: none;
