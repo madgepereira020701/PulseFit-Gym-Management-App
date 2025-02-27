@@ -112,12 +112,6 @@ h2 {
   border-radius: 4px;
 }
 
-.input-group-edit {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: flex-start; /* Align input and label to the top */
-}
 
 .error-message {
   color: red;

@@ -23,20 +23,8 @@
     margin-bottom: 1.5rem;
   }
   
-  .input-field {
-    width: 100%;
-    padding: 12px;
-    margin: 0.75rem 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
-  }
-  
-  
-  
-  .input-field2, .input-field3 {
+
+  .input-field2 {
     width: 180px;
     padding: 12px;
     margin: 0.75rem 0;
@@ -46,7 +34,7 @@
     box-sizing: border-box;
     transition: border-color 0.3s;
   }
-  .input-field2:focus, .input-field3:focus, .input-field:focus {
+  .input-field2:focus{
     border-color: lightsalmon;
     outline: none;
   }
@@ -127,7 +115,7 @@
         padding: 1rem;
     }
   
-    .input-field2, .input-field3 {
+    .input-field2 {
         width: 100%;
     }
   

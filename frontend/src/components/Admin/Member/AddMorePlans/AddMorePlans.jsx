@@ -148,7 +148,7 @@ const AddMorePlans = () => {
                                 <label>Plan</label>
                                 <select 
                                  name="plan"
-                                 className='input-field3'
+                                 className='input-field2'
                                  value={planrow.plan}
                                  onChange={(e) => handlePackageChange(index,'plan', e.target.value)}>
                                     <option value="">Select a Plan</option>
@@ -167,7 +167,7 @@ const AddMorePlans = () => {
                                   type="number"
                                   name="price"
                                   placeholder='Price'
-                                  className='input-field3'
+                                  className='input-field2'
                                   value={planrow.price}
                                   onChange={(e) => handlePackageChange(index,'price',e.target.value)} />
                                 {/* {warnings.price && <p className='warning-message'>{warnings.plan}</p>} */}
@@ -181,7 +181,7 @@ const AddMorePlans = () => {
                              type="date"
                              name="doj"
                              placeholder='Start Date'
-                             className='input-field3'
+                             className='input-field2'
                              value={planrow.doj}
                              onChange={(e) => handlePackageChange(index,'doj',e.target.value)} />
                             {/* {warnings.doj && <p className='warning-message'>{warnings.doj}</p>} */}
@@ -193,7 +193,7 @@ const AddMorePlans = () => {
                              type="date"
                              name="doe"
                              placeholder='End Date'
-                             className='input-field3'
+                             className='input-field2'
                              value={planrow.doe}
                              />
                             {/* onChange={(e) => handlePackageChange(index,'doe',e.target.value)} */}

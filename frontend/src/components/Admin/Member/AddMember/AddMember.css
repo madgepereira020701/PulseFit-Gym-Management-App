@@ -36,7 +36,7 @@ h2 {
 
 
 
-.input-field2, .input-field3 {
+.input-field2 {
   width: 199px;
   padding: 12px;
   margin: 0.75rem 0;
@@ -46,7 +46,7 @@ h2 {
   box-sizing: border-box;
   transition: border-color 0.3s;
 }
-.input-field2:focus, .input-field3:focus, .input-field:focus {
+.input-field2:focus, .input-field:focus {
   border-color: lightsalmon;
   outline: none;
 }
@@ -126,7 +126,7 @@ p {
       padding: 1rem;
   }
 
-  .input-field2, .input-field3 {
+  .input-field2 {
       width: 100%;
   }
 

@@ -275,7 +275,7 @@ const AddMembers = () => {
           type="number"
           name="memno"
           placeholder="Member ID"
-          className="input-field3"
+          className="input-field2"
           value={addMember.memno}
           onChange={onInputChange}
           readOnly
@@ -289,7 +289,7 @@ const AddMembers = () => {
           type="number"
           name="memphno"
           placeholder="Phone Number"
-          className="input-field3"
+          className="input-field2"
           value={addMember.memphno}
           onChange={onInputChange}
         />
@@ -318,7 +318,7 @@ const AddMembers = () => {
           <label>Plan</label>
           <select
             name="plan"
-            className="input-field3"
+            className="input-field2"
             value={planrow.plan}
             onChange={(e) => handlePackageChange(index,'plan', e.target.value) }
           >
@@ -338,7 +338,7 @@ const AddMembers = () => {
             type="number"
             name="price"
             placeholder="Price"
-            className="input-field3"
+            className="input-field2"
             value={planrow.price}
             onChange={(e) => handlePackageChange(index,'price',e.target.value)}
           />
@@ -353,7 +353,7 @@ const AddMembers = () => {
             type="date"
             name="doj"
             placeholder="Date of Joining"
-            className="input-field3"
+            className="input-field2"
             value={planrow.doj}
             onChange={(e) => handlePackageChange(index,'doj',e.target.value)}
           />
@@ -366,7 +366,7 @@ const AddMembers = () => {
             type="date"
             name="doe"
             placeholder="End Date"
-            className="input-field3"
+            className="input-field2"
             value={planrow.doe}
             onChange={(e) => handlePackageChange(index,'doe',e.target.value)}
             readOnly
