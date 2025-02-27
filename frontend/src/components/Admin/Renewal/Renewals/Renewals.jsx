@@ -43,7 +43,7 @@ const fetchPayments = async () => {
 }, [memno]);
 
 const handleNavigation = (selectedPlan) => {
-  navigate(`/addrenewals/${selectedPlan}`);
+  navigate(`/addrenewals/${memno}/${selectedPlan}`);
 };
 
 const isExpiringSoon = (doe) => {
