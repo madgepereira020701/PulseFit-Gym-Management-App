@@ -9,6 +9,7 @@ const AddRenewal = () => {
     const [packageData, setPackageData] = useState({ plan: initialPlan || '', price:'', doj:'', doe:''})
     const [status, setStatus] = useState("Submit");
     const navigate = useNavigate();
+    const [ isInitialLoad, setInitialLoad] = useState(true);
   
   const calculateDoe = useCallback((planName, doj) => {
     const plan = plans.find((p) => p.planname === planName);
@@ -45,20 +46,21 @@ const AddRenewal = () => {
           const packagesData = await packagesResponse.json();
           if(initialPlan) {
             const foundPlan = plansData.find((plan) => plan.planname === initialPlan);
-            if(packagesData && foundPlan) {
+            if(packagesData && foundPlan && isInitialLoad) {
               setPackageData({
                 plan: initialPlan,
                 price: foundPlan ? foundPlan.amount.toString() : "",
                 doj: packagesData.data.doe,
                 doe: calculateDoe(initialPlan, packagesData.data.doe)
               });
-            } else {
+            } else  if(isInitialLoad){
               setPackageData({
                 plan: initialPlan,
                 price: foundPlan ? foundPlan.amount.toString() : "",
               });
 
             }
+            setInitialLoad(false);
             }
           }
            catch (error) {
