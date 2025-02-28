@@ -371,7 +371,7 @@ const addMorePlans = async (req, res) => {
 
 const getlastmemno = async (req, res) => {
   try {
-    const lastMember = await Members.findOne({}, { memno: 1}, { sort: {memno: -1}});
+    const lastMember = await Members.findOne({ userId: req.user }, { memno: 1}, { sort: {memno: -1}});
     if(lastMember) {
       res.json({ lastMemNo: lastMember.memno});
     } else {
