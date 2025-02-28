@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 // Password validation regex (for example, check for special characters)
 const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).+$/;  // At least one special character
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function (next) {
+adminSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -35,10 +35,10 @@ userSchema.pre('save', async function (next) {
 });
 
 // Compare entered password with hashed password
-userSchema.methods.isValidPassword = async function (password) {
+adminSchema.methods.isValidPassword = async function (password) {
   const trimmedPassword = password.trim();  // Trim any whitespace
   return await bcrypt.compare(trimmedPassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema, 'admin'); // 'admin' is the collection name
-module.exports = User;
+const Admin = mongoose.model('Admin', adminSchema, 'admin'); // 'admin' is the collection name
+module.exports = Admin;

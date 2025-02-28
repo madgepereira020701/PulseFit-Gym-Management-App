@@ -101,8 +101,8 @@ for (const [key, value] of Object.entries(SERVICE_URLS)) {
 }
 
 // Adding fetch-based methods to the same API object
-API.userRegister = async (userData) => {
-    const response = await fetch('http://localhost:3000/api/register', {
+API.adminRegister = async (userData) => {
+    const response = await fetch('http://localhost:3000/api/adminregister', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -129,8 +129,8 @@ API.employeeRegister = async (userData) => {
     return await response.json();
 };
 
-API.userLogin = async (loginData) => {
-    const response = await fetch('http://localhost:3000/api/login', {
+API.adminLogin = async (loginData) => {
+    const response = await fetch('http://localhost:3000/api/adminlogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginData),

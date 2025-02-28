@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User.jsx');
+const Admin = require('../models/Admin.jsx');
 const Member = require('../../models/members.js');
 const Employee = require('../../models/employees.js');
 const bcrypt = require('bcryptjs')
@@ -8,24 +8,24 @@ const bcrypt = require('bcryptjs')
 // Define your JWT_SECRET directly
 const JWT_SECRET = 'mysecretkey';  // Hardcoded secret key
 
-// Register user
-const userRegister = async (req, res) => {
+// Register admin
+const adminRegister = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ isSuccess: false, message: 'User already exists' });
+    // Check if admin already exists
+    const adminExists = await Admin.findOne({ email });
+    if (adminExists) {
+      return res.status(400).json({ isSuccess: false, message: 'Admin already exists' });
     }
 
-    // Create new user
-    const newUser = new User({ name, email, password });
-    await newUser.save();
+    // Create new admin
+    const newAdmin = new Admin({ name, email, password });
+    await newAdmin.save();
 
-    res.status(201).json({ isSuccess: true, message: 'User registered successfully' });
+    res.status(201).json({ isSuccess: true, message: 'Admin registered successfully' });
   } catch (err) {
-    console.error('Error in userRegister:', err);
+    console.error('Error in adminRegister:', err);
     res.status(500).json({ isSuccess: false, message: 'An error occurred. Please try again later.' });
   }
 };
@@ -173,8 +173,8 @@ const employeeLogin = async (req, res) => {
 
 
 
-// Login user
-const userLogin = async(req,res) => {
+// Login admin
+const adminLogin = async(req,res) => {
   const { email, password } = req.body;
 
   console.log('Entered email:', email);
@@ -182,9 +182,9 @@ const userLogin = async(req,res) => {
 
 
   try{
-    const admin = await User.findOne({email});
+    const admin = await Admin.findOne({email});
     if(!admin){
-      console.log("User not found in email");
+      console.log("Admin not found in email");
       return res.status(400).json({isSuccess: false, message: 'Invalid credentials'});
     }
 
@@ -222,7 +222,7 @@ const updatePassword = async(req,res) => {
 
   try{
     console.log('Token:', token)
-    const models = [User, Member, Employee]
+    const models = [Admin, Member, Employee]
     let foundDoc = null;
     for (const model of models){
   const doc = await model.findOne({passwordResetToken: token,
@@ -237,7 +237,7 @@ const updatePassword = async(req,res) => {
 
 if(!foundDoc)
 {
-  return res.status(404).json({isSuccess: false, message: 'User/Member/Employee not found or token expired.'});
+  return res.status(404).json({isSuccess: false, message: 'Admin/Member/Employee not found or token expired.'});
 }
           console.log("Found Document:", foundDoc); // Log the result of findOne
   
@@ -295,7 +295,7 @@ const passwordresetrequest = async(req,res) => {
   const { email } = req.body;
 
   try{
-      const models = [User, Member, Employee]
+      const models = [Admin, Member, Employee]
       let foundModel = null;
       for (const model of models){
     const entity = await model.findOne({email}
@@ -356,6 +356,6 @@ async function sendPasswordResetEmail(model,email,token) {
   await storeToken(model,email,token);
 }
 
-module.exports = { userRegister, userLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
+module.exports = { adminRegister, adminLogin, memberLogin, employeeLogin, memberRegister, employeeRegister, updatePassword, 
   passwordresetrequest
  };

@@ -96,7 +96,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
     try {
       const response =
         register.role === 'Admin'
-          ? await API.userRegister(register) // Admin registration
+          ? await API.adminRegister(register) // Admin registration
           : register.role === 'Member'
           ? await API.memberRegister(register) // Member registration
           : register.role === 'Employee'
@@ -129,7 +129,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
     try {
       const response =
         login.role === 'Admin'
-          ? await API.userLogin(login) // Admin login
+          ? await API.adminLogin(login) // Admin login
           : login.role === 'Member'
           ? await API.memberLogin(login) // Member login
           : login.role === 'Employee'
