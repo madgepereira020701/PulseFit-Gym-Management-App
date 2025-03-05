@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb+srv://gym:workout@cluster0.ie8js.mongodb.net/Gym-Admin?retryWrites=true&w=majority&appName=Cluster0';
+// for the below url, paste the mongodb uri link 
+const url = //mongodb uri link;
 const Members = require('../models/members');
 const Attendance = require('../models/attendance');
 const Employee = require('../models/employees');
