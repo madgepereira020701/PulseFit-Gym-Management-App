@@ -4,7 +4,8 @@ mongoose.connection.on('error', (err) => {
   console.log('MongoDB connection error:', err);
 });
 
-const mongoURI = 'mongodb+srv://gym:workout@cluster0.ie8js.mongodb.net/Gym-Admin?retryWrites=true&w=majority';
+// for the below url, paste the mongodb uri link 
+const mongoURI = //mongodb uri link;
 
 const connectDB = async () => {
   try {
