@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const AddMorePlans = () => {
     const [packages, setPackages] = useState([{plan:'', price:'', doj:'', doe:''}])
-    const [warnings, setWarnings] = useState({});
     const [plans, setPlans] = useState([]);
     const [error, setError] = useState('');
     const { memno } = useParams();
@@ -158,7 +157,6 @@ const AddMorePlans = () => {
                                         </option>
                                     ))}
                                  </select>
-                                  {warnings.plan && <p className='warning-message'>{warnings.plan}</p>} 
                             </div>
 
                             <div>
@@ -170,7 +168,6 @@ const AddMorePlans = () => {
                                   className='input-field2'
                                   value={planrow.price}
                                   onChange={(e) => handlePackageChange(index,'price',e.target.value)} />
-                                 {warnings.price && <p className='warning-message'>{warnings.plan}</p>} 
                             </div>
                         </div>
 
@@ -184,7 +181,6 @@ const AddMorePlans = () => {
                              className='input-field2'
                              value={planrow.doj}
                              onChange={(e) => handlePackageChange(index,'doj',e.target.value)} />
-                             {warnings.doj && <p className='warning-message'>{warnings.doj}</p>} 
                             </div>
 
                             <div>
