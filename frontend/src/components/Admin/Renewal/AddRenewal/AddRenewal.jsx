@@ -70,7 +70,7 @@ const AddRenewal = () => {
         };
 
           fetchData();
-        }, [initialPlan, memno, calculateDoe, plans, navigate]);
+        }, [initialPlan, isInitialLoad, memno, calculateDoe, plans, navigate]);
             
         const handleSubmit = async (e) => {
           e.preventDefault();
