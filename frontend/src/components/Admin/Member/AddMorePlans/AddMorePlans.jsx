@@ -43,7 +43,7 @@ const AddMorePlans = () => {
     {
         for(const packageItem of packages){
             if(!packageItem.plan || !packageItem.price || !packageItem.doj || !packageItem.doe){
-                setError('Please resolve all validation warnings. ');
+                setError('Fill in the fields. ');
                 return;
             }
         }
