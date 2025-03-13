@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 
 
 // Define your JWT_SECRET directly
-const JWT_SECRET = 'mysecretkey';  // Hardcoded secret key
+const JWT_SECRET = ''; //yoursecretkey (any name) Hardcoded secret key
 
 // Register admin
 const adminRegister = async (req, res) => {
