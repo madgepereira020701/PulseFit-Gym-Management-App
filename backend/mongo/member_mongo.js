@@ -27,7 +27,7 @@ transporter.verify((error) => {
 // Utility function to send email
 const sendEmail = async (to, subject, htmlContent) => {
   const mailOptions = {
-    from: 'madgepereira020701@gmail.com',
+    from: '', //Your email
     to,
     subject,
     html: htmlContent,
