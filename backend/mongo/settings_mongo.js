@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
   
 const sendReminderEmail = async (email, eventName) => {
     const mailOptions = {
-        from: 'madgepereira020701@gmail.com',
+        from: '', //Your email
         to: email,
         subject: `Reminder: ${eventName}`,
         text: `This is a reminder about your holiday: ${eventName}`,
