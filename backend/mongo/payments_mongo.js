@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 // for the below url, paste the mongodb uri link 
-const url = //mongodb uri link;
+const url = 'mongodb uri link';
 const Members = require('../models/members');
 
 const paymentsForAdmin = async (req, res) => {
