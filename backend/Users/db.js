@@ -5,7 +5,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 // for the below url, paste the mongodb uri link 
-const mongoURI = //mongodb uri link;
+const mongoURI = 'mongodb uri link';
 
 const connectDB = async () => {
   try {
