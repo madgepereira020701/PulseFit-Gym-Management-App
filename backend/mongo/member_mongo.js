@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 // for the below url, paste the mongodb uri link 
-const url = //mongodb uri link;
+const url = 'mongodb uri link';
 const Members = require('../models/members');
 const axios = require('axios'); // Make sure to install axios
 const moment = require('moment');
