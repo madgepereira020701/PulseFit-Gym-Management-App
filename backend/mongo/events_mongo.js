@@ -1,6 +1,3 @@
-const MongoClient = require('mongodb').MongoClient;
-// for the below url, paste the mongodb uri link 
-const url = 'mongodb uri link';
 const Event = require('../models/events');
 const Members = require('../models/members');
 const moment = require('moment');
