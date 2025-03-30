@@ -4,8 +4,6 @@ const moment = require('moment');
 const axios = require('axios'); // Make sure to install axios
 const nodemailer = require('nodemailer');
 
-
-
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
