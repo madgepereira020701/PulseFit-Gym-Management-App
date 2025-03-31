@@ -196,7 +196,7 @@ const transporter = nodemailer.createTransport({
 
 
     
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('0 9 * * *', async () => {
     try {
         const sevenDaysAhead = moment().add(7, 'days').startOf('day').format('YYYY-MM-DD');
         console.log('Checking for renewals expiring on:', sevenDaysAhead);
