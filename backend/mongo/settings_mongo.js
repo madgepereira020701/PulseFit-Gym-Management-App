@@ -98,7 +98,7 @@ const updateSettings =  async (req, res) => {
     }
   };
   
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('0 9 * * *', async () => {
     try {
       console.log("Starting holiday reminder cron job...");
   
