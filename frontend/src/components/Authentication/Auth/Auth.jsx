@@ -193,7 +193,7 @@ const Auth = ({ setIsAuthenticated, setUserName }) => {
               {showPassword ? 'visibility' : 'visibility_off'}
             </span>
           </div>
-          <p onClick={handleClick} style={{textAlign: "start"}}>Forgot Password ?</p>
+          {/* <p onClick={handleClick} style={{textAlign: "start"}}>Forgot Password ?</p> */}
           <select name="role" value={login.role} onChange={onRoleChange} className="input-field">
             <option value="">Login as</option>
             <option value="Admin">Admin</option>
